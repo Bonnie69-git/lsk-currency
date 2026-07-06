@@ -402,6 +402,16 @@ function cDot() {
 }
 
 function cOp(op) {
+  // Если нажали минус первым — начинаем отрицательное число
+  if(op==='-' && cNewNum && !cLastOp) {
+    cCur = '-';
+    cNewNum = false;
+    cExpr = '-';
+    updC();
+    return;
+  }
+  // Если текущее число неполное (только минус) — игнорируем
+  if(cCur === '-') return;
   cLastNum = parseFloat(cCur);
   cLastOp = op;
   cExpr = cCur + ' ' + ({'+':'+','-':'−','*':'×','/':'÷'}[op]||op);
@@ -410,14 +420,12 @@ function cOp(op) {
 }
 
 function cPct() {
-  // Если есть предыдущая операция — считаем процент от первого числа
   if(cLastOp && cLastNum !== 0) {
     const pct = cLastNum * (parseFloat(cCur)/100);
     cCur = String(parseFloat(pct.toFixed(10)));
     cExpr = cLastNum + ' ' + ({'+':'+','-':'−','*':'×','/':'÷'}[cLastOp]||cLastOp) + ' ' + parseFloat(cCur);
     cNewNum = true;
   } else {
-    // Просто делим на 100
     cCur = String(parseFloat((parseFloat(cCur)/100).toFixed(10)));
     cNewNum = true;
   }
@@ -441,7 +449,7 @@ function cEq() {
 
 function cDel() {
   if(cNewNum||cCur.length<=1) { cCur='0'; cNewNum=true; }
-  else cCur=cCur.slice(0,-1);
+  else { cCur=cCur.slice(0,-1); if(cCur==='-') cCur='0'; }
   updC();
 }
 
