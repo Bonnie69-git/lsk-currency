@@ -373,7 +373,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 <!-- THEME PANEL -->
 <div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
   <div class="theme-panel">
-    <div class="theme-header" id="theme-header">🎨 Выбери тему</div>
+    <div class="theme-header" id="theme-header">Выбери тему</div>
     <div class="theme-grid" id="theme-grid"></div>
   </div>
 </div>
@@ -737,7 +737,7 @@ function toggleLang() {
   document.getElementById('sl-max').textContent=lang==='ru'?'Макс':'Max';
   document.getElementById('sl-chg').textContent=lang==='ru'?'Изм.':'Chg.';
   document.querySelectorAll('.menu-item-label[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
-  const th=document.getElementById('theme-header');if(th)th.textContent=lang==='ru'?'🎨 Выбери тему':'🎨 Choose theme';
+  const th=document.getElementById('theme-header');if(th)th.textContent=lang==='ru'?'Выбери тему':'Choose theme';
   const mt = document.getElementById('multi-title');
   if(mt) mt.textContent = mt.dataset[lang];
   const fab = document.getElementById('add-fav-btn');
@@ -946,13 +946,37 @@ const METALS_LIST = [
 ];
 let metalPricesUSD = {XAU:3320,XAG:33,XPT:975,XPD:1060,XCU:9.5};
 
+function renderMetals() {
+  const loadEl = document.getElementById('metals-load');
+  const listEl = document.getElementById('metals-list');
+  if(loadEl) loadEl.style.display='none';
+  if(!listEl) return;
+  const gel = rates['GEL'] || 2.65;
+  const title = lang==='ru' ? 'Цена за 1 тройскую унцию (31.1г)' : 'Price per troy ounce (31.1g)';
+  const footer = lang==='ru' ? 'Приблизительные цены' : 'Approximate prices';
+  listEl.innerHTML = '<div class="group-title">'+title+'</div>' +
+    METALS_LIST.map(m => '<div class="metal-item">' +
+      '<div class="rate-left">' +
+        '<div class="rate-flag">'+m.flag+'</div>' +
+        '<div><div class="rate-name">'+m[lang]+'</div><div class="rate-code">'+m.code+'</div></div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="metal-val">$'+fmt(metalPricesUSD[m.code]||0)+'</div>' +
+        '<div class="metal-sub">≈ '+fmt((metalPricesUSD[m.code]||0)*gel)+' ₾</div>' +
+      '</div>' +
+    '</div>').join('') +
+    '<div class="footer">'+footer+'</div>';
+}
+
 async function loadMetals() {
+  // Show metals immediately with default prices
+  renderMetals();
+  // Then try to update from API
   try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/XAU');
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/XAU', {signal: AbortSignal.timeout(5000)});
     const d = await r.json();
-    if(d.rates&&d.rates.USD) {
+    if(d.rates && d.rates.USD) {
       metalPricesUSD['XAU'] = d.rates.USD;
-      if(d.rates.XAG) metalPricesUSD['XAG'] = d.rates.USD/d.rates.XAG;
     }
   } catch(e) {}
   renderMetals();
