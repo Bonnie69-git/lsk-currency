@@ -250,6 +250,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
         <option value="USDT">💵 USDT</option><option value="TON">💎 TON</option>
         <option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option>
         <option value="XTR">⭐ STARS</option>
+        <option value="XAU">🥇 XAU (Gold)</option>
+        <option value="XAG">🥈 XAG (Silver)</option>
+        <option value="XPT">⬜ XPT (Platinum)</option>
+        <option value="XPD">🔲 XPD (Palladium)</option>
       </select>
     </div>
   </div>
@@ -268,6 +272,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
         <option value="USDT">💵 USDT</option><option value="TON">💎 TON</option>
         <option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option>
         <option value="XTR">⭐ STARS</option>
+        <option value="XAU">🥇 XAU (Gold)</option>
+        <option value="XAG">🥈 XAG (Silver)</option>
+        <option value="XPT">⬜ XPT (Platinum)</option>
+        <option value="XPD">🔲 XPD (Palladium)</option>
       </select>
     </div>
   </div>
@@ -365,7 +373,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 <!-- THEME PANEL -->
 <div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
   <div class="theme-panel">
-    <div class="theme-header">🎨 Выбери тему</div>
+    <div class="theme-header" id="theme-header">🎨 Выбери тему</div>
     <div class="theme-grid" id="theme-grid"></div>
   </div>
 </div>
@@ -422,17 +430,48 @@ const FIAT = [
   {code:"CAD",flag:"🇨🇦",ru:"Канад. доллар",en:"CAD"},
   {code:"AUD",flag:"🇦🇺",ru:"Австрал. доллар",en:"AUD"},
   {code:"SGD",flag:"🇸🇬",ru:"Сингап. доллар",en:"SGD"},
+  {code:"HKD",flag:"🇭🇰",ru:"Гонконг. доллар",en:"HKD"},
+  {code:"NZD",flag:"🇳🇿",ru:"Новозел. доллар",en:"NZD"},
+  {code:"SEK",flag:"🇸🇪",ru:"Шведская крона",en:"SEK"},
+  {code:"NOK",flag:"🇳🇴",ru:"Норвеж. крона",en:"NOK"},
+  {code:"DKK",flag:"🇩🇰",ru:"Датская крона",en:"DKK"},
+  {code:"MXN",flag:"🇲🇽",ru:"Мексик. песо",en:"MXN"},
+  {code:"BRL",flag:"🇧🇷",ru:"Бразил. реал",en:"BRL"},
+  {code:"INR",flag:"🇮🇳",ru:"Индийская рупия",en:"INR"},
+  {code:"ZAR",flag:"🇿🇦",ru:"Южноафр. ранд",en:"ZAR"},
+  {code:"SAR",flag:"🇸🇦",ru:"Саудовский риял",en:"SAR"},
+  {code:"QAR",flag:"🇶🇦",ru:"Катарский риял",en:"QAR"},
+  {code:"KWD",flag:"🇰🇼",ru:"Кувейтский динар",en:"KWD"},
+  {code:"ILS",flag:"🇮🇱",ru:"Израильский шекель",en:"ILS"},
+  {code:"EGP",flag:"🇪🇬",ru:"Египетский фунт",en:"EGP"},
+  {code:"UZS",flag:"🇺🇿",ru:"Узбекский сум",en:"UZS"},
+  {code:"AMD",flag:"🇦🇲",ru:"Армянский драм",en:"AMD"},
+  {code:"CZK",flag:"🇨🇿",ru:"Чешская крона",en:"CZK"},
+  {code:"HUF",flag:"🇭🇺",ru:"Венгерский форинт",en:"HUF"},
+  {code:"RON",flag:"🇷🇴",ru:"Румынский лей",en:"RON"},
 ];
 
 const CRYPTOS = [
-  {code:"BTC",flag:"₿",ru:"Биткоин",en:"Bitcoin",id:"bitcoin"},
-  {code:"ETH",flag:"⟠",ru:"Эфириум",en:"Ethereum",id:"ethereum"},
-  {code:"USDT",flag:"💵",ru:"USDT",en:"USDT",id:"tether"},
-  {code:"TON",flag:"💎",ru:"TON",en:"TON",id:"the-open-network"},
-  {code:"SOL",flag:"◎",ru:"Solana",en:"Solana",id:"solana"},
-  {code:"BNB",flag:"🟡",ru:"BNB",en:"BNB",id:"binancecoin"},
-  {code:"XRP",flag:"🔵",ru:"XRP",en:"XRP",id:"ripple"},
-  {code:"DOGE",flag:"🐕",ru:"Dogecoin",en:"Dogecoin",id:"dogecoin"},
+  {code:"BTC", flag:"₿",  ru:"Биткоин",    en:"Bitcoin",      id:"bitcoin"},
+  {code:"ETH", flag:"⟠",  ru:"Эфириум",    en:"Ethereum",     id:"ethereum"},
+  {code:"USDT",flag:"💵", ru:"USDT",        en:"USDT",         id:"tether"},
+  {code:"USDC",flag:"💙", ru:"USD Coin",    en:"USD Coin",     id:"usd-coin"},
+  {code:"TON", flag:"💎", ru:"TON",         en:"TON",          id:"the-open-network"},
+  {code:"SOL", flag:"◎",  ru:"Solana",      en:"Solana",       id:"solana"},
+  {code:"BNB", flag:"🟡", ru:"BNB",         en:"BNB",          id:"binancecoin"},
+  {code:"XRP", flag:"🔵", ru:"XRP",         en:"XRP",          id:"ripple"},
+  {code:"DOGE",flag:"🐕", ru:"Dogecoin",    en:"Dogecoin",     id:"dogecoin"},
+  {code:"ADA", flag:"🔷", ru:"Cardano",     en:"Cardano",      id:"cardano"},
+  {code:"TRX", flag:"⚡", ru:"TRON",        en:"TRON",         id:"tron"},
+  {code:"AVAX",flag:"🔺", ru:"Avalanche",   en:"Avalanche",    id:"avalanche-2"},
+  {code:"MATIC",flag:"🟣",ru:"Polygon",     en:"Polygon",      id:"matic-network"},
+  {code:"DOT", flag:"⚫", ru:"Polkadot",    en:"Polkadot",     id:"polkadot"},
+  {code:"LTC", flag:"🪙", ru:"Litecoin",    en:"Litecoin",     id:"litecoin"},
+  {code:"BCH", flag:"💚", ru:"Bitcoin Cash",en:"Bitcoin Cash", id:"bitcoin-cash"},
+  {code:"LINK",flag:"🔗", ru:"Chainlink",   en:"Chainlink",    id:"chainlink"},
+  {code:"UNI", flag:"🦄", ru:"Uniswap",     en:"Uniswap",      id:"uniswap"},
+  {code:"XLM", flag:"⭐", ru:"Stellar",     en:"Stellar",      id:"stellar"},
+  {code:"ATOM",flag:"⚛️", ru:"Cosmos",      en:"Cosmos",       id:"cosmos"},
 ];
 const CRYPTO_IDS = Object.fromEntries(CRYPTOS.map(c=>[c.code,c.id]));
 const CRYPTO_SET = new Set(CRYPTOS.map(c=>c.code));
@@ -530,6 +569,7 @@ function renderCrypto() {
 function toUSD(c,a) {
   if(c==='USD') return a;
   if(c==='XTR') return a*starsUsd;
+  if(metalPricesUSD[c]) return a*metalPricesUSD[c];
   if(cryptoPrices[c]) return a*cryptoPrices[c];
   if(rates[c]) return a/rates[c];
   return 0;
@@ -537,6 +577,7 @@ function toUSD(c,a) {
 function fromUSD(u,c) {
   if(c==='USD') return u;
   if(c==='XTR') return u/starsUsd;
+  if(metalPricesUSD[c]) return u/metalPricesUSD[c];
   if(cryptoPrices[c]) return u/cryptoPrices[c];
   if(rates[c]) return u*rates[c];
   return 0;
@@ -696,6 +737,7 @@ function toggleLang() {
   document.getElementById('sl-max').textContent=lang==='ru'?'Макс':'Max';
   document.getElementById('sl-chg').textContent=lang==='ru'?'Изм.':'Chg.';
   document.querySelectorAll('.menu-item-label[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
+  const th=document.getElementById('theme-header');if(th)th.textContent=lang==='ru'?'🎨 Выбери тему':'🎨 Choose theme';
   const mt = document.getElementById('multi-title');
   if(mt) mt.textContent = mt.dataset[lang];
   const fab = document.getElementById('add-fav-btn');
@@ -782,7 +824,7 @@ const THEMES = [
   {id:'purple',   name:'Пурпур',   t:'#e040fb', t2:'#d500f9', t3:'#9c00c0', s1:'#120a14', s2:'#1c0e20', s3:'#241228', b2:'#2c1030'},
   {id:'pink',     name:'Розовый',  t:'#ff80ab', t2:'#ff4081', t3:'#c60055', s1:'#140a0e', s2:'#200e18', s3:'#281220', b2:'#351028'},
   {id:'coral',    name:'Коралл',   t:'#ff6e40', t2:'#ff4820', t3:'#c83000', s1:'#140a08', s2:'#200e0c', s3:'#281210', b2:'#351510'},
-  {id:'red',      name:'Красный',  t:'#ff1744', t2:'#e00032', t3:'#b0001e', s1:'#140808', s2:'#200c0c', s3:'#281010', b2:'#350f0f'},
+  {id:'red',      name:'Красный',  t:'#e53935', t2:'#c62828', t3:'#8d1a1a', s1:'#120808', s2:'#1c0c0c', s3:'#241010', b2:'#2e1212'},
   {id:'orange',   name:'Оранжевый',t:'#ff6d00', t2:'#e55c00', t3:'#b54000', s1:'#140a00', s2:'#200f00', s3:'#281400', b2:'#351800'},
   {id:'amber',    name:'Янтарь',   t:'#ffab00', t2:'#e09000', t3:'#b06a00', s1:'#140e00', s2:'#201500', s3:'#281c00', b2:'#352200'},
   {id:'gold',     name:'Золото',   t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
@@ -790,9 +832,9 @@ const THEMES = [
   {id:'white',    name:'Белый',    t:'#ffffff', t2:'#e0e0e0', t3:'#aaaaaa', s1:'#111111', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a'},
   {id:'silver',   name:'Серебро',  t:'#b0bec5', t2:'#90a4ae', t3:'#607d8b', s1:'#0e1012', s2:'#141820', s3:'#1c2030', b2:'#202835'},
   {id:'graphite', name:'Графит',   t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
-  {id:'neon_blue',name:'Неон 🔵',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
-  {id:'neon_grn', name:'Неон 🟢',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
-  {id:'neon_vio', name:'Неон 🟣',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
+  {id:'neon_blue',name:'Неон Blue',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
+  {id:'neon_grn', name:'Неон Green',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
+  {id:'neon_vio', name:'Неон Vio',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
 ];
 
 let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
@@ -895,41 +937,25 @@ function renderSaved() {
 }
 
 // METALS
+const METALS_LIST = [
+  {code:"XAU",flag:"🥇",ru:"Золото",en:"Gold"},
+  {code:"XAG",flag:"🥈",ru:"Серебро",en:"Silver"},
+  {code:"XPT",flag:"⬜",ru:"Платина",en:"Platinum"},
+  {code:"XPD",flag:"🔲",ru:"Палладий",en:"Palladium"},
+  {code:"XCU",flag:"🟤",ru:"Медь",en:"Copper"},
+];
+let metalPricesUSD = {XAU:3320,XAG:33,XPT:975,XPD:1060,XCU:9.5};
+
 async function loadMetals() {
-  const metalsList = [
-    {code:'XAU',flag:'🥇',ru:'Золото',en:'Gold'},
-    {code:'XAG',flag:'🥈',ru:'Серебро',en:'Silver'},
-    {code:'XPT',flag:'⬜',ru:'Платина',en:'Platinum'},
-    {code:'XPD',flag:'🔲',ru:'Палладий',en:'Palladium'},
-  ];
-  let metalPrices = {};
   try {
     const r = await fetch('https://api.exchangerate-api.com/v4/latest/XAU');
     const d = await r.json();
     if(d.rates&&d.rates.USD) {
-      metalPrices['XAU'] = d.rates.USD;
-      if(d.rates.XAG) metalPrices['XAG'] = d.rates.USD/d.rates.XAG;
+      metalPricesUSD['XAU'] = d.rates.USD;
+      if(d.rates.XAG) metalPricesUSD['XAG'] = d.rates.USD/d.rates.XAG;
     }
   } catch(e) {}
-  if(!metalPrices['XAU']) metalPrices = {XAU:3320,XAG:33.5,XPT:975,XPD:1060};
-  if(!metalPrices['XAG']) metalPrices['XAG'] = metalPrices['XAU']/90;
-  if(!metalPrices['XPT']) metalPrices['XPT'] = 975;
-  if(!metalPrices['XPD']) metalPrices['XPD'] = 1060;
-  const gel = rates['GEL']||2.65;
-  document.getElementById('metals-load').style.display='none';
-  document.getElementById('metals-list').innerHTML =
-    '<div class="group-title">'+(lang==='ru'?'Цена за 1 тройскую унцию (31.1г)':'Price per troy ounce (31.1g)')+'</div>' +
-    metalsList.map(m=>`<div class="metal-item">
-      <div class="rate-left">
-        <div class="rate-flag">${m.flag}</div>
-        <div><div class="rate-name">${m[lang]}</div><div class="rate-code">${m.code}</div></div>
-      </div>
-      <div>
-        <div class="metal-val">$${fmt(metalPrices[m.code]||0)}</div>
-        <div class="metal-sub">≈ ${fmt((metalPrices[m.code]||0)*gel)} ₾</div>
-      </div>
-    </div>`).join('') +
-    '<div class="footer">'+(lang==='ru'?'Приблизительные цены':'Approximate prices')+'</div>';
+  renderMetals();
 }
 
 // COMPARE
