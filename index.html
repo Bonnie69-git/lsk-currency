@@ -356,8 +356,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
       <select class="cur-select" id="cmp-base" onchange="renderCompare()">
         <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
         <option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option>
-        <option value="RUB">🇷🇺 RUB</option><option value="BTC">₿ BTC</option>
-        <option value="TON">💎 TON</option><option value="ETH">⟠ ETH</option>
+        <option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option>
+        <option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option>
+        <option value="CNY">🇨🇳 CNY</option><option value="TRY">🇹🇷 TRY</option>
+        <option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option>
+        <option value="TON">💎 TON</option><option value="USDT">💵 USDT</option>
+        <option value="XAU">🥇 XAU</option>
       </select>
     </div>
   </div>
@@ -708,7 +712,8 @@ function drawChart(labels, data) {
   const min=Math.min(...data), max=Math.max(...data);
   const first=data[0], last=data[data.length-1];
   const change=first?((last-first)/first*100):0;
-  const color=change>=0?'#00e5cc':'#ff5252';
+  const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--t').trim() || '#00e5cc';
+  const color=change>=0?themeColor:'#ff5252';
   document.getElementById('stat-min').textContent=fmt(min);
   document.getElementById('stat-max').textContent=fmt(max);
   const chgEl=document.getElementById('stat-chg');
@@ -810,31 +815,31 @@ function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
 
 // THEMES
 const THEMES = [
-  {id:'teal',     name:'Бирюза',   t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
-  {id:'emerald',  name:'Изумруд',  t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
-  {id:'green',    name:'Зеленый',  t:'#00c853', t2:'#00a846', t3:'#006b2c', s1:'#0a130c', s2:'#0f1e12', s3:'#142818', b2:'#153520'},
-  {id:'lime',     name:'Салатовый',t:'#b2ff59', t2:'#9ef050', t3:'#6daa30', s1:'#111400', s2:'#1a1e00', s3:'#212800', b2:'#2a3200'},
-  {id:'mint',     name:'Мятный',   t:'#64ffda', t2:'#4dd8b5', t3:'#2e9e80', s1:'#0a1412', s2:'#0f1e1b', s3:'#142822', b2:'#153028'},
-  {id:'sky',      name:'Голубой',  t:'#40c4ff', t2:'#29b4f0', t3:'#0080c0', s1:'#0a1214', s2:'#0f1c1e', s3:'#142428', b2:'#153035'},
-  {id:'blue',     name:'Синий',    t:'#448aff', t2:'#2979ff', t3:'#1565c0', s1:'#0a0e14', s2:'#0f1520', s3:'#142028', b2:'#152535'},
-  {id:'cobalt',   name:'Кобальт',  t:'#0057ff', t2:'#0046d0', t3:'#0030a0', s1:'#080a14', s2:'#0d1220', s3:'#121a28', b2:'#102030'},
-  {id:'sapphire', name:'Сапфир',   t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
-  {id:'violet',   name:'Фиолет',   t:'#aa00ff', t2:'#8800d0', t3:'#5c00a0', s1:'#100a14', s2:'#180f20', s3:'#201428', b2:'#251535'},
-  {id:'lilac',    name:'Сирень',   t:'#ce93d8', t2:'#ba68c8', t3:'#7b1fa2', s1:'#120a14', s2:'#1c0f20', s3:'#241428', b2:'#2c1535'},
-  {id:'purple',   name:'Пурпур',   t:'#e040fb', t2:'#d500f9', t3:'#9c00c0', s1:'#120a14', s2:'#1c0e20', s3:'#241228', b2:'#2c1030'},
-  {id:'pink',     name:'Розовый',  t:'#ff80ab', t2:'#ff4081', t3:'#c60055', s1:'#140a0e', s2:'#200e18', s3:'#281220', b2:'#351028'},
-  {id:'coral',    name:'Коралл',   t:'#ff6e40', t2:'#ff4820', t3:'#c83000', s1:'#140a08', s2:'#200e0c', s3:'#281210', b2:'#351510'},
-  {id:'red',      name:'Красный',  t:'#e53935', t2:'#c62828', t3:'#8d1a1a', s1:'#120808', s2:'#1c0c0c', s3:'#241010', b2:'#2e1212'},
-  {id:'orange',   name:'Оранжевый',t:'#ff6d00', t2:'#e55c00', t3:'#b54000', s1:'#140a00', s2:'#200f00', s3:'#281400', b2:'#351800'},
-  {id:'amber',    name:'Янтарь',   t:'#ffab00', t2:'#e09000', t3:'#b06a00', s1:'#140e00', s2:'#201500', s3:'#281c00', b2:'#352200'},
-  {id:'gold',     name:'Золото',   t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
-  {id:'yellow',   name:'Желтый',   t:'#ffee58', t2:'#fdd835', t3:'#c8a800', s1:'#141200', s2:'#201a00', s3:'#282400', b2:'#352e00'},
-  {id:'white',    name:'Белый',    t:'#ffffff', t2:'#e0e0e0', t3:'#aaaaaa', s1:'#111111', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a'},
-  {id:'silver',   name:'Серебро',  t:'#b0bec5', t2:'#90a4ae', t3:'#607d8b', s1:'#0e1012', s2:'#141820', s3:'#1c2030', b2:'#202835'},
-  {id:'graphite', name:'Графит',   t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
-  {id:'neon_blue',name:'Неон Blue',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
-  {id:'neon_grn', name:'Неон Green',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
-  {id:'neon_vio', name:'Неон Vio',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
+  {id:'teal',     name:'Бирюза',   nameEn:'Teal',      t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
+  {id:'emerald',  name:'Изумруд',   nameEn:'Emerald',  t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
+  {id:'green',    name:'Зеленый',   nameEn:'Green',  t:'#00c853', t2:'#00a846', t3:'#006b2c', s1:'#0a130c', s2:'#0f1e12', s3:'#142818', b2:'#153520'},
+  {id:'lime',     name:'Салатовый', nameEn:'Lime',t:'#b2ff59', t2:'#9ef050', t3:'#6daa30', s1:'#111400', s2:'#1a1e00', s3:'#212800', b2:'#2a3200'},
+  {id:'mint',     name:'Мятный',    nameEn:'Mint',   t:'#64ffda', t2:'#4dd8b5', t3:'#2e9e80', s1:'#0a1412', s2:'#0f1e1b', s3:'#142822', b2:'#153028'},
+  {id:'sky',      name:'Голубой',   nameEn:'Sky',  t:'#40c4ff', t2:'#29b4f0', t3:'#0080c0', s1:'#0a1214', s2:'#0f1c1e', s3:'#142428', b2:'#153035'},
+  {id:'blue',     name:'Синий',     nameEn:'Blue',    t:'#448aff', t2:'#2979ff', t3:'#1565c0', s1:'#0a0e14', s2:'#0f1520', s3:'#142028', b2:'#152535'},
+  {id:'cobalt',   name:'Кобальт',   nameEn:'Cobalt',  t:'#0057ff', t2:'#0046d0', t3:'#0030a0', s1:'#080a14', s2:'#0d1220', s3:'#121a28', b2:'#102030'},
+  {id:'sapphire', name:'Сапфир',    nameEn:'Sapphire',   t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
+  {id:'violet',   name:'Фиолет',    nameEn:'Violet',   t:'#aa00ff', t2:'#8800d0', t3:'#5c00a0', s1:'#100a14', s2:'#180f20', s3:'#201428', b2:'#251535'},
+  {id:'lilac',    name:'Сирень',    nameEn:'Lilac',   t:'#ce93d8', t2:'#ba68c8', t3:'#7b1fa2', s1:'#120a14', s2:'#1c0f20', s3:'#241428', b2:'#2c1535'},
+  {id:'purple',   name:'Пурпур',    nameEn:'Purple',   t:'#e040fb', t2:'#d500f9', t3:'#9c00c0', s1:'#120a14', s2:'#1c0e20', s3:'#241228', b2:'#2c1030'},
+  {id:'pink',     name:'Розовый',   nameEn:'Pink',  t:'#ff80ab', t2:'#ff4081', t3:'#c60055', s1:'#140a0e', s2:'#200e18', s3:'#281220', b2:'#351028'},
+  {id:'coral',    name:'Коралл',    nameEn:'Coral',   t:'#ff6e40', t2:'#ff4820', t3:'#c83000', s1:'#140a08', s2:'#200e0c', s3:'#281210', b2:'#351510'},
+  {id:'red',      name:'Красный',   nameEn:'Red',  t:'#e53935', t2:'#c62828', t3:'#8d1a1a', s1:'#120808', s2:'#1c0c0c', s3:'#241010', b2:'#2e1212'},
+  {id:'orange',   name:'Оранжевый', nameEn:'Orange',t:'#ff6d00', t2:'#e55c00', t3:'#b54000', s1:'#140a00', s2:'#200f00', s3:'#281400', b2:'#351800'},
+  {id:'amber',    name:'Янтарь',    nameEn:'Amber',   t:'#ffab00', t2:'#e09000', t3:'#b06a00', s1:'#140e00', s2:'#201500', s3:'#281c00', b2:'#352200'},
+  {id:'gold',     name:'Золото',    nameEn:'Gold',   t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
+  {id:'yellow',   name:'Желтый',    nameEn:'Yellow',   t:'#ffee58', t2:'#fdd835', t3:'#c8a800', s1:'#141200', s2:'#201a00', s3:'#282400', b2:'#352e00'},
+  {id:'white',    name:'Белый',     nameEn:'White',    t:'#ffffff', t2:'#e0e0e0', t3:'#aaaaaa', s1:'#111111', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a'},
+  {id:'silver',   name:'Серебро',   nameEn:'Silver',  t:'#b0bec5', t2:'#90a4ae', t3:'#607d8b', s1:'#0e1012', s2:'#141820', s3:'#1c2030', b2:'#202835'},
+  {id:'graphite', name:'Графит',    nameEn:'Graphite',   t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
+  {id:'neon_blue',name:'Неон Blue', nameEn:'Neon Blue',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
+  {id:'neon_grn', name:'Неон Green',nameEn:'Neon Green',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
+  {id:'neon_vio', name:'Неон Vio',  nameEn:'Neon Vio',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
 ];
 
 let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
@@ -860,7 +865,7 @@ function applyTheme(id) {
 }
 
 function renderThemeGrid() {
-  document.getElementById('theme-grid').innerHTML = THEMES.map(th=>'<div class="theme-item"><div class="theme-dot'+(th.id===currentTheme?' active':'')+'" style="background:linear-gradient(135deg,'+th.t+','+th.t3+')" onclick="applyTheme(\''+th.id+'\');closeThemePanel();renderThemeGrid()"></div><div class="theme-name">'+th.name+'</div></div>').join('');
+  document.getElementById('theme-grid').innerHTML = THEMES.map(th=>'<div class="theme-item"><div class="theme-dot'+(th.id===currentTheme?' active':'')+'" style="background:linear-gradient(135deg,'+th.t+','+th.t3+')" onclick="applyTheme(\''+th.id+'\');closeThemePanel();renderThemeGrid()"></div><div class="theme-name">'+(lang==='en'?(th.nameEn||th.name):th.name)+'</div></div>').join('');
 }
 
 function openTheme() { renderThemeGrid(); document.getElementById('theme-overlay').classList.add('open'); }
@@ -984,26 +989,46 @@ async function loadMetals() {
 
 // COMPARE
 const COMPARE_LIST = [
-  {code:"UAH",flag:"🇺🇦"},{code:"USD",flag:"🇺🇸"},{code:"EUR",flag:"🇪🇺"},
-  {code:"GEL",flag:"🇬🇪"},{code:"RUB",flag:"🇷🇺"},{code:"GBP",flag:"🇬🇧"},
-  {code:"CNY",flag:"🇨🇳"},{code:"TRY",flag:"🇹🇷"},{code:"PLN",flag:"🇵🇱"},
-  {code:"BTC",flag:"₿"},{code:"ETH",flag:"⟠"},{code:"TON",flag:"💎"},
+  {code:"UAH",name:"Гривна",nameEn:"Hryvnia",flag:"🇺🇦"},
+  {code:"USD",name:"Доллар",nameEn:"Dollar",flag:"🇺🇸"},
+  {code:"EUR",name:"Евро",nameEn:"Euro",flag:"🇪🇺"},
+  {code:"GEL",name:"Лари",nameEn:"Lari",flag:"🇬🇪"},
+  {code:"RUB",name:"Рубль",nameEn:"Ruble",flag:"🇷🇺"},
+  {code:"GBP",name:"Фунт",nameEn:"Pound",flag:"🇬🇧"},
+  {code:"CNY",name:"Юань",nameEn:"Yuan",flag:"🇨🇳"},
+  {code:"TRY",name:"Лира",nameEn:"Lira",flag:"🇹🇷"},
+  {code:"PLN",name:"Злотый",nameEn:"Zloty",flag:"🇵🇱"},
+  {code:"CHF",name:"Франк",nameEn:"Franc",flag:"🇨🇭"},
+  {code:"JPY",name:"Йена",nameEn:"Yen",flag:"🇯🇵"},
+  {code:"KZT",name:"Тенге",nameEn:"Tenge",flag:"🇰🇿"},
+  {code:"AED",name:"Дирхам",nameEn:"Dirham",flag:"🇦🇪"},
+  {code:"BYN",name:"Бел. рубль",nameEn:"Bel. Ruble",flag:"🇧🇾"},
+  {code:"CAD",name:"Канад. доллар",nameEn:"CAD",flag:"🇨🇦"},
+  {code:"AUD",name:"Австрал. доллар",nameEn:"AUD",flag:"🇦🇺"},
+  {code:"BTC",name:"Биткоин",nameEn:"Bitcoin",flag:"₿"},
+  {code:"ETH",name:"Эфириум",nameEn:"Ethereum",flag:"⟠"},
+  {code:"TON",name:"TON",nameEn:"TON",flag:"💎"},
+  {code:"USDT",name:"USDT",nameEn:"USDT",flag:"💵"},
+  {code:"SOL",name:"Solana",nameEn:"Solana",flag:"◎"},
+  {code:"XAU",name:"Золото",nameEn:"Gold",flag:"🥇"},
+  {code:"XAG",name:"Серебро",nameEn:"Silver",flag:"🥈"},
 ];
 
 function renderCompare() {
   const a = parseFloat(document.getElementById('cmp-amount').value)||1;
   const base = document.getElementById('cmp-base').value;
-  const n = NAMES[lang];
   const usd = toUSD(base, a);
   const items = COMPARE_LIST.filter(c=>c.code!==base);
   const vals = items.map(c=>({...c, val:fromUSD(usd,c.code)}));
   const maxVal = Math.max(...vals.map(v=>v.val));
+  const baseName = COMPARE_LIST.find(c=>c.code===base);
+  const baseLabel = baseName ? baseName[lang==='en'?'nameEn':'name'] : base;
   document.getElementById('compare-list').innerHTML =
-    '<div class="group-title">'+(lang==='ru'?`${fmt(a)} ${n[base]||base} равно...`:`${fmt(a)} ${n[base]||base} equals...`)+'</div>' +
+    '<div class="group-title">'+(lang==='ru'?fmt(a)+' '+baseLabel+' равно...':fmt(a)+' '+baseLabel+' equals...')+'</div>' +
     vals.map(v=>`<div class="compare-card">
-      <div>
-        <div class="compare-name">${v.flag} ${n[v.code]||v.code}</div>
-        <div class="compare-bar-wrap" style="width:120px">
+      <div style="flex:1">
+        <div class="compare-name">${v.flag} ${lang==='en'?v.nameEn:v.name}</div>
+        <div class="compare-bar-wrap" style="width:100%;max-width:160px;margin-top:4px">
           <div class="compare-bar" style="width:${maxVal?Math.min(100,v.val/maxVal*100):0}%"></div>
         </div>
       </div>
