@@ -17,7 +17,7 @@
   --border: #0e2020; --border2: #183030;
   --up: #00e676; --down: #ff5252;
 }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; padding-bottom: 90px; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; padding-bottom: 20px; }
 
 .header { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; background: rgba(6,10,10,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border2); }
 .brand { display: flex; align-items: center; gap: 10px; }
@@ -30,14 +30,41 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .lang-btn { background: var(--s2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; color: var(--t); cursor: pointer; font-family: 'Inter', sans-serif; }
 
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(6,10,10,0.97); backdrop-filter: blur(20px); border-top: 1px solid var(--border2); display: flex; z-index: 100; padding: 6px 0 max(6px, env(safe-area-inset-bottom)); }
-.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px; cursor: pointer; transition: all 0.18s; border-radius: 10px; margin: 0 2px; }
-.nav-item:active { background: var(--tg); }
-.nav-icon { font-size: 20px; line-height: 1; transition: transform 0.18s; }
-.nav-label { font-size: 9px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.3px; transition: color 0.18s; }
-.nav-item.active .nav-icon { transform: scale(1.15); }
-.nav-item.active .nav-label { color: var(--t); }
-.nav-item.active { background: var(--tg); }
+.hamburger-btn { width: 36px; height: 36px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer; border-radius: 10px; background: var(--s2); border: 1px solid var(--border2); }
+.hamburger-btn span { display: block; width: 18px; height: 2px; background: var(--t); border-radius: 2px; transition: all 0.2s; }
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* THEME PANEL */
+.theme-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; align-items: flex-end; }
+.theme-overlay.open { display: flex; }
+.theme-panel { background: var(--s1); border-radius: 20px 20px 0 0; padding: 20px 16px 30px; width: 100%; border-top: 1px solid var(--border2); max-height: 70vh; overflow-y: auto; }
+.theme-header { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+.theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.theme-dot { width: 46px; height: 46px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.theme-dot.active { border-color: white; transform: scale(1.15); }
+.theme-name { font-size: 9px; color: var(--sub2); text-align: center; margin-top: 4px; }
+.theme-item { display: flex; flex-direction: column; align-items: center; }
+.theme-btn { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); background: linear-gradient(135deg, var(--t), var(--t3)); flex-shrink: 0; transition: transform 0.2s; }
+.theme-btn:active { transform: scale(0.9); }
+
+.menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
+.menu-overlay.open { display: block; }
+.side-menu { position: fixed; top: 0; right: -280px; width: 260px; height: 100vh; background: var(--s1); border-left: 1px solid var(--border2); z-index: 200; transition: right 0.3s cubic-bezier(0.4,0,0.2,1); padding: 20px 16px; overflow-y: auto; }
+.side-menu.open { right: 0; }
+.menu-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border2); }
+.menu-logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--t), var(--t3)); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.menu-brand { font-size: 16px; font-weight: 900; color: var(--t); }
+.menu-item { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 14px; cursor: pointer; transition: all 0.15s; margin-bottom: 4px; }
+.menu-item:active { background: var(--tg2); }
+.menu-item.active { background: var(--tg); border: 1px solid var(--t3); }
+.menu-item.active .menu-item-label { color: var(--t); }
+.menu-icon { font-size: 22px; width: 28px; text-align: center; }
+.menu-item-label { font-size: 15px; font-weight: 600; color: var(--text); }
+.menu-item.active .menu-icon-arrow { color: var(--t); }
+.menu-arrow { margin-left: auto; color: var(--sub); font-size: 12px; }
+.current-tab-badge { background: var(--tg2); border: 1px solid var(--t3); border-radius: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--t); margin-left: auto; }
 
 .section { display: none; padding: 14px; }
 .section.active { display: block; }
@@ -161,38 +188,48 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
   </div>
   <div class="header-right">
     <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+    <div class="theme-btn" onclick="openTheme()" id="theme-btn"></div>
     <div class="live-badge"><div class="live-dot"></div><span id="upd-time">Live</span></div>
+    <div class="hamburger-btn" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
   </div>
 </div>
 
-<div class="bottom-nav">
-  <div class="nav-item active" onclick="switchTab('conv')" id="nav-conv">
-    <div class="nav-icon">💱</div>
-    <div class="nav-label" data-ru="Конвертер" data-en="Convert">Конвертер</div>
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+<div class="side-menu" id="side-menu">
+  <div class="menu-header">
+    <div class="menu-logo">💱</div>
+    <div class="menu-brand">LSK Currency</div>
   </div>
-  <div class="nav-item" onclick="switchTab('fiat')" id="nav-fiat">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label" data-ru="Фиат" data-en="Fiat">Фиат</div>
+  <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv">
+    <div class="menu-icon">💱</div>
+    <div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div>
+    <div class="current-tab-badge" id="badge-conv">✓</div>
   </div>
-  <div class="nav-item" onclick="switchTab('crypto')" id="nav-crypto">
-    <div class="nav-icon">₿</div>
-    <div class="nav-label" data-ru="Крипта" data-en="Crypto">Крипта</div>
+  <div class="menu-item" onclick="switchTab('fiat')" id="nav-fiat">
+    <div class="menu-icon">📊</div>
+    <div class="menu-item-label" data-ru="Фиат" data-en="Fiat">Фиат</div>
   </div>
-  <div class="nav-item" onclick="switchTab('metals')" id="nav-metals">
-    <div class="nav-icon">🥇</div>
-    <div class="nav-label" data-ru="Металлы" data-en="Metals">Металлы</div>
+  <div class="menu-item" onclick="switchTab('crypto')" id="nav-crypto">
+    <div class="menu-icon">₿</div>
+    <div class="menu-item-label" data-ru="Крипта" data-en="Crypto">Крипта</div>
   </div>
-  <div class="nav-item" onclick="switchTab('compare')" id="nav-compare">
-    <div class="nav-icon">⚖️</div>
-    <div class="nav-label" data-ru="Сравни" data-en="Compare">Сравни</div>
+  <div class="menu-item" onclick="switchTab('metals')" id="nav-metals">
+    <div class="menu-icon">🥇</div>
+    <div class="menu-item-label" data-ru="Металлы" data-en="Metals">Металлы</div>
   </div>
-  <div class="nav-item" onclick="switchTab('calc')" id="nav-calc">
-    <div class="nav-icon">⌗</div>
-    <div class="nav-label" data-ru="Калькулятор" data-en="Calc">Калькулятор</div>
+  <div class="menu-item" onclick="switchTab('compare')" id="nav-compare">
+    <div class="menu-icon">⚖️</div>
+    <div class="menu-item-label" data-ru="Сравни" data-en="Compare">Сравни</div>
   </div>
-  <div class="nav-item" onclick="switchTab('saved')" id="nav-saved">
-    <div class="nav-icon">⭐</div>
-    <div class="nav-label" data-ru="Сохранено" data-en="Saved">Сохранено</div>
+  <div class="menu-item" onclick="switchTab('calc')" id="nav-calc">
+    <div class="menu-icon">⌗</div>
+    <div class="menu-item-label" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div>
+  </div>
+  <div class="menu-item" onclick="switchTab('saved')" id="nav-saved">
+    <div class="menu-icon">⭐</div>
+    <div class="menu-item-label" data-ru="Сохранено" data-en="Saved">Сохранено</div>
   </div>
 </div>
 
@@ -323,6 +360,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 <div class="section" id="tab-saved">
   <div id="fav-section"></div>
   <div id="hist-section"></div>
+</div>
+
+<!-- THEME PANEL -->
+<div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
+  <div class="theme-panel">
+    <div class="theme-header">🎨 Выбери тему</div>
+    <div class="theme-grid" id="theme-grid"></div>
+  </div>
 </div>
 
 <!-- CHART MODAL -->
@@ -510,7 +555,7 @@ function renderMulti(fromCur, amount) {
   const items = MULTI_TARGETS.filter(t => t.code !== fromCur).map(t => {
     const val = fromUSD(usd, t.code);
     return `<div class="multi-item">
-      <span class="multi-name">${t.flag} ${n[t.code]||t.code}</span>
+      <span class="multi-name">${t.flag} ${(n[t.code]||t.code).split(" ").slice(1).join(" ")}</span>
       <span class="multi-val">${fmt(val)}</span>
     </div>`;
   });
@@ -650,7 +695,7 @@ function toggleLang() {
   document.getElementById('sl-min').textContent=lang==='ru'?'Мин':'Min';
   document.getElementById('sl-max').textContent=lang==='ru'?'Макс':'Max';
   document.getElementById('sl-chg').textContent=lang==='ru'?'Изм.':'Chg.';
-  document.querySelectorAll('.nav-label[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
+  document.querySelectorAll('.menu-item-label[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
   const mt = document.getElementById('multi-title');
   if(mt) mt.textContent = mt.dataset[lang];
   const fab = document.getElementById('add-fav-btn');
@@ -658,14 +703,39 @@ function toggleLang() {
   renderFiat(); renderCrypto(); conv();
 }
 
+function toggleMenu() {
+  const menu = document.getElementById('side-menu');
+  const overlay = document.getElementById('menu-overlay');
+  const btn = document.getElementById('hamburger');
+  const isOpen = menu.classList.contains('open');
+  menu.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+function closeMenu() {
+  document.getElementById('side-menu').classList.remove('open');
+  document.getElementById('menu-overlay').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
 function switchTab(n) {
-  const tabs=['conv','fiat','crypto','metals','compare','calc','saved'];
-  document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
-  document.getElementById('nav-'+n)?.classList.add('active');
+  document.querySelectorAll('.menu-item').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('[id^="badge-"]').forEach(b=>b.remove());
+  const navEl = document.getElementById('nav-'+n);
+  if(navEl) {
+    navEl.classList.add('active');
+    const badge = document.createElement('div');
+    badge.className='current-tab-badge';
+    badge.id='badge-'+n;
+    badge.textContent='✓';
+    navEl.appendChild(badge);
+  }
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active');
   if(n==='saved') renderSaved();
   if(n==='compare') renderCompare();
+  closeMenu();
 }
 
 // CALCULATOR
@@ -695,6 +765,66 @@ function cEq(){
 }
 function cDel(){if(cNewNum||cCur.length<=1){cCur='0';cNewNum=true;}else{cCur=cCur.slice(0,-1);if(cCur==='-')cCur='0';}updC();}
 function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
+
+// THEMES
+const THEMES = [
+  {id:'teal',     name:'Бирюза',   t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
+  {id:'emerald',  name:'Изумруд',  t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
+  {id:'green',    name:'Зеленый',  t:'#00c853', t2:'#00a846', t3:'#006b2c', s1:'#0a130c', s2:'#0f1e12', s3:'#142818', b2:'#153520'},
+  {id:'lime',     name:'Салатовый',t:'#b2ff59', t2:'#9ef050', t3:'#6daa30', s1:'#111400', s2:'#1a1e00', s3:'#212800', b2:'#2a3200'},
+  {id:'mint',     name:'Мятный',   t:'#64ffda', t2:'#4dd8b5', t3:'#2e9e80', s1:'#0a1412', s2:'#0f1e1b', s3:'#142822', b2:'#153028'},
+  {id:'sky',      name:'Голубой',  t:'#40c4ff', t2:'#29b4f0', t3:'#0080c0', s1:'#0a1214', s2:'#0f1c1e', s3:'#142428', b2:'#153035'},
+  {id:'blue',     name:'Синий',    t:'#448aff', t2:'#2979ff', t3:'#1565c0', s1:'#0a0e14', s2:'#0f1520', s3:'#142028', b2:'#152535'},
+  {id:'cobalt',   name:'Кобальт',  t:'#0057ff', t2:'#0046d0', t3:'#0030a0', s1:'#080a14', s2:'#0d1220', s3:'#121a28', b2:'#102030'},
+  {id:'sapphire', name:'Сапфир',   t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
+  {id:'violet',   name:'Фиолет',   t:'#aa00ff', t2:'#8800d0', t3:'#5c00a0', s1:'#100a14', s2:'#180f20', s3:'#201428', b2:'#251535'},
+  {id:'lilac',    name:'Сирень',   t:'#ce93d8', t2:'#ba68c8', t3:'#7b1fa2', s1:'#120a14', s2:'#1c0f20', s3:'#241428', b2:'#2c1535'},
+  {id:'purple',   name:'Пурпур',   t:'#e040fb', t2:'#d500f9', t3:'#9c00c0', s1:'#120a14', s2:'#1c0e20', s3:'#241228', b2:'#2c1030'},
+  {id:'pink',     name:'Розовый',  t:'#ff80ab', t2:'#ff4081', t3:'#c60055', s1:'#140a0e', s2:'#200e18', s3:'#281220', b2:'#351028'},
+  {id:'coral',    name:'Коралл',   t:'#ff6e40', t2:'#ff4820', t3:'#c83000', s1:'#140a08', s2:'#200e0c', s3:'#281210', b2:'#351510'},
+  {id:'red',      name:'Красный',  t:'#ff1744', t2:'#e00032', t3:'#b0001e', s1:'#140808', s2:'#200c0c', s3:'#281010', b2:'#350f0f'},
+  {id:'orange',   name:'Оранжевый',t:'#ff6d00', t2:'#e55c00', t3:'#b54000', s1:'#140a00', s2:'#200f00', s3:'#281400', b2:'#351800'},
+  {id:'amber',    name:'Янтарь',   t:'#ffab00', t2:'#e09000', t3:'#b06a00', s1:'#140e00', s2:'#201500', s3:'#281c00', b2:'#352200'},
+  {id:'gold',     name:'Золото',   t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
+  {id:'yellow',   name:'Желтый',   t:'#ffee58', t2:'#fdd835', t3:'#c8a800', s1:'#141200', s2:'#201a00', s3:'#282400', b2:'#352e00'},
+  {id:'white',    name:'Белый',    t:'#ffffff', t2:'#e0e0e0', t3:'#aaaaaa', s1:'#111111', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a'},
+  {id:'silver',   name:'Серебро',  t:'#b0bec5', t2:'#90a4ae', t3:'#607d8b', s1:'#0e1012', s2:'#141820', s3:'#1c2030', b2:'#202835'},
+  {id:'graphite', name:'Графит',   t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
+  {id:'neon_blue',name:'Неон 🔵',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
+  {id:'neon_grn', name:'Неон 🟢',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
+  {id:'neon_vio', name:'Неон 🟣',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
+];
+
+let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
+
+function applyTheme(id) {
+  const th = THEMES.find(x=>x.id===id) || THEMES[0];
+  const r = document.documentElement.style;
+  r.setProperty('--t', th.t);
+  r.setProperty('--t2', th.t2);
+  r.setProperty('--t3', th.t3);
+  r.setProperty('--tg', th.t+'18');
+  r.setProperty('--tg2', th.t+'35');
+  r.setProperty('--s1', th.s1);
+  r.setProperty('--s2', th.s2);
+  r.setProperty('--s3', th.s3);
+  r.setProperty('--border2', th.b2);
+  r.setProperty('--sub', th.t3+'99');
+  r.setProperty('--sub2', th.t2+'aa');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.style.background = 'linear-gradient(135deg,'+th.t+','+th.t3+')';
+  currentTheme = id;
+  localStorage.setItem('lsk_theme', id);
+}
+
+function renderThemeGrid() {
+  document.getElementById('theme-grid').innerHTML = THEMES.map(th=>'<div class="theme-item"><div class="theme-dot'+(th.id===currentTheme?' active':'')+'" style="background:linear-gradient(135deg,'+th.t+','+th.t3+')" onclick="applyTheme(\''+th.id+'\');closeThemePanel();renderThemeGrid()"></div><div class="theme-name">'+th.name+'</div></div>').join('');
+}
+
+function openTheme() { renderThemeGrid(); document.getElementById('theme-overlay').classList.add('open'); }
+function closeThemePanel() { document.getElementById('theme-overlay').classList.remove('open'); }
+function closeTheme(e) { if(e.target.id==='theme-overlay') closeThemePanel(); }
+applyTheme(currentTheme);
 
 // LOCAL STORAGE
 let lsHistory = JSON.parse(localStorage.getItem('lsk_hist')||'[]');
