@@ -6,320 +6,340 @@
 <title>LSK Currency</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
-  --bg: #060a0a; --s1: #0c1414; --s2: #111e1e; --s3: #162828;
-  --t: #00e5cc; --t2: #00c4ae; --t3: #008f7e;
-  --tg: #00e5cc18; --tg2: #00e5cc35;
-  --text: #e2f0f0; --sub: #5a8080; --sub2: #7aa0a0;
-  --border: #0e2020; --border2: #183030;
-  --up: #00e676; --down: #ff5252;
+  --bg: #000000;
+  --card: #1c1c1e;
+  --card2: #111113;
+  --t: #00e5cc;
+  --t2: #00c4ae;
+  --t3: #008f7e;
+  --tg: #00e5cc18;
+  --result-bg: #1c2333;
+  --text: #ffffff;
+  --sub: #8e8e93;
+  --sub2: #aeaeb2;
+  --border: #2a2a2c;
+  --up: #34c759;
+  --down: #ff453a;
+  --r: 14px;
+  --rl: 18px;
 }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; padding-bottom: 20px; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:20px; -webkit-font-smoothing:antialiased; }
 
-.header { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; background: rgba(6,10,10,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border2); }
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-icon { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--t), var(--t3)); display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 20px var(--tg2); }
-.brand-name span:first-child { display: block; font-size: 16px; font-weight: 900; color: var(--t); letter-spacing: -0.5px; }
-.brand-name span:last-child { display: block; font-size: 9px; color: var(--sub); font-weight: 500; letter-spacing: 0.5px; margin-top: 1px; }
-.header-right { display: flex; align-items: center; gap: 8px; }
-.live-badge { display: flex; align-items: center; gap: 5px; background: var(--s2); border: 1px solid var(--border2); border-radius: 20px; padding: 4px 9px; font-size: 10px; color: var(--sub2); font-weight: 600; }
-.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--t); box-shadow: 0 0 6px var(--t); animation: pulse 2s infinite; }
+/* HEADER */
+.header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-icon { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#000; flex-shrink:0; }
+.brand-text-main { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.2px; }
+.brand-text-sub { font-size:9px; color:var(--sub); font-weight:500; margin-top:1px; letter-spacing:0.8px; }
+.header-right { display:flex; align-items:center; gap:8px; }
+.hbtn { height:28px; border-radius:7px; border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; display:flex; align-items:center; padding:0 10px; transition:opacity 0.15s; }
+.hbtn:active { opacity:0.7; }
+.lang-btn { background:var(--card); color:var(--sub2); }
+.theme-btn-wrap { height:28px; border-radius:7px; background:var(--card); border:none; cursor:pointer; padding:0 10px; display:flex; align-items:center; gap:6px; flex-shrink:0; transition:background 0.15s; }
+.theme-btn-wrap:active { background:var(--card2); }
+.theme-color-dot { width:10px; height:10px; border-radius:3px; background:var(--t); flex-shrink:0; transition:background 0.2s; }
+.theme-btn-text { font-size:11px; font-weight:500; color:var(--sub2); font-family:'Inter',sans-serif; letter-spacing:0.2px; }
+.live-badge { background:var(--card); border-radius:20px; padding:4px 9px; display:flex; align-items:center; gap:4px; font-size:10px; font-weight:500; color:var(--sub); }
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.lang-btn { background: var(--s2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; color: var(--t); cursor: pointer; font-family: 'Inter', sans-serif; }
+.menu-btn { width:28px; height:28px; border-radius:7px; background:transparent; border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
+.menu-btn span { width:16px; height:1.5px; background:var(--sub2); border-radius:2px; transition:all 0.2s; }
+.menu-btn.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.menu-btn.open span:nth-child(2) { opacity:0; }
+.menu-btn.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
 
-.hamburger-btn { width: 36px; height: 36px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer; border-radius: 10px; background: var(--s2); border: 1px solid var(--border2); }
-.hamburger-btn span { display: block; width: 18px; height: 2px; background: var(--t); border-radius: 2px; transition: all 0.2s; }
-.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger-btn.open span:nth-child(2) { opacity: 0; }
-.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* SECTIONS */
+.section { display:none; padding:10px 14px 14px; }
+.section.active { display:block; }
 
-/* THEME PANEL */
-.theme-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; align-items: flex-end; }
-.theme-overlay.open { display: flex; }
-.theme-panel { background: var(--s1); border-radius: 20px 20px 0 0; padding: 20px 16px 30px; width: 100%; border-top: 1px solid var(--border2); max-height: 70vh; overflow-y: auto; }
-.theme-header { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 16px; }
-.theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-.theme-dot { width: 46px; height: 46px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-.theme-dot.active { border-color: white; transform: scale(1.15); }
-.theme-name { font-size: 9px; color: var(--sub2); text-align: center; margin-top: 4px; }
-.theme-item { display: flex; flex-direction: column; align-items: center; }
-.theme-btn { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); background: linear-gradient(135deg, var(--t), var(--t3)); flex-shrink: 0; transition: transform 0.2s; }
-.theme-btn:active { transform: scale(0.9); }
+/* CARD */
+.card { background:var(--card); border-radius:var(--rl); padding:14px 14px 14px; margin-bottom:8px; }
+.card-label { font-size:10px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.3px; margin-bottom:8px; }
 
-.menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
-.menu-overlay.open { display: block; }
-.side-menu { position: fixed; top: 0; right: -280px; width: 260px; height: 100vh; background: var(--s1); border-left: 1px solid var(--border2); z-index: 200; transition: right 0.3s cubic-bezier(0.4,0,0.2,1); padding: 20px 16px; overflow-y: auto; }
-.side-menu.open { right: 0; }
-.menu-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border2); }
-.menu-logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--t), var(--t3)); display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.menu-brand { font-size: 16px; font-weight: 900; color: var(--t); }
-.menu-item { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 14px; cursor: pointer; transition: all 0.15s; margin-bottom: 4px; }
-.menu-item:active { background: var(--tg2); }
-.menu-item.active { background: var(--tg); border: 1px solid var(--t3); }
-.menu-item.active .menu-item-label { color: var(--t); }
-.menu-icon { font-size: 22px; width: 28px; text-align: center; }
-.menu-item-label { font-size: 15px; font-weight: 600; color: var(--text); }
-.menu-item.active .menu-icon-arrow { color: var(--t); }
-.menu-arrow { margin-left: auto; color: var(--sub); font-size: 12px; }
-.current-tab-badge { background: var(--tg2); border: 1px solid var(--t3); border-radius: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--t); margin-left: auto; }
+/* CONVERTER */
+.input-row { display:flex; gap:8px; }
+.num-input { flex:1; background:#000; border:none; border-radius:12px; padding:14px 16px; font-size:22px; font-weight:500; color:var(--text); outline:none; font-family:'Inter',sans-serif; min-width:0; }
+.cur-select { background:#000; border:none; border-radius:12px; padding:14px 14px; font-size:14px; font-weight:600; color:var(--text); outline:none; cursor:pointer; font-family:'Inter',sans-serif; width:100%; -webkit-appearance:none; display:block; }
+.swap-wrap { display:flex; align-items:center; gap:12px; margin:4px 0; }
+.swap-line { flex:1; height:1px; background:var(--border); }
+.swap-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--sub); transition:all 0.15s; flex-shrink:0; }
+.swap-btn:active { background:var(--t); color:#000; border-color:var(--t); transform:rotate(180deg); }
 
-.section { display: none; padding: 14px; }
-.section.active { display: block; }
+/* RESULT */
+.result-card { background:var(--result-bg,#141c1a); border-radius:var(--rl); padding:22px 18px 16px; text-align:center; margin-bottom:8px; }
+.result-num { font-size:44px; font-weight:700; color:var(--text); letter-spacing:-2px; line-height:1; }
+.result-from-to { font-size:13px; color:var(--sub2); margin-top:8px; }
+.result-rate-line { font-size:12px; color:var(--sub); margin-top:6px; }
+.result-divider { height:1px; background:rgba(255,255,255,0.08); margin:12px 0; }
+.copy-btn { background:var(--t); border:none; border-radius:10px; padding:11px 0; font-size:13px; font-weight:600; color:#000; cursor:pointer; font-family:'Inter',sans-serif; width:100%; letter-spacing:0.2px; transition:opacity 0.15s; }
+.copy-btn:active { opacity:0.8; }
 
-.card { background: var(--s1); border: 1px solid var(--border2); border-radius: 18px; padding: 16px; margin-bottom: 10px; position: relative; overflow: hidden; }
-.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--t3), transparent); opacity: 0.6; }
-.card-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+/* FAV BTN */
+.fav-btn { width:100%; background:transparent; border:none; border-radius:var(--rl); padding:11px; text-align:center; font-size:12px; font-weight:500; color:var(--sub); cursor:pointer; font-family:'Inter',sans-serif; margin-bottom:8px; transition:color 0.15s; }
+.fav-btn:active { color:var(--t); }
 
-.search-wrap { position: relative; margin-bottom: 12px; }
-.search-input { width: 100%; background: var(--s2); border: 1.5px solid var(--border2); border-radius: 12px; padding: 11px 14px 11px 38px; font-size: 14px; color: var(--text); outline: none; font-family: 'Inter', sans-serif; }
-.search-input::placeholder { color: var(--sub); }
-.search-input:focus { border-color: var(--t3); }
-.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+/* MULTI */
+.multi-card { background:var(--card); border-radius:var(--rl); padding:12px 14px; margin-bottom:8px; }
+.multi-label { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:10px; }
+.multi-item { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); }
+.multi-item:last-child { border-bottom:none; }
+.multi-name { font-size:12px; color:var(--sub); }
+.multi-val { font-size:13px; font-weight:500; color:var(--t); }
 
-.input-row { display: flex; gap: 8px; }
-.num-input { flex: 1; background: var(--s2); border: 1.5px solid var(--border2); border-radius: 12px; padding: 13px 14px; font-size: 22px; font-weight: 800; color: var(--text); outline: none; font-family: 'Inter', sans-serif; width: 100%; }
-.num-input:focus { border-color: var(--t3); box-shadow: 0 0 0 3px var(--tg); }
-.cur-select { background: var(--s2); border: 1.5px solid var(--border2); border-radius: 12px; padding: 0 12px; font-size: 12px; font-weight: 700; color: var(--text); outline: none; cursor: pointer; font-family: 'Inter', sans-serif; min-width: 95px; -webkit-appearance: none; }
-.swap-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
-.line { flex: 1; height: 1px; background: var(--border2); }
-.swap-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--s2); border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--t); flex-shrink: 0; transition: all 0.2s; }
-.swap-btn:active { background: var(--tg2); transform: rotate(180deg); }
+/* RATES */
+.group-title { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin:16px 0 8px; padding:0 4px; }
+.rate-item { background:var(--card); border-radius:var(--r); padding:11px 14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; cursor:pointer; transition:background 0.12s; }
+.rate-item:active { background:var(--card2); }
+.rate-left { display:flex; align-items:center; gap:13px; }
+.rate-flag { font-size:22px; width:28px; text-align:center; line-height:1; }
+.rate-name { font-size:13px; font-weight:500; color:var(--text); }
+.rate-code { font-size:11px; color:var(--sub); margin-top:2px; }
+.rate-right { text-align:right; }
+.rate-val { font-size:14px; font-weight:500; color:var(--text); }
+.rate-chg { font-size:11px; margin-top:2px; font-weight:600; }
+.rate-chg.up { color:var(--up); }
+.rate-chg.down { color:var(--down); }
+.rate-chg.flat { color:var(--sub); }
 
-.result { background: linear-gradient(135deg, #091f1f, #0c2828); border: 1.5px solid var(--t3); border-radius: 20px; padding: 20px 18px; text-align: center; position: relative; overflow: hidden; }
-.result::before { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, var(--tg2), transparent 70%); }
-.result-num { font-size: 38px; font-weight: 900; color: var(--t); letter-spacing: -1.5px; text-shadow: 0 0 40px var(--tg2); line-height: 1; position: relative; z-index: 1; }
-.result-cur { font-size: 13px; font-weight: 600; color: var(--t2); margin-top: 6px; position: relative; z-index: 1; }
-.result-rate { font-size: 11px; color: var(--sub2); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border2); position: relative; z-index: 1; }
-.copy-btn { margin-top: 10px; background: var(--tg2); border: 1px solid var(--t3); border-radius: 8px; padding: 6px 14px; font-size: 11px; font-weight: 700; color: var(--t); cursor: pointer; font-family: 'Inter', sans-serif; position: relative; z-index: 1; }
-
-.multi-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 18px; padding: 14px 16px; margin-top: 10px; position: relative; overflow: hidden; }
-.multi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--t3), transparent); opacity: 0.6; }
-.multi-title { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
-.multi-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.multi-item:last-child { border-bottom: none; }
-.multi-name { font-size: 13px; color: var(--sub2); font-weight: 500; }
-.multi-val { font-size: 15px; font-weight: 800; color: var(--t); }
-
-.group-title { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 2px 8px; }
-.rate-item { background: var(--s1); border: 1px solid var(--border2); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; cursor: pointer; transition: border-color 0.15s; }
-.rate-item:active { border-color: var(--t3); }
-.rate-left { display: flex; align-items: center; gap: 12px; }
-.rate-flag { font-size: 22px; line-height: 1; width: 28px; text-align: center; }
-.rate-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1; }
-.rate-code { font-size: 10px; color: var(--sub2); margin-top: 2px; }
-.rate-right { text-align: right; }
-.rate-val { font-size: 15px; font-weight: 800; color: var(--t); }
-.rate-change { font-size: 10px; margin-top: 2px; font-weight: 700; }
-.rate-change.up { color: var(--up); }
-.rate-change.down { color: var(--down); }
-.rate-change.flat { color: var(--sub2); }
-
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: flex-end; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--s1); border-radius: 20px 20px 0 0; padding: 20px 16px 30px; width: 100%; border-top: 1px solid var(--border2); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.modal-title { font-size: 17px; font-weight: 800; color: var(--text); }
-.modal-close { font-size: 22px; cursor: pointer; color: var(--sub2); background: none; border: none; font-family: 'Inter', sans-serif; }
-.period-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-.period-btn { flex: 1; padding: 7px 4px; text-align: center; font-size: 11px; font-weight: 700; color: var(--sub2); cursor: pointer; border-radius: 8px; border: 1px solid var(--border2); background: var(--s2); transition: all 0.15s; }
-.period-btn.active { color: #000; background: linear-gradient(135deg, var(--t), var(--t2)); border-color: transparent; }
-.chart-wrap { position: relative; height: 180px; }
-.chart-stats { display: flex; gap: 8px; margin-top: 14px; }
-.stat-box { flex: 1; background: var(--s2); border-radius: 10px; padding: 10px; text-align: center; border: 1px solid var(--border2); }
-.stat-label { font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.8px; }
-.stat-val { font-size: 13px; font-weight: 800; color: var(--t); margin-top: 3px; }
-
-.calc-display { background: var(--s1); border: 1px solid var(--border2); border-radius: 18px; padding: 20px 18px; margin-bottom: 12px; min-height: 100px; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; position: relative; overflow: hidden; }
-.calc-display::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--t3), transparent); opacity: 0.6; }
-.calc-expr { font-size: 13px; color: var(--sub2); min-height: 18px; text-align: right; margin-bottom: 4px; word-break: break-all; }
-.calc-result { font-size: 42px; font-weight: 900; color: var(--t); letter-spacing: -1.5px; text-shadow: 0 0 30px var(--tg2); word-break: break-all; text-align: right; line-height: 1.1; }
-.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.calc-btn { background: var(--s1); border: 1px solid var(--border2); border-radius: 14px; padding: 18px 8px; font-size: 18px; font-weight: 700; color: var(--text); cursor: pointer; text-align: center; transition: all 0.12s; font-family: 'Inter', sans-serif; user-select: none; }
-.calc-btn:active { transform: scale(0.93); background: var(--s2); }
-.calc-btn.op { background: var(--s3); color: var(--t); border-color: var(--t3); }
-.calc-btn.eq { background: linear-gradient(135deg, var(--t), var(--t2)); color: #000; border-color: transparent; box-shadow: 0 4px 16px var(--tg2); }
-.calc-btn.del { background: #1a1010; color: #ff6b6b; border-color: #2a1515; }
-.calc-btn.clear { background: #0a1a1a; color: var(--sub2); }
-.calc-btn.span2 { grid-column: span 2; }
-
-.loading { text-align: center; padding: 50px 20px; color: var(--sub2); font-size: 13px; }
-.spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: var(--t); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.footer { text-align: center; font-size: 10px; color: var(--sub); margin-top: 16px; }
-
-/* HISTORY & FAVORITES */
-.hist-item { background: var(--s1); border: 1px solid var(--border2); border-radius: 12px; padding: 11px 14px; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; }
-.hist-from { font-size: 12px; font-weight: 700; color: var(--text); }
-.hist-time { font-size: 10px; color: var(--sub); margin-top: 2px; }
-.hist-res { font-size: 14px; font-weight: 800; color: var(--t); text-align: right; }
-.fav-item { background: var(--s1); border: 1px solid var(--border2); border-radius: 12px; padding: 11px 14px; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: border-color 0.15s; }
-.fav-item:active { border-color: var(--t3); }
-.fav-pair { font-size: 14px; font-weight: 700; color: var(--text); }
-.fav-rate { font-size: 14px; font-weight: 800; color: var(--t); }
-.fav-del { font-size: 16px; color: var(--sub); cursor: pointer; padding: 0 4px; }
-.add-fav-btn { width: 100%; background: var(--tg); border: 1px dashed var(--t3); border-radius: 12px; padding: 11px; text-align: center; font-size: 13px; font-weight: 700; color: var(--t2); cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; }
-.add-fav-btn:active { background: var(--tg2); }
+/* SEARCH */
+.search-wrap { position:relative; margin-bottom:12px; }
+.search-input { width:100%; background:var(--card); border:none; border-radius:var(--r); padding:12px 14px 12px 40px; font-size:14px; color:var(--text); outline:none; font-family:'Inter',sans-serif; }
+.search-input::placeholder { color:var(--sub); }
+.search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--sub); pointer-events:none; }
 
 /* METALS */
-.metal-item { background: var(--s1); border: 1px solid #2a1f00; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
-.metal-val { font-size: 15px; font-weight: 800; color: #ffd700; }
-.metal-sub { font-size: 10px; color: var(--sub2); margin-top: 2px; text-align: right; }
+.metal-item { background:var(--card); border-radius:var(--r); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.metal-val { font-size:15px; font-weight:600; color:var(--text); text-align:right; }
+.metal-sub { font-size:11px; color:var(--sub); margin-top:2px; text-align:right; }
 
 /* COMPARE */
-.compare-card { background: var(--s1); border: 1px solid var(--border2); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
-.compare-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.compare-val { font-size: 15px; font-weight: 800; color: var(--t); }
-.compare-bar-wrap { height: 4px; background: var(--border2); border-radius: 2px; margin-top: 4px; }
-.compare-bar { height: 4px; background: linear-gradient(90deg, var(--t), var(--t2)); border-radius: 2px; transition: width 0.4s; }
+.compare-card { background:var(--card); border-radius:var(--r); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.compare-name { font-size:13px; font-weight:600; color:var(--text); }
+.compare-bar-wrap { height:3px; background:var(--border); border-radius:2px; margin-top:5px; width:100px; }
+.compare-bar { height:3px; background:var(--t); border-radius:2px; transition:width 0.4s; }
+.compare-val { font-size:15px; font-weight:600; color:var(--t); }
+
+/* CALCULATOR */
+.calc-display { background:var(--card); border-radius:var(--rl); padding:20px 18px; margin-bottom:10px; min-height:110px; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; }
+.calc-expr { font-size:13px; color:var(--sub); min-height:18px; text-align:right; margin-bottom:6px; word-break:break-all; }
+.calc-result-num { font-size:46px; font-weight:700; color:var(--text); letter-spacing:-2px; text-align:right; line-height:1; word-break:break-all; }
+.calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.calc-btn { background:var(--card); border:none; border-radius:var(--r); padding:16px 8px; font-size:19px; font-weight:400; color:var(--text); cursor:pointer; text-align:center; font-family:'Inter',sans-serif; user-select:none; transition:background 0.1s; }
+.calc-btn:active { background:var(--card2); }
+.calc-btn.op { background:var(--card2); color:var(--t); font-weight:600; }
+.calc-btn.op:active { background:var(--border); }
+.calc-btn.eq { background:var(--t); color:#000; font-weight:700; }
+.calc-btn.eq:active { opacity:0.85; }
+.calc-btn.del { background:var(--card2); color:var(--down); }
+.calc-btn.clr { background:var(--card2); color:var(--sub2); }
+.calc-btn.span2 { grid-column:span 2; }
+
+/* SAVED */
+.hist-item { background:var(--card); border-radius:var(--r); padding:13px 15px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+.hist-from { font-size:13px; font-weight:600; color:var(--text); }
+.hist-time { font-size:11px; color:var(--sub); margin-top:2px; }
+.hist-res { font-size:14px; font-weight:600; color:var(--t); }
+.fav-item { background:var(--card); border-radius:var(--r); padding:13px 15px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+.fav-item:active { background:var(--card2); }
+.fav-pair { font-size:14px; font-weight:600; color:var(--text); }
+.fav-rate { font-size:14px; font-weight:600; color:var(--t); }
+.fav-del { color:var(--sub); font-size:16px; cursor:pointer; padding:0 4px; }
+
+/* SIDE MENU */
+.menu-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:150; backdrop-filter:blur(4px); }
+.menu-overlay.open { display:block; }
+.side-menu { position:fixed; top:0; right:-270px; width:250px; height:100vh; background:#1c1c1e; z-index:200; transition:right 0.28s cubic-bezier(0.4,0,0.2,1); padding:24px 16px; overflow-y:auto; border-left:1px solid var(--border); }
+.side-menu.open { right:0; }
+.menu-head { display:flex; align-items:center; gap:12px; margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+.menu-logo { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#000; }
+.menu-brand { font-size:15px; font-weight:700; color:var(--text); }
+.menu-item { display:flex; align-items:center; gap:13px; padding:12px 13px; border-radius:var(--r); cursor:pointer; transition:background 0.12s; margin-bottom:2px; }
+.menu-item:active { background:var(--card2); }
+.menu-item.active { background:var(--card2); }
+.menu-item.active .menu-item-label { color:var(--t); font-weight:700; }
+.menu-icon { font-size:20px; width:26px; text-align:center; }
+.menu-item-label { font-size:14px; font-weight:500; color:var(--sub2); }
+.menu-badge { background:var(--t); border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:#000; margin-left:auto; }
+
+/* CHART MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; backdrop-filter:blur(4px); }
+.modal-overlay.open { display:flex; }
+.modal { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); }
+.modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.modal-title { font-size:17px; font-weight:700; color:var(--text); }
+.modal-close { width:28px; height:28px; border-radius:50%; background:var(--card2); border:none; cursor:pointer; font-size:14px; color:var(--sub2); display:flex; align-items:center; justify-content:center; }
+.period-tabs { display:flex; gap:6px; margin-bottom:14px; }
+.period-btn { flex:1; padding:8px 4px; text-align:center; font-size:12px; font-weight:600; color:var(--sub2); cursor:pointer; border-radius:8px; border:none; background:var(--card2); transition:all 0.15s; }
+.period-btn.active { color:#000; background:var(--t); font-weight:700; }
+.chart-wrap { position:relative; height:180px; }
+.chart-stats { display:flex; gap:8px; margin-top:14px; }
+.stat-box { flex:1; background:var(--card2); border-radius:10px; padding:10px; text-align:center; }
+.stat-label { font-size:9px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; }
+
+/* THEME PANEL */
+.theme-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; align-items:flex-end; backdrop-filter:blur(4px); }
+.theme-overlay.open { display:flex; }
+.theme-panel { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); max-height:72vh; overflow-y:auto; }
+.theme-head { font-size:16px; font-weight:700; color:var(--text); margin-bottom:18px; }
+.theme-grid { display:flex; flex-direction:column; gap:2px; }
+.theme-row { display:flex; align-items:center; justify-content:space-between; padding:12px 4px; border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:opacity 0.12s; }
+.theme-row:last-child { border-bottom:none; }
+.theme-row:active { opacity:0.6; }
+.theme-row-left { display:flex; align-items:center; gap:12px; }
+.theme-row-swatch { width:32px; height:18px; border-radius:5px; flex-shrink:0; }
+.theme-row-name { font-size:14px; font-weight:400; color:var(--text); }
+.theme-row-check { font-size:14px; color:var(--t); font-weight:600; opacity:0; }
+.theme-row-check.visible { opacity:1; }
+.theme-item { display:contents; }
+.theme-dot { display:none; }
+.theme-name { display:none; }
+
+/* COMPARE SELECT */
+.cmp-row { display:flex; gap:8px; margin-bottom:0; }
+
+/* LOADING */
+.loading { text-align:center; padding:50px 20px; color:var(--sub); font-size:13px; }
+.spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--t); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.footer-note { text-align:center; font-size:11px; color:var(--sub); margin-top:16px; }
+.empty-state { text-align:center; padding:30px 20px; color:var(--sub); font-size:13px; }
+
+/* PULL TO REFRESH */
+.ptr-indicator { text-align:center; padding:12px; font-size:12px; color:var(--sub); display:none; }
+.ptr-indicator.visible { display:block; }
+
+/* SPARKLINE */
+.sparkline-wrap { display:inline-block; vertical-align:middle; margin-left:8px; }
+.sparkline-canvas { display:block; }
+
+/* COUNTER */
+.update-counter { font-size:10px; color:var(--sub); text-align:center; padding:6px; }
+
+/* ANIMATED NUMBER */
+@keyframes numFade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.result-num.animating { animation: numFade 0.25s ease-out; }
+
+/* RATE ITEM with sparkline */
+.rate-item-inner { display:flex; align-items:center; justify-content:space-between; width:100%; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="brand">
-    <div class="brand-icon">💱</div>
-    <div class="brand-name">
-      <span>LSK Currency</span>
-      <span>LIVE EXCHANGE RATES</span>
+    <div class="brand-icon">$</div>
+    <div>
+      <div class="brand-text-main">LSK Currency</div>
+      <div class="brand-text-sub">LIVE EXCHANGE RATES</div>
     </div>
   </div>
   <div class="header-right">
-    <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
-    <div class="theme-btn" onclick="openTheme()" id="theme-btn"></div>
+    <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+    <div class="theme-btn-wrap" onclick="openTheme()" id="theme-btn"><div class="theme-color-dot" id="theme-color-dot"></div><span class="theme-btn-text" id="theme-btn-text">Theme</span></div>
     <div class="live-badge"><div class="live-dot"></div><span id="upd-time">Live</span></div>
-    <div class="hamburger-btn" onclick="toggleMenu()" id="hamburger">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
 
+<!-- SIDE MENU -->
+<div class="update-counter" id="update-counter">Обновляется...</div>
 <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
 <div class="side-menu" id="side-menu">
-  <div class="menu-header">
-    <div class="menu-logo">💱</div>
+  <div class="menu-head">
+    <div class="menu-logo">$</div>
     <div class="menu-brand">LSK Currency</div>
   </div>
-  <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv">
-    <div class="menu-icon">💱</div>
-    <div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div>
-    <div class="current-tab-badge" id="badge-conv">✓</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('fiat')" id="nav-fiat">
-    <div class="menu-icon">📊</div>
-    <div class="menu-item-label" data-ru="Фиат" data-en="Fiat">Фиат</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('crypto')" id="nav-crypto">
-    <div class="menu-icon">₿</div>
-    <div class="menu-item-label" data-ru="Крипта" data-en="Crypto">Крипта</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('metals')" id="nav-metals">
-    <div class="menu-icon">🥇</div>
-    <div class="menu-item-label" data-ru="Металлы" data-en="Metals">Металлы</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('compare')" id="nav-compare">
-    <div class="menu-icon">⚖️</div>
-    <div class="menu-item-label" data-ru="Сравни" data-en="Compare">Сравни</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('calc')" id="nav-calc">
-    <div class="menu-icon">⌗</div>
-    <div class="menu-item-label" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div>
-  </div>
-  <div class="menu-item" onclick="switchTab('saved')" id="nav-saved">
-    <div class="menu-icon">⭐</div>
-    <div class="menu-item-label" data-ru="Сохранено" data-en="Saved">Сохранено</div>
-  </div>
+  <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv"><div class="menu-icon">💱</div><div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div><div class="menu-badge" id="badge-conv">✓</div></div>
+  <div class="menu-item" onclick="switchTab('fiat')" id="nav-fiat"><div class="menu-icon">📊</div><div class="menu-item-label" data-ru="Фиат" data-en="Fiat">Фиат</div></div>
+  <div class="menu-item" onclick="switchTab('crypto')" id="nav-crypto"><div class="menu-icon">₿</div><div class="menu-item-label" data-ru="Крипта" data-en="Crypto">Крипта</div></div>
+  <div class="menu-item" onclick="switchTab('metals')" id="nav-metals"><div class="menu-icon">🥇</div><div class="menu-item-label" data-ru="Металлы" data-en="Metals">Металлы</div></div>
+  <div class="menu-item" onclick="switchTab('compare')" id="nav-compare"><div class="menu-icon">⚖️</div><div class="menu-item-label" data-ru="Сравни" data-en="Compare">Сравни</div></div>
+  <div class="menu-item" onclick="switchTab('calc')" id="nav-calc"><div class="menu-icon">⌗</div><div class="menu-item-label" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div></div>
+  <div class="menu-item" onclick="switchTab('saved')" id="nav-saved"><div class="menu-icon">⭐</div><div class="menu-item-label" data-ru="Сохранено" data-en="Saved">Сохранено</div></div>
 </div>
 
+<div class="ptr-indicator" id="ptr-indicator">↓ Потяни чтобы обновить</div>
 <!-- КОНВЕРТЕР -->
 <div class="section active" id="tab-conv">
   <div class="card">
     <div class="card-label" data-ru="Сумма и валюта" data-en="Amount & currency">Сумма и валюта</div>
     <div class="input-row">
       <input class="num-input" type="number" id="amount" value="1" oninput="conv()">
-      <select class="cur-select" id="from-cur" onchange="conv()">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
-        <option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option>
-        <option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option>
-        <option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option>
-        <option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option>
-        <option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option>
-        <option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option>
-        <option value="USDT">💵 USDT</option><option value="TON">💎 TON</option>
-        <option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option>
-        <option value="XTR">⭐ STARS</option>
-        <option value="XAU">🥇 XAU (Gold)</option>
-        <option value="XAG">🥈 XAG (Silver)</option>
-        <option value="XPT">⬜ XPT (Platinum)</option>
-        <option value="XPD">🔲 XPD (Palladium)</option>
+      <select class="cur-select" id="from-cur" onchange="conv()" style="width:110px;flex-shrink:0;padding:14px 10px;">
+        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
-  <div class="swap-row"><div class="line"></div><div class="swap-btn" onclick="swapCur()">⇅</div><div class="line"></div></div>
+  <div class="swap-wrap"><div class="swap-line"></div><div class="swap-btn" onclick="swapCur()">⇅</div><div class="swap-line"></div></div>
   <div class="card">
     <div class="card-label" data-ru="Конвертировать в" data-en="Convert to">Конвертировать в</div>
-    <div class="input-row">
-      <select class="cur-select" id="to-cur" onchange="conv()" style="flex:1;min-width:unset">
-        <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option>
-        <option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option>
-        <option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option>
-        <option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option>
-        <option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option>
-        <option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option>
-        <option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option>
-        <option value="USDT">💵 USDT</option><option value="TON">💎 TON</option>
-        <option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option>
-        <option value="XTR">⭐ STARS</option>
-        <option value="XAU">🥇 XAU (Gold)</option>
-        <option value="XAG">🥈 XAG (Silver)</option>
-        <option value="XPT">⬜ XPT (Platinum)</option>
-        <option value="XPD">🔲 XPD (Palladium)</option>
+    <div>
+      <select class="cur-select" id="to-cur" onchange="conv()">
+        <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
-  <div class="result">
+  <div class="result-card">
     <div class="result-num" id="r-num">—</div>
-    <div class="result-cur" id="r-cur"></div>
-    <div class="result-rate" id="r-rate"></div>
+    <div class="result-from-to" id="r-cur"></div>
+    <div class="result-rate-line" id="r-rate"></div>
+    <div class="result-divider"></div>
     <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Копировать</button>
   </div>
-  <button class="add-fav-btn" id="add-fav-btn" onclick="addFav()">⭐ Добавить в избранное</button>
+  <button class="fav-btn" id="add-fav-btn" onclick="addFav()">⭐ Добавить в избранное</button>
   <div class="multi-card">
-    <div class="multi-title" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
+    <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
     <div id="multi-list"></div>
   </div>
 </div>
 
 <!-- ФИАТ -->
 <div class="section" id="tab-fiat">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()">
-  </div>
+  <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()"></div>
   <div class="loading" id="fiat-load"><div class="spinner"></div>Загрузка...</div>
   <div id="fiat-list"></div>
 </div>
 
 <!-- КРИПТА -->
 <div class="section" id="tab-crypto">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()">
-  </div>
+  <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()"></div>
   <div class="loading" id="crypto-load"><div class="spinner"></div>Загрузка...</div>
   <div id="crypto-list"></div>
+</div>
+
+<!-- МЕТАЛЛЫ -->
+<div class="section" id="tab-metals">
+  <div class="loading" id="metals-load"><div class="spinner"></div>Загрузка...</div>
+  <div id="metals-list"></div>
+</div>
+
+<!-- СРАВНИ -->
+<div class="section" id="tab-compare">
+  <div class="card">
+    <div class="card-label" data-ru="Базовая валюта" data-en="Base currency">Базовая валюта</div>
+    <div class="cmp-row">
+      <input class="num-input" type="number" id="cmp-amount" value="100" oninput="renderCompare()" style="font-size:20px;width:45%;flex-shrink:0;">
+      <select class="cur-select" id="cmp-base" onchange="renderCompare()" style="flex:1;padding:11px 12px;">
+        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option><option value="CNY">🇨🇳 CNY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="TON">💎 TON</option><option value="XAU">🥇 XAU</option>
+      </select>
+    </div>
+  </div>
+  <div id="compare-list"></div>
 </div>
 
 <!-- КАЛЬКУЛЯТОР -->
 <div class="section" id="tab-calc">
   <div class="calc-display">
     <div class="calc-expr" id="c-expr"></div>
-    <div class="calc-result" id="c-res">0</div>
+    <div class="calc-result-num" id="c-res">0</div>
   </div>
   <div class="calc-grid">
-    <div class="calc-btn clear" onclick="cClear()">AC</div>
+    <div class="calc-btn clr" onclick="cClear()">AC</div>
     <div class="calc-btn del" onclick="cDel()">⌫</div>
     <div class="calc-btn op" onclick="cPct()">%</div>
     <div class="calc-btn op" onclick="cOp('/')">÷</div>
@@ -341,51 +361,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
   </div>
 </div>
 
-<!-- МЕТАЛЛЫ -->
-<div class="section" id="tab-metals">
-  <div class="loading" id="metals-load"><div class="spinner"></div>Загрузка...</div>
-  <div id="metals-list"></div>
-</div>
-
-<!-- СРАВНИ -->
-<div class="section" id="tab-compare">
-  <div class="card">
-    <div class="card-label" data-ru="Базовая валюта" data-en="Base currency">Базовая валюта</div>
-    <div class="input-row">
-      <input class="num-input" type="number" id="cmp-amount" value="100" oninput="renderCompare()" style="font-size:18px">
-      <select class="cur-select" id="cmp-base" onchange="renderCompare()">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
-        <option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option>
-        <option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option>
-        <option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option>
-        <option value="CNY">🇨🇳 CNY</option><option value="TRY">🇹🇷 TRY</option>
-        <option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option>
-        <option value="TON">💎 TON</option><option value="USDT">💵 USDT</option>
-        <option value="XAU">🥇 XAU</option>
-      </select>
-    </div>
-  </div>
-  <div id="compare-list"></div>
-</div>
-
 <!-- СОХРАНЕНО -->
 <div class="section" id="tab-saved">
   <div id="fav-section"></div>
   <div id="hist-section"></div>
 </div>
 
-<!-- THEME PANEL -->
-<div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
-  <div class="theme-panel">
-    <div class="theme-header" id="theme-header">Выбери тему</div>
-    <div class="theme-grid" id="theme-grid"></div>
-  </div>
-</div>
-
 <!-- CHART MODAL -->
 <div class="modal-overlay" id="chart-modal" onclick="closeModalBg(event)">
   <div class="modal">
-    <div class="modal-header">
+    <div class="modal-head">
       <div class="modal-title" id="modal-title">Курс</div>
       <button class="modal-close" onclick="closeChart()">✕</button>
     </div>
@@ -400,6 +385,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
       <div class="stat-box"><div class="stat-label" id="sl-max">Макс</div><div class="stat-val" id="stat-max">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
+  </div>
+</div>
+
+<!-- THEME PANEL -->
+<div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
+  <div class="theme-panel">
+    <div class="theme-head" id="theme-header">Выбери тему</div>
+    <div class="theme-grid" id="theme-grid"></div>
   </div>
 </div>
 
@@ -499,6 +492,10 @@ async function loadFiat() {
     rates['USD']=1; rates['XTR']=1/starsUsd;
     renderFiat(); conv();
     document.getElementById('upd-time').textContent = new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});
+    lastUpdateTime = Date.now();
+    updateCounter();
+    updateSparklineHistory();
+    setTimeout(addSparklinesToRates, 500);
   } catch(e) {}
 }
 
@@ -536,7 +533,7 @@ function renderFiat() {
       const cls = Math.abs(diff)<0.001?'flat':diff>0?'up':'down';
       const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
       const pctText = Math.abs(diff)<0.001 ? '0.00%' : (diff>0?'+':'')+diff.toFixed(2)+'%';
-      return `<div class="rate-item" onclick="openChart('${c.code}','${c[lang]}')">
+      return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
         <div class="rate-left"><div class="rate-flag">${c.flag}</div>
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
@@ -558,7 +555,7 @@ function renderCrypto() {
       const chg = cryptoChanges[c.code]||0;
       const cls = Math.abs(chg)<0.01?'flat':chg>0?'up':'down';
       const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
-      return `<div class="rate-item" onclick="openChart('${c.code}','${c[lang]}')">
+      return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
         <div class="rate-left"><div class="rate-flag">${c.flag}</div>
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
@@ -614,7 +611,7 @@ function conv() {
   const n=NAMES[lang];
   const res=fromUSD(toUSD(f,a),t);
   const r1=fromUSD(toUSD(f,1),t);
-  document.getElementById('r-num').textContent=fmt(res);
+  animateResult(fmt(res));
   document.getElementById('r-cur').textContent=`${n[f]||f} → ${n[t]||t}`;
   document.getElementById('r-rate').textContent=`1 ${f} = ${fmt(r1)} ${t}`;
   renderMulti(f, a);
@@ -624,6 +621,7 @@ function conv() {
 function copyResult() {
   const num=document.getElementById('r-num').textContent;
   const cur=document.getElementById('to-cur').value;
+  haptic('success');
   navigator.clipboard?.writeText(`${num} ${cur}`).then(()=>{
     const btn=document.getElementById('copy-btn');
     btn.textContent=lang==='ru'?'✅ Скопировано!':'✅ Copied!';
@@ -767,6 +765,7 @@ function closeMenu() {
 }
 
 function switchTab(n) {
+  haptic('light');
   document.querySelectorAll('.menu-item').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('[id^="badge-"]').forEach(b=>b.remove());
   const navEl = document.getElementById('nav-'+n);
@@ -815,31 +814,12 @@ function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
 
 // THEMES
 const THEMES = [
-  {id:'teal',     name:'Бирюза',   nameEn:'Teal',      t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
-  {id:'emerald',  name:'Изумруд',   nameEn:'Emerald',  t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
-  {id:'green',    name:'Зеленый',   nameEn:'Green',  t:'#00c853', t2:'#00a846', t3:'#006b2c', s1:'#0a130c', s2:'#0f1e12', s3:'#142818', b2:'#153520'},
-  {id:'lime',     name:'Салатовый', nameEn:'Lime',t:'#b2ff59', t2:'#9ef050', t3:'#6daa30', s1:'#111400', s2:'#1a1e00', s3:'#212800', b2:'#2a3200'},
-  {id:'mint',     name:'Мятный',    nameEn:'Mint',   t:'#64ffda', t2:'#4dd8b5', t3:'#2e9e80', s1:'#0a1412', s2:'#0f1e1b', s3:'#142822', b2:'#153028'},
-  {id:'sky',      name:'Голубой',   nameEn:'Sky',  t:'#40c4ff', t2:'#29b4f0', t3:'#0080c0', s1:'#0a1214', s2:'#0f1c1e', s3:'#142428', b2:'#153035'},
-  {id:'blue',     name:'Синий',     nameEn:'Blue',    t:'#448aff', t2:'#2979ff', t3:'#1565c0', s1:'#0a0e14', s2:'#0f1520', s3:'#142028', b2:'#152535'},
-  {id:'cobalt',   name:'Кобальт',   nameEn:'Cobalt',  t:'#0057ff', t2:'#0046d0', t3:'#0030a0', s1:'#080a14', s2:'#0d1220', s3:'#121a28', b2:'#102030'},
-  {id:'sapphire', name:'Сапфир',    nameEn:'Sapphire',   t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
-  {id:'violet',   name:'Фиолет',    nameEn:'Violet',   t:'#aa00ff', t2:'#8800d0', t3:'#5c00a0', s1:'#100a14', s2:'#180f20', s3:'#201428', b2:'#251535'},
-  {id:'lilac',    name:'Сирень',    nameEn:'Lilac',   t:'#ce93d8', t2:'#ba68c8', t3:'#7b1fa2', s1:'#120a14', s2:'#1c0f20', s3:'#241428', b2:'#2c1535'},
-  {id:'purple',   name:'Пурпур',    nameEn:'Purple',   t:'#e040fb', t2:'#d500f9', t3:'#9c00c0', s1:'#120a14', s2:'#1c0e20', s3:'#241228', b2:'#2c1030'},
-  {id:'pink',     name:'Розовый',   nameEn:'Pink',  t:'#ff80ab', t2:'#ff4081', t3:'#c60055', s1:'#140a0e', s2:'#200e18', s3:'#281220', b2:'#351028'},
-  {id:'coral',    name:'Коралл',    nameEn:'Coral',   t:'#ff6e40', t2:'#ff4820', t3:'#c83000', s1:'#140a08', s2:'#200e0c', s3:'#281210', b2:'#351510'},
-  {id:'red',      name:'Красный',   nameEn:'Red',  t:'#e53935', t2:'#c62828', t3:'#8d1a1a', s1:'#120808', s2:'#1c0c0c', s3:'#241010', b2:'#2e1212'},
-  {id:'orange',   name:'Оранжевый', nameEn:'Orange',t:'#ff6d00', t2:'#e55c00', t3:'#b54000', s1:'#140a00', s2:'#200f00', s3:'#281400', b2:'#351800'},
-  {id:'amber',    name:'Янтарь',    nameEn:'Amber',   t:'#ffab00', t2:'#e09000', t3:'#b06a00', s1:'#140e00', s2:'#201500', s3:'#281c00', b2:'#352200'},
-  {id:'gold',     name:'Золото',    nameEn:'Gold',   t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
-  {id:'yellow',   name:'Желтый',    nameEn:'Yellow',   t:'#ffee58', t2:'#fdd835', t3:'#c8a800', s1:'#141200', s2:'#201a00', s3:'#282400', b2:'#352e00'},
-  {id:'white',    name:'Белый',     nameEn:'White',    t:'#ffffff', t2:'#e0e0e0', t3:'#aaaaaa', s1:'#111111', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a'},
-  {id:'silver',   name:'Серебро',   nameEn:'Silver',  t:'#b0bec5', t2:'#90a4ae', t3:'#607d8b', s1:'#0e1012', s2:'#141820', s3:'#1c2030', b2:'#202835'},
-  {id:'graphite', name:'Графит',    nameEn:'Graphite',   t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
-  {id:'neon_blue',name:'Неон Blue', nameEn:'Neon Blue',  t:'#00f0ff', t2:'#00d0e0', t3:'#0090a8', s1:'#060c10', s2:'#0a141a', s3:'#0e1c24', b2:'#102030'},
-  {id:'neon_grn', name:'Неон Green',nameEn:'Neon Green',  t:'#39ff14', t2:'#28e000', t3:'#18a800', s1:'#060c00', s2:'#0a1400', s3:'#0e1c00', b2:'#122400'},
-  {id:'neon_vio', name:'Неон Vio',  nameEn:'Neon Vio',  t:'#df00ff', t2:'#b800d8', t3:'#8800a8', s1:'#0c0010', s2:'#140018', s3:'#1c0024', b2:'#220030'},
+  {id:'teal',     name:'Бирюза',     nameEn:'Teal',      t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
+  {id:'sapphire', name:'Сапфир',     nameEn:'Sapphire',  t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
+  {id:'emerald',  name:'Изумруд',    nameEn:'Emerald',   t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
+  {id:'gold',     name:'Золото',     nameEn:'Gold',      t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
+  {id:'white',    name:'Белый',      nameEn:'White',     t:'#ffffff', t2:'#d0d0d0', t3:'#888888', s1:'#141414', s2:'#1c1c1c', s3:'#242424', b2:'#2e2e2e'},
+  {id:'graphite', name:'Графит',     nameEn:'Graphite',  t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
 ];
 
 let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
@@ -858,14 +838,35 @@ function applyTheme(id) {
   r.setProperty('--border2', th.b2);
   r.setProperty('--sub', th.t3+'99');
   r.setProperty('--sub2', th.t2+'aa');
-  const btn = document.getElementById('theme-btn');
-  if(btn) btn.style.background = 'linear-gradient(135deg,'+th.t+','+th.t3+')';
+  // result card - very dark tinted version of theme
+  const hex = th.t.replace('#','');
+  const ri=parseInt(hex.slice(0,2),16), gi=parseInt(hex.slice(2,4),16), bi=parseInt(hex.slice(4,6),16);
+  // result bg stays dark navy
+  r.setProperty('--result-bg', '#1c2333');
+  // Dark tinted result bg
+  r.setProperty('--result-bg', th.s1+'ee');
+  const dot = document.getElementById('theme-color-dot');
+  if(dot) dot.style.background = th.t;
+  document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color='#000';});
   currentTheme = id;
   localStorage.setItem('lsk_theme', id);
 }
 
 function renderThemeGrid() {
-  document.getElementById('theme-grid').innerHTML = THEMES.map(th=>'<div class="theme-item"><div class="theme-dot'+(th.id===currentTheme?' active':'')+'" style="background:linear-gradient(135deg,'+th.t+','+th.t3+')" onclick="applyTheme(\''+th.id+'\');closeThemePanel();renderThemeGrid()"></div><div class="theme-name">'+(lang==='en'?(th.nameEn||th.name):th.name)+'</div></div>').join('');
+  const grid = document.getElementById('theme-grid');
+  if(!grid) return;
+  grid.innerHTML = THEMES.map(function(th) {
+    var name = lang==='en'?(th.nameEn||th.name):th.name;
+    var isActive = th.id===currentTheme;
+    var check = isActive ? '<span style="color:var(--t);font-weight:700;font-size:16px;">✓</span>' : '';
+    return '<div onclick="applyTheme(\''+th.id+'\');renderThemeGrid()" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">' +
+      '<div style="display:flex;align-items:center;gap:12px;">' +
+        '<div style="width:36px;height:20px;border-radius:5px;background:linear-gradient(90deg,'+th.t+','+th.t3+');flex-shrink:0;"></div>' +
+        '<span style="font-size:14px;color:#fff;font-weight:'+(isActive?'600':'400')+';">'+name+'</span>' +
+      '</div>' +
+      check +
+    '</div>';
+  }).join('');
 }
 
 function openTheme() { renderThemeGrid(); document.getElementById('theme-overlay').classList.add('open'); }
@@ -945,11 +946,15 @@ function renderSaved() {
 const METALS_LIST = [
   {code:"XAU",flag:"🥇",ru:"Золото",en:"Gold"},
   {code:"XAG",flag:"🥈",ru:"Серебро",en:"Silver"},
+  {code:"XBR",flag:"🥉",ru:"Бронза",en:"Bronze"},
+  {code:"XRH",flag:"⚪",ru:"Родий",en:"Rhodium"},
+  {code:"XIR",flag:"🔘",ru:"Иридий",en:"Iridium"},
+  {code:"XRU",flag:"🩶",ru:"Рутений",en:"Ruthenium"},
   {code:"XPT",flag:"⬜",ru:"Платина",en:"Platinum"},
   {code:"XPD",flag:"🔲",ru:"Палладий",en:"Palladium"},
   {code:"XCU",flag:"🟤",ru:"Медь",en:"Copper"},
 ];
-let metalPricesUSD = {XAU:3320,XAG:33,XPT:975,XPD:1060,XCU:9.5};
+let metalPricesUSD = {XAU:3320,XAG:33,XBR:8.5,XRH:4500,XIR:5200,XRU:520,XPT:975,XPD:1060,XCU:9.5};
 
 function renderMetals() {
   const loadEl = document.getElementById('metals-load');
@@ -1034,6 +1039,122 @@ function renderCompare() {
       </div>
       <div class="compare-val">${fmt(v.val)}</div>
     </div>`).join('');
+}
+
+// === FEATURE 2: Real-time update counter ===
+let lastUpdateTime = Date.now();
+function updateCounter() {
+  const el = document.getElementById('update-counter');
+  if(!el) return;
+  const sec = Math.round((Date.now() - lastUpdateTime) / 1000);
+  if(sec < 5) el.textContent = lang==='ru' ? 'Только что обновлено' : 'Just updated';
+  else if(sec < 60) el.textContent = (lang==='ru' ? 'Обновлено ' : 'Updated ') + sec + (lang==='ru' ? ' сек назад' : 's ago');
+  else el.textContent = lang==='ru' ? 'Обновляется...' : 'Updating...';
+}
+setInterval(updateCounter, 3000);
+
+// === FEATURE 7: Haptic feedback ===
+function haptic(style) {
+  if(window.Telegram?.WebApp?.HapticFeedback) {
+    if(style === 'light') window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    else if(style === 'medium') window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    else if(style === 'success') window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+  }
+}
+
+// === FEATURE 8: Pull to refresh ===
+let ptrStartY = 0, ptrActive = false;
+document.addEventListener('touchstart', e => { ptrStartY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', e => {
+  const scrollTop = document.documentElement.scrollTop;
+  const diff = e.touches[0].clientY - ptrStartY;
+  const indicator = document.getElementById('ptr-indicator');
+  if(scrollTop === 0 && diff > 40) {
+    ptrActive = true;
+    if(indicator) { indicator.classList.add('visible'); indicator.textContent = diff > 80 ? (lang==='ru'?'Отпусти для обновления':'Release to refresh') : (lang==='ru'?'↓ Потяни для обновления':'↓ Pull to refresh'); }
+  }
+}, {passive:true});
+document.addEventListener('touchend', () => {
+  if(ptrActive) {
+    ptrActive = false;
+    const indicator = document.getElementById('ptr-indicator');
+    if(indicator) { indicator.textContent = lang==='ru'?'⟳ Обновляю...':'⟳ Refreshing...'; }
+    haptic('medium');
+    Promise.all([loadFiat(), loadCrypto(), loadMetals()]).then(() => {
+      if(indicator) { indicator.classList.remove('visible'); }
+      haptic('success');
+      lastUpdateTime = Date.now();
+      updateCounter();
+    });
+  }
+  ptrStartY = 0;
+});
+
+// === FEATURE 4: Sparklines ===
+const sparklineHistory = {};
+function updateSparklineHistory() {
+  // Store last 10 rate values for sparkline
+  for(const code in rates) {
+    if(!sparklineHistory[code]) sparklineHistory[code] = [];
+    sparklineHistory[code].push(rates[code]);
+    if(sparklineHistory[code].length > 10) sparklineHistory[code].shift();
+  }
+  for(const code in cryptoPrices) {
+    if(!sparklineHistory[code]) sparklineHistory[code] = [];
+    sparklineHistory[code].push(cryptoPrices[code]);
+    if(sparklineHistory[code].length > 10) sparklineHistory[code].shift();
+  }
+}
+
+function drawSparkline(canvas, data, color) {
+  if(!canvas || !data || data.length < 2) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  data.forEach((v, i) => {
+    const x = (i / (data.length-1)) * w;
+    const y = h - ((v - min) / range) * h;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+}
+
+function addSparklinesToRates() {
+  document.querySelectorAll('.rate-item[data-code]').forEach(item => {
+    const code = item.dataset.code;
+    const hist = sparklineHistory[code];
+    if(!hist || hist.length < 2) return;
+    let canvas = item.querySelector('.sparkline-canvas');
+    if(!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.className = 'sparkline-canvas';
+      canvas.width = 48; canvas.height = 20;
+      const wrap = document.createElement('div');
+      wrap.className = 'sparkline-wrap';
+      wrap.appendChild(canvas);
+      const rateRight = item.querySelector('.rate-right');
+      if(rateRight) rateRight.appendChild(wrap);
+    }
+    const first = hist[0], last = hist[hist.length-1];
+    const color = last >= first ? 'var(--up)' : 'var(--down)';
+    drawSparkline(canvas, hist, last >= first ? '#34c759' : '#ff453a');
+  });
+}
+
+// === FEATURE 9: Animated number ===
+function animateResult(newVal) {
+  const el = document.getElementById('r-num');
+  if(!el) return;
+  el.classList.remove('animating');
+  void el.offsetWidth; // reflow
+  el.textContent = newVal;
+  el.classList.add('animating');
 }
 
 loadFiat(); loadCrypto(); loadMetals();
