@@ -271,7 +271,6 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
     <div class="input-row">
       <input class="num-input" type="number" id="amount" value="1" oninput="conv()">
       <select class="cur-select" id="from-cur" onchange="conv()" style="width:110px;flex-shrink:0;padding:14px 10px;">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
@@ -280,7 +279,6 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
     <div class="card-label" data-ru="Конвертировать в" data-en="Convert to">Конвертировать в</div>
     <div>
       <select class="cur-select" id="to-cur" onchange="conv()">
-        <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
@@ -325,7 +323,6 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
     <div class="cmp-row">
       <input class="num-input" type="number" id="cmp-amount" value="100" oninput="renderCompare()" style="font-size:20px;width:45%;flex-shrink:0;">
       <select class="cur-select" id="cmp-base" onchange="renderCompare()" style="flex:1;padding:11px 12px;">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option><option value="CNY">🇨🇳 CNY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="TON">💎 TON</option><option value="XAU">🥇 XAU</option>
       </select>
     </div>
   </div>
@@ -404,10 +401,18 @@ let chartInstance = null, chartCode = null, chartPeriod = '7';
 const starsUsd = 0.013;
 let lang = 'ru';
 
-const NAMES = {
-  ru: { USD:"🇺🇸 Доллар",EUR:"🇪🇺 Евро",UAH:"🇺🇦 Гривна",GEL:"🇬🇪 Лари",RUB:"🇷🇺 Рубль",TRY:"🇹🇷 Лира",GBP:"🇬🇧 Фунт",JPY:"🇯🇵 Йена",CNY:"🇨🇳 Юань",PLN:"🇵🇱 Злотый",KZT:"🇰🇿 Тенге",AZN:"🇦🇿 Манат",AED:"🇦🇪 Дирхам",BYN:"🇧🇾 Бел.рубль",CHF:"🇨🇭 Франк",XTR:"⭐ Stars",BTC:"₿ Биткоин",ETH:"⟠ Эфириум",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" },
-  en: { USD:"🇺🇸 Dollar",EUR:"🇪🇺 Euro",UAH:"🇺🇦 Hryvnia",GEL:"🇬🇪 Lari",RUB:"🇷🇺 Ruble",TRY:"🇹🇷 Lira",GBP:"🇬🇧 Pound",JPY:"🇯🇵 Yen",CNY:"🇨🇳 Yuan",PLN:"🇵🇱 Zloty",KZT:"🇰🇿 Tenge",AZN:"🇦🇿 Manat",AED:"🇦🇪 Dirham",BYN:"🇧🇾 Bel.Ruble",CHF:"🇨🇭 Franc",XTR:"⭐ Stars",BTC:"₿ Bitcoin",ETH:"⟠ Ethereum",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" }
+const NAMES_STATIC = {
+  ru: { USD:"🇺🇸 Доллар",XTR:"⭐ Stars" },
+  en: { USD:"🇺🇸 Dollar",XTR:"⭐ Stars" }
 };
+// NAMES собирается из FIAT/CRYPTOS/METALS_LIST ниже, см. populateCurSelects/buildNames
+let NAMES = { ru:{...NAMES_STATIC.ru}, en:{...NAMES_STATIC.en} };
+function buildNames() {
+  [...FIAT, ...CRYPTOS, ...METALS_LIST].forEach(c => {
+    NAMES.ru[c.code] = `${c.flag} ${c.ru}`;
+    NAMES.en[c.code] = `${c.flag} ${c.en}`;
+  });
+}
 
 const FIAT = [
   {code:"EUR",flag:"🇪🇺",ru:"Евро",en:"Euro"},
@@ -955,6 +960,26 @@ const METALS_LIST = [
   {code:"XCU",flag:"🟤",ru:"Медь",en:"Copper"},
 ];
 let metalPricesUSD = {XAU:3320,XAG:33,XBR:8.5,XRH:4500,XIR:5200,XRU:520,XPT:975,XPD:1060,XCU:9.5};
+
+// Формирует опции выпадающих списков конвертера из полных списков валют,
+// чтобы все новые валюты/крипта/металлы автоматически появлялись в конвертере
+function populateCurSelects() {
+  const usdOpt = `<option value="USD">🇺🇸 USD</option>`;
+  const fiatOpts = FIAT.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
+  const cryptoOpts = CRYPTOS.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
+  const starsOpt = `<option value="XTR">⭐ STARS</option>`;
+  const metalOpts = METALS_LIST.map(m => `<option value="${m.code}">${m.flag} ${m.code}</option>`).join('');
+  const fullList = usdOpt + fiatOpts + cryptoOpts + starsOpt + metalOpts;
+
+  const fromSel = document.getElementById('from-cur');
+  const toSel = document.getElementById('to-cur');
+  const cmpSel = document.getElementById('cmp-base');
+  if (fromSel) { fromSel.innerHTML = fullList; fromSel.value = 'USD'; }
+  if (toSel) { toSel.innerHTML = fullList; toSel.value = 'EUR'; }
+  if (cmpSel) { cmpSel.innerHTML = fullList; cmpSel.value = 'USD'; }
+}
+buildNames();
+populateCurSelects();
 
 function renderMetals() {
   const loadEl = document.getElementById('metals-load');
