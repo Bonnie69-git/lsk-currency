@@ -43,7 +43,6 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .theme-btn-wrap:active { background:var(--card2); }
 .theme-color-dot { width:10px; height:10px; border-radius:3px; background:var(--t); flex-shrink:0; transition:background 0.2s; }
 .theme-btn-text { font-size:11px; font-weight:500; color:var(--sub2); font-family:'Inter',sans-serif; letter-spacing:0.2px; }
-.live-badge { background:var(--card); border-radius:20px; padding:4px 9px; display:flex; align-items:center; gap:4px; font-size:10px; font-weight:500; color:var(--sub); }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .menu-btn { width:28px; height:28px; border-radius:7px; background:transparent; border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
@@ -96,6 +95,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .rate-item:active { background:var(--card2); }
 .rate-left { display:flex; align-items:center; gap:13px; }
 .rate-flag { font-size:22px; width:28px; text-align:center; line-height:1; }
+.coin-badge { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:8.5px; font-weight:800; letter-spacing:-0.2px; flex-shrink:0; }
 .rate-name { font-size:13px; font-weight:500; color:var(--text); }
 .rate-code { font-size:11px; color:var(--sub); margin-top:2px; }
 .rate-right { text-align:right; }
@@ -187,17 +187,6 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .theme-panel { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); max-height:72vh; overflow-y:auto; }
 .theme-head { font-size:16px; font-weight:700; color:var(--text); margin-bottom:18px; }
 .theme-grid { display:flex; flex-direction:column; gap:2px; }
-.theme-row { display:flex; align-items:center; justify-content:space-between; padding:12px 4px; border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:opacity 0.12s; }
-.theme-row:last-child { border-bottom:none; }
-.theme-row:active { opacity:0.6; }
-.theme-row-left { display:flex; align-items:center; gap:12px; }
-.theme-row-swatch { width:32px; height:18px; border-radius:5px; flex-shrink:0; }
-.theme-row-name { font-size:14px; font-weight:400; color:var(--text); }
-.theme-row-check { font-size:14px; color:var(--t); font-weight:600; opacity:0; }
-.theme-row-check.visible { opacity:1; }
-.theme-item { display:contents; }
-.theme-dot { display:none; }
-.theme-name { display:none; }
 
 /* COMPARE SELECT */
 .cmp-row { display:flex; gap:8px; margin-bottom:0; }
@@ -241,13 +230,12 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
   <div class="header-right">
     <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
     <div class="theme-btn-wrap" onclick="openTheme()" id="theme-btn"><div class="theme-color-dot" id="theme-color-dot"></div><span class="theme-btn-text" id="theme-btn-text">Theme</span></div>
-    <div class="live-badge"><div class="live-dot"></div><span id="upd-time">Live</span></div>
     <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
 
 <!-- SIDE MENU -->
-<div class="update-counter" id="update-counter">Обновляется...</div>
+<div class="update-counter"><span class="live-dot" style="display:inline-block;vertical-align:middle;margin-right:5px;"></span><span id="update-counter">Обновляется...</span></div>
 <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
 <div class="side-menu" id="side-menu">
   <div class="menu-head">
@@ -269,8 +257,9 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
   <div class="card">
     <div class="card-label" data-ru="Сумма и валюта" data-en="Amount & currency">Сумма и валюта</div>
     <div class="input-row">
-      <input class="num-input" type="number" id="amount" value="1" oninput="conv()">
-      <select class="cur-select" id="from-cur" onchange="conv()" style="width:110px;flex-shrink:0;padding:14px 10px;">
+      <input class="num-input" type="number" id="amount" value="1" oninput="conv(true)">
+      <select class="cur-select" id="from-cur" onchange="conv(true)" style="width:110px;flex-shrink:0;padding:14px 10px;">
+        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
@@ -278,7 +267,8 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
   <div class="card">
     <div class="card-label" data-ru="Конвертировать в" data-en="Convert to">Конвертировать в</div>
     <div>
-      <select class="cur-select" id="to-cur" onchange="conv()">
+      <select class="cur-select" id="to-cur" onchange="conv(true)">
+        <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
       </select>
     </div>
   </div>
@@ -323,6 +313,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
     <div class="cmp-row">
       <input class="num-input" type="number" id="cmp-amount" value="100" oninput="renderCompare()" style="font-size:20px;width:45%;flex-shrink:0;">
       <select class="cur-select" id="cmp-base" onchange="renderCompare()" style="flex:1;padding:11px 12px;">
+        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option><option value="CNY">🇨🇳 CNY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="TON">💎 TON</option><option value="XAU">🥇 XAU</option>
       </select>
     </div>
   </div>
@@ -401,18 +392,10 @@ let chartInstance = null, chartCode = null, chartPeriod = '7';
 const starsUsd = 0.013;
 let lang = 'ru';
 
-const NAMES_STATIC = {
-  ru: { USD:"🇺🇸 Доллар",XTR:"⭐ Stars" },
-  en: { USD:"🇺🇸 Dollar",XTR:"⭐ Stars" }
+const NAMES = {
+  ru: { USD:"🇺🇸 Доллар",EUR:"🇪🇺 Евро",UAH:"🇺🇦 Гривна",GEL:"🇬🇪 Лари",RUB:"🇷🇺 Рубль",TRY:"🇹🇷 Лира",GBP:"🇬🇧 Фунт",JPY:"🇯🇵 Йена",CNY:"🇨🇳 Юань",PLN:"🇵🇱 Злотый",KZT:"🇰🇿 Тенге",AZN:"🇦🇿 Манат",AED:"🇦🇪 Дирхам",BYN:"🇧🇾 Бел.рубль",CHF:"🇨🇭 Франк",XTR:"⭐ Stars",BTC:"₿ Биткоин",ETH:"⟠ Эфириум",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" },
+  en: { USD:"🇺🇸 Dollar",EUR:"🇪🇺 Euro",UAH:"🇺🇦 Hryvnia",GEL:"🇬🇪 Lari",RUB:"🇷🇺 Ruble",TRY:"🇹🇷 Lira",GBP:"🇬🇧 Pound",JPY:"🇯🇵 Yen",CNY:"🇨🇳 Yuan",PLN:"🇵🇱 Zloty",KZT:"🇰🇿 Tenge",AZN:"🇦🇿 Manat",AED:"🇦🇪 Dirham",BYN:"🇧🇾 Bel.Ruble",CHF:"🇨🇭 Franc",XTR:"⭐ Stars",BTC:"₿ Bitcoin",ETH:"⟠ Ethereum",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" }
 };
-// NAMES собирается из FIAT/CRYPTOS/METALS_LIST ниже, см. populateCurSelects/buildNames
-let NAMES = { ru:{...NAMES_STATIC.ru}, en:{...NAMES_STATIC.en} };
-function buildNames() {
-  [...FIAT, ...CRYPTOS, ...METALS_LIST].forEach(c => {
-    NAMES.ru[c.code] = `${c.flag} ${c.ru}`;
-    NAMES.en[c.code] = `${c.flag} ${c.en}`;
-  });
-}
 
 const FIAT = [
   {code:"EUR",flag:"🇪🇺",ru:"Евро",en:"Euro"},
@@ -454,26 +437,26 @@ const FIAT = [
 ];
 
 const CRYPTOS = [
-  {code:"BTC", flag:"₿",  ru:"Биткоин",    en:"Bitcoin",      id:"bitcoin"},
-  {code:"ETH", flag:"⟠",  ru:"Эфириум",    en:"Ethereum",     id:"ethereum"},
-  {code:"USDT",flag:"💵", ru:"USDT",        en:"USDT",         id:"tether"},
-  {code:"USDC",flag:"💙", ru:"USD Coin",    en:"USD Coin",     id:"usd-coin"},
-  {code:"TON", flag:"💎", ru:"TON",         en:"TON",          id:"the-open-network"},
-  {code:"SOL", flag:"◎",  ru:"Solana",      en:"Solana",       id:"solana"},
-  {code:"BNB", flag:"🟡", ru:"BNB",         en:"BNB",          id:"binancecoin"},
-  {code:"XRP", flag:"🔵", ru:"XRP",         en:"XRP",          id:"ripple"},
-  {code:"DOGE",flag:"🐕", ru:"Dogecoin",    en:"Dogecoin",     id:"dogecoin"},
-  {code:"ADA", flag:"🔷", ru:"Cardano",     en:"Cardano",      id:"cardano"},
-  {code:"TRX", flag:"⚡", ru:"TRON",        en:"TRON",         id:"tron"},
-  {code:"AVAX",flag:"🔺", ru:"Avalanche",   en:"Avalanche",    id:"avalanche-2"},
-  {code:"MATIC",flag:"🟣",ru:"Polygon",     en:"Polygon",      id:"matic-network"},
-  {code:"DOT", flag:"⚫", ru:"Polkadot",    en:"Polkadot",     id:"polkadot"},
-  {code:"LTC", flag:"🪙", ru:"Litecoin",    en:"Litecoin",     id:"litecoin"},
-  {code:"BCH", flag:"💚", ru:"Bitcoin Cash",en:"Bitcoin Cash", id:"bitcoin-cash"},
-  {code:"LINK",flag:"🔗", ru:"Chainlink",   en:"Chainlink",    id:"chainlink"},
-  {code:"UNI", flag:"🦄", ru:"Uniswap",     en:"Uniswap",      id:"uniswap"},
-  {code:"XLM", flag:"⭐", ru:"Stellar",     en:"Stellar",      id:"stellar"},
-  {code:"ATOM",flag:"⚛️", ru:"Cosmos",      en:"Cosmos",       id:"cosmos"},
+  {code:"BTC", short:"BTC", color:"#F7931A", ru:"Биткоин",    en:"Bitcoin",      id:"bitcoin"},
+  {code:"ETH", short:"ETH", color:"#627EEA", ru:"Эфириум",    en:"Ethereum",     id:"ethereum"},
+  {code:"USDT",short:"USDT",color:"#26A17B", ru:"USDT",        en:"USDT",         id:"tether"},
+  {code:"USDC",short:"USDC",color:"#2775CA", ru:"USD Coin",    en:"USD Coin",     id:"usd-coin"},
+  {code:"TON", short:"TON", color:"#0098EA", ru:"TON",         en:"TON",          id:"the-open-network"},
+  {code:"SOL", short:"SOL", color:"#14F195", ru:"Solana",      en:"Solana",       id:"solana"},
+  {code:"BNB", short:"BNB", color:"#F3BA2F", ru:"BNB",         en:"BNB",          id:"binancecoin"},
+  {code:"XRP", short:"XRP", color:"#4C93E0", ru:"XRP",         en:"XRP",          id:"ripple"},
+  {code:"DOGE",short:"DOGE",color:"#C2A633", ru:"Dogecoin",    en:"Dogecoin",     id:"dogecoin"},
+  {code:"ADA", short:"ADA", color:"#3468D1", ru:"Cardano",     en:"Cardano",      id:"cardano"},
+  {code:"TRX", short:"TRX", color:"#EF4444", ru:"TRON",        en:"TRON",         id:"tron"},
+  {code:"AVAX",short:"AVAX",color:"#E84142", ru:"Avalanche",   en:"Avalanche",    id:"avalanche-2"},
+  {code:"MATIC",short:"MATIC",color:"#8247E5",ru:"Polygon",     en:"Polygon",      id:"matic-network"},
+  {code:"DOT", short:"DOT", color:"#E6007A", ru:"Polkadot",    en:"Polkadot",     id:"polkadot"},
+  {code:"LTC", short:"LTC", color:"#5D9CD6", ru:"Litecoin",    en:"Litecoin",     id:"litecoin"},
+  {code:"BCH", short:"BCH", color:"#8DC351", ru:"Bitcoin Cash",en:"Bitcoin Cash", id:"bitcoin-cash"},
+  {code:"LINK",short:"LINK",color:"#2A5ADA", ru:"Chainlink",   en:"Chainlink",    id:"chainlink"},
+  {code:"UNI", short:"UNI", color:"#FF007A", ru:"Uniswap",     en:"Uniswap",      id:"uniswap"},
+  {code:"XLM", short:"XLM", color:"#08B5E5", ru:"Stellar",     en:"Stellar",      id:"stellar"},
+  {code:"ATOM",short:"ATOM",color:"#5064FB", ru:"Cosmos",      en:"Cosmos",       id:"cosmos"},
 ];
 const CRYPTO_IDS = Object.fromEntries(CRYPTOS.map(c=>[c.code,c.id]));
 const CRYPTO_SET = new Set(CRYPTOS.map(c=>c.code));
@@ -496,7 +479,6 @@ async function loadFiat() {
     rates = d.rates||{};
     rates['USD']=1; rates['XTR']=1/starsUsd;
     renderFiat(); conv();
-    document.getElementById('upd-time').textContent = new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});
     lastUpdateTime = Date.now();
     updateCounter();
     updateSparklineHistory();
@@ -537,7 +519,7 @@ function renderFiat() {
       const diff = prev ? (r-prev)/prev*100 : 0;
       const cls = Math.abs(diff)<0.001?'flat':diff>0?'up':'down';
       const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
-      const pctText = Math.abs(diff)<0.001 ? '0.00%' : (diff>0?'+':'')+diff.toFixed(2)+'%';
+      const pctText = Math.abs(diff)<0.001 ? '' : (diff>0?'+':'')+diff.toFixed(2)+'%';
       return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
         <div class="rate-left"><div class="rate-flag">${c.flag}</div>
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
@@ -561,7 +543,7 @@ function renderCrypto() {
       const cls = Math.abs(chg)<0.01?'flat':chg>0?'up':'down';
       const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
       return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
-        <div class="rate-left"><div class="rate-flag">${c.flag}</div>
+        <div class="rate-left"><div class="coin-badge" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}40">${c.short.slice(0,4)}</div>
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
         <div class="rate-right">
@@ -609,7 +591,8 @@ function renderMulti(fromCur, amount) {
   document.getElementById('multi-list').innerHTML = items.join('');
 }
 
-function conv() {
+let historyDebounceTimer = null;
+function conv(userAction=false) {
   const a=parseFloat(document.getElementById('amount').value)||0;
   const f=document.getElementById('from-cur').value;
   const t=document.getElementById('to-cur').value;
@@ -620,7 +603,12 @@ function conv() {
   document.getElementById('r-cur').textContent=`${n[f]||f} → ${n[t]||t}`;
   document.getElementById('r-rate').textContent=`1 ${f} = ${fmt(r1)} ${t}`;
   renderMulti(f, a);
-  if(a>0&&res>0) saveHistory(f,a,t,res);
+  // Only log real user-triggered conversions (not background rate refreshes),
+  // and debounce so typing "1" -> "10" -> "100" doesn't create 3 entries.
+  if(userAction && a>0 && res>0) {
+    clearTimeout(historyDebounceTimer);
+    historyDebounceTimer = setTimeout(()=>saveHistory(f,a,t,res), 800);
+  }
 }
 
 function copyResult() {
@@ -636,7 +624,7 @@ function copyResult() {
 
 function swapCur() {
   const f=document.getElementById('from-cur'),t=document.getElementById('to-cur');
-  [f.value,t.value]=[t.value,f.value]; conv();
+  [f.value,t.value]=[t.value,f.value]; conv(true);
 }
 
 function filterFiat() {
@@ -890,6 +878,8 @@ function saveHistory(fromCur, amount, toCur, result) {
     res: fmt(result)+' '+toCur,
     time: new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})
   };
+  const last = lsHistory[0];
+  if(last && last.from===entry.from && last.to===entry.to && last.res===entry.res) return;
   lsHistory = [entry,...lsHistory].slice(0,10);
   localStorage.setItem('lsk_hist', JSON.stringify(lsHistory));
 }
@@ -915,7 +905,7 @@ function removeFav(key) {
 function useFav(f,t) {
   document.getElementById('from-cur').value=f;
   document.getElementById('to-cur').value=t;
-  switchTab('conv'); conv();
+  switchTab('conv'); conv(true);
 }
 
 function renderSaved() {
@@ -960,26 +950,6 @@ const METALS_LIST = [
   {code:"XCU",flag:"🟤",ru:"Медь",en:"Copper"},
 ];
 let metalPricesUSD = {XAU:3320,XAG:33,XBR:8.5,XRH:4500,XIR:5200,XRU:520,XPT:975,XPD:1060,XCU:9.5};
-
-// Формирует опции выпадающих списков конвертера из полных списков валют,
-// чтобы все новые валюты/крипта/металлы автоматически появлялись в конвертере
-function populateCurSelects() {
-  const usdOpt = `<option value="USD">🇺🇸 USD</option>`;
-  const fiatOpts = FIAT.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
-  const cryptoOpts = CRYPTOS.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
-  const starsOpt = `<option value="XTR">⭐ STARS</option>`;
-  const metalOpts = METALS_LIST.map(m => `<option value="${m.code}">${m.flag} ${m.code}</option>`).join('');
-  const fullList = usdOpt + fiatOpts + cryptoOpts + starsOpt + metalOpts;
-
-  const fromSel = document.getElementById('from-cur');
-  const toSel = document.getElementById('to-cur');
-  const cmpSel = document.getElementById('cmp-base');
-  if (fromSel) { fromSel.innerHTML = fullList; fromSel.value = 'USD'; }
-  if (toSel) { toSel.innerHTML = fullList; toSel.value = 'EUR'; }
-  if (cmpSel) { cmpSel.innerHTML = fullList; cmpSel.value = 'USD'; }
-}
-buildNames();
-populateCurSelects();
 
 function renderMetals() {
   const loadEl = document.getElementById('metals-load');
@@ -1154,7 +1124,11 @@ function addSparklinesToRates() {
   document.querySelectorAll('.rate-item[data-code]').forEach(item => {
     const code = item.dataset.code;
     const hist = sparklineHistory[code];
-    if(!hist || hist.length < 2) return;
+    // Wait for a few real polls before drawing anything, and skip if
+    // there's no actual variance yet (a flat line at this point would
+    // just be a visual artifact of a freshly-opened session, not data).
+    if(!hist || hist.length < 4) return;
+    if(Math.min(...hist) === Math.max(...hist)) return;
     let canvas = item.querySelector('.sparkline-canvas');
     if(!canvas) {
       canvas = document.createElement('canvas');
