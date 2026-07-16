@@ -289,7 +289,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
   <div class="conv-rate-line" id="r-rate"></div>
   <div id="r-cur" style="display:none"></div>
   <div class="conv-actions">
-    <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Копировать</button>
+    <button class="copy-btn" id="copy-btn" onclick="copyResult()">Копировать</button>
     <button class="fav-icon-btn" id="add-fav-btn" onclick="addFav()" aria-label="Добавить в избранное">⭐</button>
   </div>
   <div class="multi-card">
@@ -629,8 +629,8 @@ function copyResult() {
   haptic('success');
   navigator.clipboard?.writeText(`${num} ${cur}`).then(()=>{
     const btn=document.getElementById('copy-btn');
-    btn.textContent=lang==='ru'?'✅ Скопировано!':'✅ Copied!';
-    setTimeout(()=>btn.textContent=lang==='ru'?'📋 Копировать':'📋 Copy',1500);
+    btn.textContent=lang==='ru'?'Скопировано':'Copied';
+    setTimeout(()=>btn.textContent=lang==='ru'?'Копировать':'Copy',1500);
   });
 }
 
@@ -737,7 +737,7 @@ function toggleLang() {
   document.getElementById('lang-btn').textContent=lang==='ru'?'EN':'RU';
   document.querySelectorAll('.tab[data-ru]').forEach(t=>t.textContent=t.dataset[lang]);
   document.querySelectorAll('[data-ru].card-label').forEach(el=>el.textContent=el.dataset[lang]);
-  document.getElementById('copy-btn').textContent=lang==='ru'?'📋 Копировать':'📋 Copy';
+  document.getElementById('copy-btn').textContent=lang==='ru'?'Копировать':'Copy';
   document.getElementById('fiat-search').placeholder=lang==='ru'?'Поиск валюты...':'Search currency...';
   document.getElementById('crypto-search').placeholder=lang==='ru'?'Поиск крипты...':'Search crypto...';
   document.querySelectorAll('.period-btn[data-ru]').forEach(b=>b.textContent=b.dataset[lang]);
