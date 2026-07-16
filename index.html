@@ -60,26 +60,28 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .card-label { font-size:10px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.3px; margin-bottom:8px; }
 
 /* CONVERTER */
-.input-row { display:flex; gap:8px; }
 .num-input { flex:1; background:#000; border:none; border-radius:12px; padding:14px 16px; font-size:22px; font-weight:500; color:var(--text); outline:none; font-family:'Inter',sans-serif; min-width:0; }
 .cur-select { background:#000; border:none; border-radius:12px; padding:14px 14px; font-size:14px; font-weight:600; color:var(--text); outline:none; cursor:pointer; font-family:'Inter',sans-serif; width:100%; -webkit-appearance:none; display:block; }
-.swap-wrap { display:flex; align-items:center; gap:12px; margin:4px 0; }
-.swap-line { flex:1; height:1px; background:var(--border); }
-.swap-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--sub); transition:all 0.15s; flex-shrink:0; }
-.swap-btn:active { background:var(--t); color:#000; border-color:var(--t); transform:rotate(180deg); }
 
-/* RESULT */
-.result-card { background:var(--result-bg,#141c1a); border-radius:var(--rl); padding:22px 18px 16px; text-align:center; margin-bottom:8px; }
-.result-num { font-size:44px; font-weight:700; color:var(--text); letter-spacing:-2px; line-height:1; }
-.result-from-to { font-size:13px; color:var(--sub2); margin-top:8px; }
-.result-rate-line { font-size:12px; color:var(--sub); margin-top:6px; }
-.result-divider { height:1px; background:rgba(255,255,255,0.08); margin:12px 0; }
-.copy-btn { background:var(--t); border:none; border-radius:10px; padding:11px 0; font-size:13px; font-weight:600; color:#000; cursor:pointer; font-family:'Inter',sans-serif; width:100%; letter-spacing:0.2px; transition:opacity 0.15s; }
+/* UNIFIED CONVERTER CARD */
+.converter-card { background:var(--card); border-radius:var(--rl); padding:4px; margin-bottom:10px; position:relative; }
+.conv-row { padding:14px 14px 16px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+.conv-amount { background:transparent; border:none; outline:none; font-size:26px; font-weight:500; color:var(--text); font-family:'Inter',sans-serif; width:100%; padding:0; min-width:0; }
+.conv-result-num { font-size:26px; font-weight:500; color:var(--t); line-height:1; word-break:break-all; }
+.conv-divider { height:1px; background:var(--border); margin:0 14px; }
+.cur-pill-wrap { position:relative; flex-shrink:0; }
+.cur-pill { background:var(--card2); border:none; border-radius:10px; padding:9px 28px 9px 12px; font-size:14px; font-weight:500; color:var(--text); font-family:'Inter',sans-serif; outline:none; cursor:pointer; -webkit-appearance:none; appearance:none; }
+.cur-pill-chevron { position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:10px; color:var(--sub); pointer-events:none; }
+.swap-btn-float { position:absolute; right:14px; top:50%; transform:translateY(-50%); width:30px; height:30px; border-radius:50%; background:var(--t); display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--card); font-size:13px; color:#000; transition:transform 0.2s; }
+.swap-btn-float:active { transform:translateY(-50%) rotate(180deg); }
+.conv-rate-line { font-size:11px; color:var(--sub); text-align:center; margin-bottom:10px; }
+
+/* ACTIONS */
+.conv-actions { display:flex; gap:8px; margin-bottom:8px; }
+.copy-btn { background:var(--t); border:none; border-radius:10px; padding:11px 0; font-size:13px; font-weight:600; color:#000; cursor:pointer; font-family:'Inter',sans-serif; flex:1; letter-spacing:0.2px; transition:opacity 0.15s; }
 .copy-btn:active { opacity:0.8; }
-
-/* FAV BTN */
-.fav-btn { width:100%; background:transparent; border:none; border-radius:var(--rl); padding:11px; text-align:center; font-size:12px; font-weight:500; color:var(--sub); cursor:pointer; font-family:'Inter',sans-serif; margin-bottom:8px; transition:color 0.15s; }
-.fav-btn:active { color:var(--t); }
+.fav-icon-btn { width:44px; flex-shrink:0; background:var(--card); border:none; border-radius:10px; font-size:16px; color:var(--sub2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s; }
+.fav-icon-btn:active { opacity:0.7; }
 
 /* MULTI */
 .multi-card { background:var(--card); border-radius:var(--rl); padding:12px 14px; margin-bottom:8px; }
@@ -211,7 +213,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 
 /* ANIMATED NUMBER */
 @keyframes numFade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
-.result-num.animating { animation: numFade 0.25s ease-out; }
+.conv-result-num.animating { animation: numFade 0.25s ease-out; }
 
 /* RATE ITEM with sparkline */
 .rate-item-inner { display:flex; align-items:center; justify-content:space-between; width:100%; }
@@ -254,32 +256,40 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 <div class="ptr-indicator" id="ptr-indicator">↓ Потяни чтобы обновить</div>
 <!-- КОНВЕРТЕР -->
 <div class="section active" id="tab-conv">
-  <div class="card">
-    <div class="card-label" data-ru="Сумма и валюта" data-en="Amount & currency">Сумма и валюта</div>
-    <div class="input-row">
-      <input class="num-input" type="number" id="amount" value="1" oninput="conv(true)">
-      <select class="cur-select" id="from-cur" onchange="conv(true)" style="width:110px;flex-shrink:0;padding:14px 10px;">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
-      </select>
+  <div class="converter-card">
+    <div class="conv-row">
+      <div>
+        <div class="card-label" data-ru="Отдаёте" data-en="You send">Отдаёте</div>
+        <input class="conv-amount" type="number" id="amount" value="1" oninput="conv(true)">
+      </div>
+      <div class="cur-pill-wrap">
+        <select class="cur-pill" id="from-cur" onchange="conv(true)">
+          <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
+        </select>
+        <span class="cur-pill-chevron">▾</span>
+      </div>
     </div>
-  </div>
-  <div class="swap-wrap"><div class="swap-line"></div><div class="swap-btn" onclick="swapCur()">⇅</div><div class="swap-line"></div></div>
-  <div class="card">
-    <div class="card-label" data-ru="Конвертировать в" data-en="Convert to">Конвертировать в</div>
-    <div>
-      <select class="cur-select" id="to-cur" onchange="conv(true)">
-        <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
-      </select>
+    <div class="conv-divider"></div>
+    <div class="conv-row">
+      <div>
+        <div class="card-label" data-ru="Получаете" data-en="You get">Получаете</div>
+        <div class="conv-result-num" id="r-num">—</div>
+      </div>
+      <div class="cur-pill-wrap">
+        <select class="cur-pill" id="to-cur" onchange="conv(true)">
+          <option value="USD">🇺🇸 USD</option><option value="EUR" selected>🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="TRY">🇹🇷 TRY</option><option value="GBP">🇬🇧 GBP</option><option value="PLN">🇵🇱 PLN</option><option value="BYN">🇧🇾 BYN</option><option value="CNY">🇨🇳 CNY</option><option value="CHF">🇨🇭 CHF</option><option value="JPY">🇯🇵 JPY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="USDT">💵 USDT</option><option value="TON">💎 TON</option><option value="SOL">◎ SOL</option><option value="BNB">🟡 BNB</option><option value="XTR">⭐ STARS</option><option value="XAU">🥇 Gold</option><option value="XAG">🥈 Silver</option>
+        </select>
+        <span class="cur-pill-chevron">▾</span>
+      </div>
     </div>
+    <div class="swap-btn-float" onclick="swapCur()">⇅</div>
   </div>
-  <div class="result-card">
-    <div class="result-num" id="r-num">—</div>
-    <div class="result-from-to" id="r-cur"></div>
-    <div class="result-rate-line" id="r-rate"></div>
-    <div class="result-divider"></div>
+  <div class="conv-rate-line" id="r-rate"></div>
+  <div id="r-cur" style="display:none"></div>
+  <div class="conv-actions">
     <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋 Копировать</button>
+    <button class="fav-icon-btn" id="add-fav-btn" onclick="addFav()" aria-label="Добавить в избранное">⭐</button>
   </div>
-  <button class="fav-btn" id="add-fav-btn" onclick="addFav()">⭐ Добавить в избранное</button>
   <div class="multi-card">
     <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
     <div id="multi-list"></div>
@@ -736,8 +746,6 @@ function toggleLang() {
   const th=document.getElementById('theme-header');if(th)th.textContent=lang==='ru'?'Выбери тему':'Choose theme';
   const mt = document.getElementById('multi-title');
   if(mt) mt.textContent = mt.dataset[lang];
-  const fab = document.getElementById('add-fav-btn');
-  if(fab) fab.textContent = lang==='ru'?'⭐ Добавить в избранное':'⭐ Add to favorites';
   renderFiat(); renderCrypto(); conv();
 }
 
@@ -892,7 +900,7 @@ function addFav() {
     lsFavs.push(key);
     localStorage.setItem('lsk_favs', JSON.stringify(lsFavs));
     const btn=document.getElementById('add-fav-btn');
-    if(btn){btn.textContent='✅ Добавлено!';setTimeout(()=>btn.textContent=lang==='ru'?'⭐ Добавить в избранное':'⭐ Add to favorites',1500);}
+    if(btn){btn.textContent='✓';btn.style.color='var(--t)';setTimeout(()=>{btn.textContent='⭐';btn.style.color='';},1500);}
   }
 }
 
