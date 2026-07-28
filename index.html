@@ -239,7 +239,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
 
 <div class="header">
   <div class="brand">
-    <div class="brand-icon"><svg viewBox="0 0 100 100" width="18" height="18" style="display:block"><path d="M 23.8 31.6 A 32 32 0 0 0 76.2 31.6" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 76.2 68.4 A 32 32 0 0 0 23.8 68.4" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 84.8 43.9 L 83.8 26.3 L 68.6 37.0 Z" fill="currentColor"/><path d="M 15.2 56.1 L 16.2 73.7 L 31.4 63.0 Z" fill="currentColor"/></svg></div>
+    <div class="brand-icon"><svg viewBox="0 0 100 100" width="20" height="20" style="display:block"><path d="M 24.0 39.5 A 28 28 0 0 0 76.0 39.5" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M 76.0 60.5 A 28 28 0 0 0 24.0 60.5" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M 83.5 58.1 L 89.3 34.1 L 62.6 44.9 Z" fill="currentColor"/><path d="M 16.5 41.9 L 10.7 65.9 L 37.4 55.1 Z" fill="currentColor"/></svg></div>
     <div>
       <div class="brand-text-main">LSK Currency</div>
       <div class="brand-text-sub">LIVE EXCHANGE RATES</div>
@@ -257,7 +257,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
 <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
 <div class="side-menu" id="side-menu">
   <div class="menu-head">
-    <div class="menu-logo"><svg viewBox="0 0 100 100" width="18" height="18" style="display:block"><path d="M 23.8 31.6 A 32 32 0 0 0 76.2 31.6" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 76.2 68.4 A 32 32 0 0 0 23.8 68.4" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 84.8 43.9 L 83.8 26.3 L 68.6 37.0 Z" fill="currentColor"/><path d="M 15.2 56.1 L 16.2 73.7 L 31.4 63.0 Z" fill="currentColor"/></svg></div>
+    <div class="menu-logo"><svg viewBox="0 0 100 100" width="20" height="20" style="display:block"><path d="M 24.0 39.5 A 28 28 0 0 0 76.0 39.5" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M 76.0 60.5 A 28 28 0 0 0 24.0 60.5" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M 83.5 58.1 L 89.3 34.1 L 62.6 44.9 Z" fill="currentColor"/><path d="M 16.5 41.9 L 10.7 65.9 L 37.4 55.1 Z" fill="currentColor"/></svg></div>
     <div class="menu-brand">LSK Currency</div>
   </div>
   <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv"><div class="menu-icon">💱</div><div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div><div class="menu-badge" id="badge-conv">✓</div></div>
@@ -798,8 +798,9 @@ function drawChart(labels, data) {
   const min=Math.min(...data), max=Math.max(...data);
   const first=data[0], last=data[data.length-1];
   const change=first?((last-first)/first*100):0;
-  const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--t').trim() || '#00e5cc';
-  const color=change>=0?themeColor:'#ff5252';
+  const upColor = getComputedStyle(document.documentElement).getPropertyValue('--up').trim() || '#34c759';
+  const downColor = getComputedStyle(document.documentElement).getPropertyValue('--down').trim() || '#ff453a';
+  const color=change>=0?upColor:downColor;
   document.getElementById('stat-min').textContent=fmt(min);
   document.getElementById('stat-max').textContent=fmt(max);
   const chgEl=document.getElementById('stat-chg');
