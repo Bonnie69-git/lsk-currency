@@ -16,6 +16,7 @@
   --t: #00e5cc;
   --t2: #00c4ae;
   --t3: #008f7e;
+  --t-contrast: #000000;
   --tg: #00e5cc18;
   --result-bg: #1c2333;
   --text: #ffffff;
@@ -31,10 +32,22 @@
 html { background:#000; }
 body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:20px; -webkit-font-smoothing:antialiased; max-width:480px; margin:0 auto; box-shadow:0 0 60px rgba(0,0,0,0.6); }
 
+/* Светлая тема: эти элементы лежат прямо на фоне страницы (не внутри
+   тёмных карточек), поэтому им нужен свой тёмный цвет текста, а не
+   унаследованный var(--text)/var(--sub), которые остаются светлыми для
+   текста ВНУТРИ чёрных карточек */
+body.light-theme .brand-text-main,
+body.light-theme .brand-text-sub,
+body.light-theme .update-counter,
+body.light-theme .conv-rate-line,
+body.light-theme .group-title,
+body.light-theme .ptr-indicator,
+body.light-theme .empty-state { color:#0a0a0a; }
+
 /* HEADER */
 .header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-icon { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#000; flex-shrink:0; }
+.brand-icon { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
 .brand-text-main { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.2px; }
 .brand-text-sub { font-size:9px; color:var(--sub); font-weight:500; margin-top:1px; letter-spacing:0.8px; }
 .header-right { display:flex; align-items:center; gap:8px; }
@@ -69,18 +82,18 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .converter-card { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:4px; margin-bottom:10px; position:relative; }
 .conv-row { padding:16px 14px 18px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
 .conv-amount { background:transparent; border:none; outline:none; font-size:28px; font-weight:600; letter-spacing:-0.4px; color:var(--text); font-family:'Inter',sans-serif; width:100%; padding:0; min-width:0; }
-.conv-result-num { font-size:28px; font-weight:600; letter-spacing:-0.4px; color:var(--t); line-height:1; word-break:break-all; }
+.conv-result-num { font-size:28px; font-weight:600; letter-spacing:-0.4px; color:var(--t-emphasis); line-height:1; word-break:break-all; }
 .conv-divider { height:1px; background:var(--border); margin:0 14px; }
 .cur-pill-wrap { position:relative; flex-shrink:0; }
 .cur-pill { background:var(--card2); border:none; border-radius:var(--rf); padding:10px 30px 10px 16px; font-size:14px; font-weight:600; color:var(--text); font-family:'Inter',sans-serif; outline:none; cursor:pointer; -webkit-appearance:none; appearance:none; }
 .cur-pill-chevron { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:10px; color:var(--sub); pointer-events:none; }
-.swap-btn-float { position:absolute; right:14px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:var(--t); display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--card); font-size:13px; color:#000; transition:transform 0.2s; }
+.swap-btn-float { position:absolute; right:14px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:var(--t); display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--card); font-size:13px; color:var(--t-contrast); transition:transform 0.2s; }
 .swap-btn-float:active { transform:translateY(-50%) rotate(180deg); }
 .conv-rate-line { font-size:11px; color:var(--sub); text-align:center; margin-bottom:10px; }
 
 /* ACTIONS */
 .conv-actions { display:flex; align-items:stretch; gap:10px; margin-bottom:8px; }
-.copy-btn { background:var(--t); border:none; border-radius:var(--rf); padding:14px 0; font-size:14px; font-weight:600; color:#000; cursor:pointer; font-family:'Inter',sans-serif; flex:1; letter-spacing:0.1px; transition:opacity 0.15s, transform 0.1s; }
+.copy-btn { background:var(--t); border:none; border-radius:var(--rf); padding:14px 0; font-size:14px; font-weight:600; color:var(--t-contrast); cursor:pointer; font-family:'Inter',sans-serif; flex:1; letter-spacing:0.1px; transition:opacity 0.15s, transform 0.1s; }
 .copy-btn:active { opacity:0.85; transform:scale(0.98); }
 .fav-icon-btn { width:48px; flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:50%; font-size:16px; color:var(--sub2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s, transform 0.1s; }
 .fav-icon-btn:active { opacity:0.7; transform:scale(0.94); }
@@ -91,7 +104,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .multi-item { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); }
 .multi-item:last-child { border-bottom:none; }
 .multi-name { font-size:12px; color:var(--sub); }
-.multi-val { font-size:13px; font-weight:500; color:var(--t); }
+.multi-val { font-size:13px; font-weight:500; color:var(--t-emphasis); }
 
 /* RATES */
 .group-title { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin:16px 0 8px; padding:0 4px; }
@@ -126,7 +139,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .compare-name { font-size:13px; font-weight:600; color:var(--text); }
 .compare-bar-wrap { height:3px; background:var(--border); border-radius:2px; margin-top:5px; width:100px; }
 .compare-bar { height:3px; background:var(--t); border-radius:2px; transition:width 0.4s; }
-.compare-val { font-size:15px; font-weight:600; color:var(--t); }
+.compare-val { font-size:15px; font-weight:600; color:var(--t-emphasis); }
 
 /* CALCULATOR */
 .calc-display { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:20px 18px; margin-bottom:10px; min-height:110px; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; }
@@ -135,9 +148,9 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
 .calc-btn { background:var(--card); border:none; border-radius:50%; aspect-ratio:1; padding:0; font-size:19px; font-weight:400; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'Inter',sans-serif; user-select:none; transition:transform 0.1s, background 0.1s; }
 .calc-btn:active { background:var(--card2); transform:scale(0.92); }
-.calc-btn.op { background:var(--card2); color:var(--t); font-weight:600; }
+.calc-btn.op { background:var(--card2); color:var(--t-emphasis); font-weight:600; }
 .calc-btn.op:active { background:var(--border); }
-.calc-btn.eq { background:var(--t); color:#000; font-weight:700; }
+.calc-btn.eq { background:var(--t); color:var(--t-contrast); font-weight:700; }
 .calc-btn.eq:active { opacity:0.85; }
 .calc-btn.del { background:var(--card2); color:var(--down); }
 .calc-btn.clr { background:var(--card2); color:var(--sub2); }
@@ -147,11 +160,11 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .hist-item { background:var(--card); border-radius:var(--r); padding:13px 15px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
 .hist-from { font-size:13px; font-weight:600; color:var(--text); }
 .hist-time { font-size:11px; color:var(--sub); margin-top:2px; }
-.hist-res { font-size:14px; font-weight:600; color:var(--t); }
+.hist-res { font-size:14px; font-weight:600; color:var(--t-emphasis); }
 .fav-item { background:var(--card); border-radius:var(--r); padding:13px 15px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
 .fav-item:active { background:var(--card2); }
 .fav-pair { font-size:14px; font-weight:600; color:var(--text); }
-.fav-rate { font-size:14px; font-weight:600; color:var(--t); }
+.fav-rate { font-size:14px; font-weight:600; color:var(--t-emphasis); }
 .fav-del { color:var(--sub); font-size:16px; cursor:pointer; padding:0 4px; }
 
 /* SIDE MENU */
@@ -160,15 +173,15 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .side-menu { position:fixed; top:0; right:-270px; width:250px; height:100vh; background:#1c1c1e; z-index:200; transition:right 0.28s cubic-bezier(0.4,0,0.2,1); padding:24px 16px; overflow-y:auto; border-left:1px solid var(--border); }
 .side-menu.open { right:0; }
 .menu-head { display:flex; align-items:center; gap:12px; margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid var(--border); }
-.menu-logo { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#000; }
+.menu-logo { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:var(--t-contrast); }
 .menu-brand { font-size:15px; font-weight:700; color:var(--text); }
 .menu-item { display:flex; align-items:center; gap:13px; padding:12px 13px; border-radius:var(--r); cursor:pointer; transition:background 0.12s; margin-bottom:2px; }
 .menu-item:active { background:var(--card2); }
 .menu-item.active { background:var(--card2); }
-.menu-item.active .menu-item-label { color:var(--t); font-weight:700; }
+.menu-item.active .menu-item-label { color:var(--t-emphasis); font-weight:700; }
 .menu-icon { font-size:20px; width:26px; text-align:center; }
 .menu-item-label { font-size:14px; font-weight:500; color:var(--sub2); }
-.menu-badge { background:var(--t); border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:#000; margin-left:auto; }
+.menu-badge { background:var(--t); border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:var(--t-contrast); margin-left:auto; }
 
 /* CHART MODAL */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; backdrop-filter:blur(4px); }
@@ -179,7 +192,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 .modal-close { width:28px; height:28px; border-radius:50%; background:var(--card2); border:none; cursor:pointer; font-size:14px; color:var(--sub2); display:flex; align-items:center; justify-content:center; }
 .period-tabs { display:flex; gap:6px; margin-bottom:14px; }
 .period-btn { flex:1; padding:8px 4px; text-align:center; font-size:12px; font-weight:600; color:var(--sub2); cursor:pointer; border-radius:8px; border:none; background:var(--card2); transition:all 0.15s; }
-.period-btn.active { color:#000; background:var(--t); font-weight:700; }
+.period-btn.active { color:var(--t-contrast); background:var(--t); font-weight:700; }
 .chart-wrap { position:relative; height:180px; }
 .chart-stats { display:flex; gap:8px; margin-top:14px; }
 .stat-box { flex:1; background:var(--card2); border-radius:10px; padding:10px; text-align:center; }
@@ -198,7 +211,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 
 /* LOADING */
 .loading { text-align:center; padding:50px 20px; color:var(--sub); font-size:13px; }
-.spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--t); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }
+.spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--t-emphasis); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .footer-note { text-align:center; font-size:11px; color:var(--sub); margin-top:16px; }
 .empty-state { text-align:center; padding:30px 20px; color:var(--sub); font-size:13px; }
@@ -226,7 +239,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 
 <div class="header">
   <div class="brand">
-    <div class="brand-icon">$</div>
+    <div class="brand-icon"><svg viewBox="0 0 100 100" width="18" height="18" style="display:block"><path d="M 23.8 31.6 A 32 32 0 0 0 76.2 31.6" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 76.2 68.4 A 32 32 0 0 0 23.8 68.4" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 84.8 43.9 L 83.8 26.3 L 68.6 37.0 Z" fill="currentColor"/><path d="M 15.2 56.1 L 16.2 73.7 L 31.4 63.0 Z" fill="currentColor"/></svg></div>
     <div>
       <div class="brand-text-main">LSK Currency</div>
       <div class="brand-text-sub">LIVE EXCHANGE RATES</div>
@@ -244,7 +257,7 @@ body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
 <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
 <div class="side-menu" id="side-menu">
   <div class="menu-head">
-    <div class="menu-logo">$</div>
+    <div class="menu-logo"><svg viewBox="0 0 100 100" width="18" height="18" style="display:block"><path d="M 23.8 31.6 A 32 32 0 0 0 76.2 31.6" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 76.2 68.4 A 32 32 0 0 0 23.8 68.4" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round"/><path d="M 84.8 43.9 L 83.8 26.3 L 68.6 37.0 Z" fill="currentColor"/><path d="M 15.2 56.1 L 16.2 73.7 L 31.4 63.0 Z" fill="currentColor"/></svg></div>
     <div class="menu-brand">LSK Currency</div>
   </div>
   <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv"><div class="menu-icon">💱</div><div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div><div class="menu-badge" id="badge-conv">✓</div></div>
@@ -892,10 +905,14 @@ const THEMES = [
   {id:'emerald',  name:'Изумруд',    nameEn:'Emerald',   t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
   {id:'gold',     name:'Золото',     nameEn:'Gold',      t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
   {id:'white',    name:'Белый',      nameEn:'White',     t:'#ffffff', t2:'#d0d0d0', t3:'#888888', s1:'#141414', s2:'#1c1c1c', s3:'#242424', b2:'#2e2e2e'},
-  {id:'graphite', name:'Графит',     nameEn:'Graphite',  t:'#9e9e9e', t2:'#757575', t3:'#424242', s1:'#0e0e0e', s2:'#161616', s3:'#1e1e1e', b2:'#252525'},
+  {id:'bw',       name:'Бело-чёрное',nameEn:'Black & White', t:'#000000', t2:'#262626', t3:'#4d4d4d', s1:'#f2f2f2', s2:'#ececec', s3:'#e2e2e2', b2:'#d8d8d8',
+    bg:'#ffffff', card:'#000000', card2:'#141414', text:'#ffffff', border:'#1a1a1a', contrast:'#ffffff',
+    sub:'#a8a8ac', sub2:'#c7c7cc', emphasis:'#d6d6d6', light:true},
 ];
 
 let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
+
+const DEFAULTS = { bg:'#000000', card:'#1c1c1e', card2:'#111113', text:'#ffffff', border:'#2a2a2c', contrast:'#000000' };
 
 function applyTheme(id) {
   const th = THEMES.find(x=>x.id===id) || THEMES[0];
@@ -903,24 +920,33 @@ function applyTheme(id) {
   r.setProperty('--t', th.t);
   r.setProperty('--t2', th.t2);
   r.setProperty('--t3', th.t3);
+  r.setProperty('--t-contrast', th.contrast || DEFAULTS.contrast);
+  r.setProperty('--t-emphasis', th.emphasis || th.t);
   r.setProperty('--tg', th.t+'18');
   r.setProperty('--tg2', th.t+'35');
   r.setProperty('--s1', th.s1);
   r.setProperty('--s2', th.s2);
   r.setProperty('--s3', th.s3);
   r.setProperty('--border2', th.b2);
-  r.setProperty('--sub', th.t3+'99');
-  r.setProperty('--sub2', th.t2+'aa');
-  // result card - very dark tinted version of theme
-  const hex = th.t.replace('#','');
-  const ri=parseInt(hex.slice(0,2),16), gi=parseInt(hex.slice(2,4),16), bi=parseInt(hex.slice(4,6),16);
-  // result bg stays dark navy
-  r.setProperty('--result-bg', '#1c2333');
-  // Dark tinted result bg
-  r.setProperty('--result-bg', th.s1+'ee');
+  // sub/sub2: тема может задать явно (нужно для светлой темы, где нельзя
+  // просто взять оттенок акцента — внутри тёмных карточек он должен остаться
+  // светлым независимо от того, что фон страницы стал белым)
+  r.setProperty('--sub', th.sub || (th.t3+'99'));
+  r.setProperty('--sub2', th.sub2 || (th.t2+'aa'));
+  // основа: фон/карточки/текст/рамка — у большинства тем это фиксированный
+  // тёмный набор, светлая тема переопределяет
+  r.setProperty('--bg', th.bg || DEFAULTS.bg);
+  r.setProperty('--card', th.card || DEFAULTS.card);
+  r.setProperty('--card2', th.card2 || DEFAULTS.card2);
+  r.setProperty('--text', th.text || DEFAULTS.text);
+  r.setProperty('--border', th.border || DEFAULTS.border);
+  document.body.classList.toggle('light-theme', !!th.light);
+  // result card - тёмная подложка результата, для светлой темы тоже тёмная
+  // (плашка результата остаётся акцентной подложкой, не белой)
+  r.setProperty('--result-bg', th.light ? '#0f0f10ee' : th.s1+'ee');
   const dot = document.getElementById('theme-color-dot');
   if(dot) dot.style.background = th.t;
-  document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color='#000';});
+  document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
   currentTheme = id;
   localStorage.setItem('lsk_theme', id);
 }
@@ -931,7 +957,7 @@ function renderThemeGrid() {
   grid.innerHTML = THEMES.map(function(th) {
     var name = lang==='en'?(th.nameEn||th.name):th.name;
     var isActive = th.id===currentTheme;
-    var check = isActive ? '<span style="color:var(--t);font-weight:700;font-size:16px;">✓</span>' : '';
+    var check = isActive ? '<span style="color:var(--t-emphasis);font-weight:700;font-size:16px;">✓</span>' : '';
     return '<div onclick="applyTheme(\''+th.id+'\');renderThemeGrid()" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">' +
       '<div style="display:flex;align-items:center;gap:12px;">' +
         '<div style="width:36px;height:20px;border-radius:5px;background:linear-gradient(90deg,'+th.t+','+th.t3+');flex-shrink:0;"></div>' +
@@ -972,7 +998,7 @@ function addFav() {
     lsFavs.push(key);
     localStorage.setItem('lsk_favs', JSON.stringify(lsFavs));
     const btn=document.getElementById('add-fav-btn');
-    if(btn){btn.textContent='✓';btn.style.color='var(--t)';setTimeout(()=>{btn.textContent='⭐';btn.style.color='';},1500);}
+    if(btn){btn.textContent='✓';btn.style.color='var(--t-emphasis)';setTimeout(()=>{btn.textContent='⭐';btn.style.color='';},1500);}
   }
 }
 
