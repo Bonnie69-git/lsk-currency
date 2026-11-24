@@ -54,7 +54,9 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .header-right { display:flex; align-items:center; gap:8px; }
 .hbtn { height:30px; border-radius:var(--rf); border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; display:flex; align-items:center; padding:0 12px; transition:opacity 0.15s; }
 .hbtn:active { opacity:0.7; }
-.lang-btn { background:var(--card); color:var(--sub2); }
+.lang-btn { background:var(--card); color:var(--sub2); padding:0 3px; gap:2px; border:1px solid var(--border); }
+.lang-btn span { padding:4px 8px; border-radius:999px; font-weight:600; font-size:11px; line-height:1; }
+.lang-btn span.on { background:var(--t); color:var(--t-contrast); }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .menu-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
@@ -288,7 +290,7 @@ body.light-theme .footer { color:#555; }
     </div>
   </div>
   <div class="header-right">
-    <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+    <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn" aria-label="Язык / Language"><span id="lang-ru">RU</span><span id="lang-en">EN</span></button>
     <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
@@ -498,6 +500,9 @@ const starsUsd = 0.013;
 // (русский для ru/uk/be/kk/... — тот же список, что TG_RU_LANGS в боте)
 const TG_RU_LANGS = ['ru','uk','be','kk','ky','uz','tg','hy','az','ka'];
 function detectLang() {
+  // ?lang=ru|en — язык, выбранный в боте (кнопка «Конвертер» передаёт его)
+  const fromBot = new URLSearchParams(location.search).get('lang');
+  if (fromBot === 'ru' || fromBot === 'en') { LS.set('lsk_lang', fromBot); return fromBot; }
   const saved = LS.get('lsk_lang', null);
   if (saved === 'ru' || saved === 'en') return saved;
   const code = (TG?.initDataUnsafe?.user?.language_code || navigator.language || '').split('-')[0].toLowerCase();
@@ -1031,7 +1036,8 @@ function drawChart(labels, data) {
 
 function applyLang() {
   document.documentElement.lang = lang;
-  document.getElementById('lang-btn').textContent=lang==='ru'?'EN':'RU';
+  document.getElementById('lang-ru').classList.toggle('on', lang==='ru');
+  document.getElementById('lang-en').classList.toggle('on', lang==='en');
   document.querySelectorAll('[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
   document.getElementById('brand-sub').textContent=T('КУРСЫ ВАЛЮТ ОНЛАЙН','LIVE EXCHANGE RATES');
   document.getElementById('copy-btn').textContent=T('Копировать','Copy');
@@ -1467,16 +1473,27 @@ async function fetchWise(amount, from, to) {
   } catch { return []; }
 }
 
+// to UAH: продаём валюту на счёте Mono (rateBuy).
+// from UAH: покупаем валюту за гривну в Mono (rateSell) — международные
+// сервисы из сравнения не принимают гривну для отправки, так что это
+// единственная оценка для таких пар.
 async function fetchMono(amount, from, to) {
-  if (to !== 'UAH' || !MONO_ISO[from]) return null;
+  const toUah = to === 'UAH' && MONO_ISO[from];
+  const fromUah = from === 'UAH' && MONO_ISO[to];
+  if (!toUah && !fromUah) return null;
   try {
     if (!monoCache || Date.now() - monoCache.t > 300000) {
       const r = await fetch('https://api.monobank.ua/bank/currency', {signal: AbortSignal.timeout(8000)});
       if (r.ok) monoCache = {t: Date.now(), d: await r.json()};
     }
-    const row = (monoCache?.d || []).find(x => x.currencyCodeA === MONO_ISO[from] && x.currencyCodeB === 980);
-    if (!row?.rateBuy) return null;
-    return {name:'Monobank', received: amount * row.rateBuy, fee: 0, rate: row.rateBuy, approx: true};
+    const cur = toUah ? from : to;
+    const row = (monoCache?.d || []).find(x => x.currencyCodeA === MONO_ISO[cur] && x.currencyCodeB === 980);
+    if (toUah) {
+      if (!row?.rateBuy) return null;
+      return {name:'Monobank', received: amount * row.rateBuy, fee: 0, rate: row.rateBuy, approx: true, monoDir: 'sell'};
+    }
+    if (!row?.rateSell) return null;
+    return {name:'Monobank', received: amount / row.rateSell, fee: 0, rate: row.rateSell, approx: true, monoDir: 'buy'};
   } catch { return null; }
 }
 
@@ -1504,8 +1521,13 @@ async function runTransfer() {
 
 function renderTransfer({amount, from, to, offers}) {
   const box = document.getElementById('tr-result');
+  const botHint = T('Вариант через USDT P2P (Binance) — в боте: команда /transfer.','The USDT P2P (Binance) option is in the bot: /transfer.');
   if (!offers.length) {
-    box.innerHTML = `<div class="empty-state">${T('Сейчас не удалось получить предложения для этой пары. Попробуй другую пару или чуть позже.',"Couldn't get transfer quotes for this pair right now. Try another pair or a bit later.")}</div>`;
+    const why = from === 'UAH'
+      ? T('Wise, Western Union, MoneyGram и PayPal не принимают гривну для отправки, поэтому предложений для перевода из UAH нет. Для гривны есть оценка Monobank: она работает для USD, EUR, GBP, PLN и CHF.',
+          "Wise, Western Union, MoneyGram and PayPal don't accept hryvnia as the sending currency, so there are no offers from UAH. For hryvnia there's a Monobank estimate for USD, EUR, GBP, PLN and CHF.")
+      : T('Сейчас не удалось получить предложения для этой пары. Попробуй другую пару или чуть позже.',"Couldn't get transfer quotes for this pair right now. Try another pair or a bit later.");
+    box.innerHTML = `<div class="empty-state">${why}</div><div class="tr-note">ℹ️ ${botHint}</div>`;
     return;
   }
   const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmt(o.rate)}` : ''].filter(Boolean).join(' · ');
@@ -1528,8 +1550,11 @@ function renderTransfer({amount, from, to, offers}) {
   const mid = fromUSD(toUSD(from, 1), to);
   if (mid) h += `<div class="tr-tip">📊 ${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
   const notes = [];
-  if (est.some(o => o.name === 'Monobank')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
-  notes.push(T('Вариант через USDT P2P (Binance) — в боте: команда /transfer.','The USDT P2P (Binance) option is in the bot: /transfer.'));
+  if (!quoted.length) notes.push(T(`Wise, Western Union, MoneyGram и PayPal не принимают ${from === 'UAH' ? 'гривну' : from} для отправки, поэтому здесь только оценки.`,
+                                    `Wise, Western Union, MoneyGram and PayPal don't accept ${from === 'UAH' ? 'hryvnia' : from} as the sending currency, so only estimates are shown.`));
+  if (est.some(o => o.monoDir === 'buy')) notes.push(T('Monobank: покупка валюты за гривну по курсу банка. Комиссия за перевод за границу и лимиты НБУ не учтены.','Monobank: buying currency for hryvnia at the bank\'s rate. Fees for sending abroad and NBU limits are not included.'));
+  if (est.some(o => o.monoDir === 'sell')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
+  notes.push(botHint);
   h += `<div class="tr-note">ℹ️ ${notes.join('<br>ℹ️ ')}</div>`;
   box.innerHTML = h;
 }
