@@ -1297,7 +1297,10 @@ function saveHistory(fromCur, amount, toCur, result) {
 function addFav() {
   const f=document.getElementById('from-cur').value;
   const t=document.getElementById('to-cur').value;
-  const key=f+'-'+t;
+  // Сохраняем и сумму: «100 ₾ → €», а не только пару (ключ F-T-сумма; старые F-T = 1)
+  const a=parseFloat(document.getElementById('amount').value);
+  const amt=a>0&&isFinite(a)?Number(a.toPrecision(12)):1;
+  const key=amt===1?f+'-'+t:f+'-'+t+'-'+amt;
   if(!lsFavs.includes(key)&&lsFavs.length<10) {
     lsFavs.push(key);
     LS.set('lsk_favs', JSON.stringify(lsFavs));
@@ -1312,9 +1315,10 @@ function removeFav(key) {
   renderSaved();
 }
 
-function useFav(f,t) {
+function useFav(f,t,a) {
   document.getElementById('from-cur').value=f;
   document.getElementById('to-cur').value=t;
+  document.getElementById('amount').value=a>0?a:1;
   switchTab('conv'); conv(true);
 }
 
@@ -1323,13 +1327,15 @@ function renderSaved() {
   const favHtml = lsFavs.length ?
     '<div class="group-title">'+(lang==='ru'?'⭐ Избранные пары':'⭐ Favorite pairs')+'</div>' +
     lsFavs.map(key=>{
-      const [f,t]=key.split('-');
+      const [f,t,as]=key.split('-');
+      const a=parseFloat(as)>0?parseFloat(as):1;
       const rate=fromUSD(toUSD(f,1),t);
-      return `<div class="fav-item" onclick="useFav('${f}','${t}')">
+      const tap=lang==='ru'?'Нажми для конвертации':'Tap to convert';
+      return `<div class="fav-item" onclick="useFav('${f}','${t}',${a})">
         <div><div class="fav-pair">${n[f]||f} → ${n[t]||t}</div>
-        <div style="font-size:10px;color:var(--sub2);margin-top:2px">${lang==='ru'?'Нажми для конвертации':'Tap to convert'}</div></div>
+        <div style="font-size:10px;color:var(--sub2);margin-top:2px">${tap}</div></div>
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="fav-rate">${fmtPairRate(f,t,rate)}</div>
+          <div class="fav-rate">${a===1?fmtPairRate(f,t,rate):fmt(a)+' '+sign(f)+' = '+fmt(a*rate)+' '+sign(t)}</div>
           <div class="fav-del" onclick="event.stopPropagation();removeFav('${key}')">✕</div>
         </div>
       </div>`;
