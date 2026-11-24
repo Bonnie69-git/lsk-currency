@@ -1500,7 +1500,21 @@ async function fetchMono(amount, from, to) {
       return {name:'Monobank', received: amount * row.rateBuy, fee: 0, rate: row.rateBuy, approx: true, monoDir: 'sell'};
     }
     if (!row?.rateSell) return null;
-    return {name:'Monobank', received: amount / row.rateSell, fee: 0, rate: row.rateSell, approx: true, monoDir: 'buy'};
+    return {name:'Monobank', received: amount / row.rateSell, fee: 0, rate: 1 / row.rateSell, approx: true, monoDir: 'buy'};
+  } catch { return null; }
+}
+
+// Сервер сравнения (Supabase Edge Function): Wise + USDT P2P (Binance) +
+// Monobank. Binance P2P из браузера недоступен, поэтому P2P — только через
+// сервер. Если сервер не ответил — считаем сами (Wise + Monobank).
+const TRANSFER_API = 'https://daicafgagkvinbtqifbc.supabase.co/functions/v1/transfer-quotes';
+async function fetchServerQuotes(amount, from, to) {
+  try {
+    const r = await fetch(`${TRANSFER_API}?from=${from}&to=${to}&amount=${amount}`, {signal: AbortSignal.timeout(15000)});
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (!Array.isArray(d.offers)) return null;
+    return d.offers.map(o => ({...o, monoDir: o.kind === 'mono-buy' ? 'buy' : o.kind === 'mono-sell' ? 'sell' : undefined, p2p: o.kind === 'p2p'}));
   } catch { return null; }
 }
 
@@ -1517,9 +1531,13 @@ async function runTransfer() {
   if (!res) {
     btn.disabled = true;
     box.innerHTML = `<div class="loading"><div class="spinner"></div>${T('Сравниваю предложения...','Comparing offers...')}</div>`;
-    const [wise, mono] = await Promise.all([fetchWise(amount, from, to), fetchMono(amount, from, to)]);
+    let offers = await fetchServerQuotes(amount, from, to);
+    if (!offers) {
+      const [wise, mono] = await Promise.all([fetchWise(amount, from, to), fetchMono(amount, from, to)]);
+      offers = [...wise, ...(mono ? [mono] : [])];
+    }
     btn.disabled = false;
-    res = {t: Date.now(), amount, from, to, offers: [...wise, ...(mono ? [mono] : [])].sort((a,b)=>b.received-a.received)};
+    res = {t: Date.now(), amount, from, to, offers: offers.sort((a,b)=>b.received-a.received)};
     if (res.offers.length) trCache[key] = res;
   }
   lastTransfer = res;
@@ -1533,11 +1551,11 @@ function renderTransfer({amount, from, to, offers}) {
     const why = from === 'UAH'
       ? T('Wise, Western Union, MoneyGram и PayPal не принимают гривну для отправки, поэтому предложений для перевода из UAH нет. Для гривны есть оценка Monobank: она работает для USD, EUR, GBP, PLN и CHF.',
           "Wise, Western Union, MoneyGram and PayPal don't accept hryvnia as the sending currency, so there are no offers from UAH. For hryvnia there's a Monobank estimate for USD, EUR, GBP, PLN and CHF.")
-      : T('Сейчас не удалось получить предложения для этой пары. Попробуй другую пару или чуть позже.',"Couldn't get transfer quotes for this pair right now. Try another pair or a bit later.");
+      : T('Для этой пары нет ни котировок сервисов, ни объявлений USDT P2P. Попробуй перевести через USD или EUR, либо повтори чуть позже.',"There are no provider quotes or USDT P2P ads for this pair. Try routing via USD or EUR, or try again a bit later.");
     box.innerHTML = `<div class="empty-state">${why}</div><div class="tr-note">ℹ️ ${botHint}</div>`;
     return;
   }
-  const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmt(o.rate)}` : ''].filter(Boolean).join(' · ');
+  const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmtPairRate(from, to, o.rate)}` : ''].filter(Boolean).join(' · ');
   const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const quoted = offers.filter(o => !o.approx), est = offers.filter(o => o.approx);
   const medals = ['🥇','🥈','🥉'];
@@ -1561,7 +1579,8 @@ function renderTransfer({amount, from, to, offers}) {
                                     `Wise, Western Union, MoneyGram and PayPal don't accept ${from === 'UAH' ? 'hryvnia' : from} as the sending currency, so only estimates are shown.`));
   if (est.some(o => o.monoDir === 'buy')) notes.push(T('Monobank: покупка валюты за гривну по курсу банка. Комиссия за перевод за границу и лимиты НБУ не учтены.','Monobank: buying currency for hryvnia at the bank\'s rate. Fees for sending abroad and NBU limits are not included.'));
   if (est.some(o => o.monoDir === 'sell')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
-  notes.push(botHint);
+  if (est.some(o => o.p2p)) notes.push(T('P2P: покупка USDT за одну валюту и продажа за другую по медиане топ-объявлений Binance. Нужен аккаунт, есть риск контрагента.','P2P: buy USDT with one currency and sell it for the other at the median of top Binance ads. Needs an account; counterparty risk.'));
+  else notes.push(botHint);
   h += `<div class="tr-note">ℹ️ ${notes.join('<br>ℹ️ ')}</div>`;
   box.innerHTML = h;
 }
