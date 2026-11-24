@@ -30,8 +30,8 @@
   --rl: 22px;
   --rf: 999px;
 }
-html { background:#000; }
-body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:20px; -webkit-font-smoothing:antialiased; max-width:480px; margin:0 auto; box-shadow:0 0 60px rgba(0,0,0,0.6); }
+html { background:#0c0b11; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:calc(86px + env(safe-area-inset-bottom)); -webkit-font-smoothing:antialiased; max-width:480px; margin:0 auto; box-shadow:0 0 60px rgba(0,0,0,0.6); }
 
 /* Светлая тема: эти элементы лежат прямо на фоне страницы (не внутри
    тёмных карточек), поэтому им нужен свой тёмный цвет текста, а не
@@ -46,7 +46,7 @@ body.light-theme .ptr-indicator,
 body.light-theme .empty-state { color:#0a0a0a; }
 
 /* HEADER */
-.header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
+.header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); background:color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
 .brand { display:flex; align-items:center; gap:12px; }
 .brand-icon { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
 .brand-text-main { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.2px; }
@@ -55,10 +55,6 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .hbtn { height:30px; border-radius:var(--rf); border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; display:flex; align-items:center; padding:0 12px; transition:opacity 0.15s; }
 .hbtn:active { opacity:0.7; }
 .lang-btn { background:var(--card); color:var(--sub2); }
-.theme-btn-wrap { height:30px; border-radius:var(--rf); background:var(--card); border:none; cursor:pointer; padding:0 12px; display:flex; align-items:center; gap:6px; flex-shrink:0; transition:background 0.15s; }
-.theme-btn-wrap:active { background:var(--card2); }
-.theme-color-dot { width:10px; height:10px; border-radius:3px; background:var(--t); flex-shrink:0; transition:background 0.2s; }
-.theme-btn-text { font-size:11px; font-weight:500; color:var(--sub2); font-family:'Inter',sans-serif; letter-spacing:0.2px; }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .menu-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
@@ -69,7 +65,28 @@ body.light-theme .empty-state { color:#0a0a0a; }
 
 /* SECTIONS */
 .section { display:none; padding:10px 14px 14px; }
-.section.active { display:block; }
+.section.active { display:block; animation:secIn 0.22s ease-out; }
+@keyframes secIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.page-title { font-size:26px; font-weight:700; letter-spacing:-0.6px; color:var(--text); margin:4px 4px 12px; }
+body.light-theme .page-title { color:#0a0a0a; }
+
+/* BOTTOM TAB BAR */
+.tabbar { position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:480px; display:flex; gap:2px; background:var(--card); background:color-mix(in srgb, var(--card) 86%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); border-top:1px solid var(--border); padding:6px 8px calc(6px + env(safe-area-inset-bottom)); z-index:120; }
+.tab-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0 4px; background:none; border:none; color:var(--sub); font-family:'Inter',sans-serif; font-size:10px; font-weight:500; cursor:pointer; border-radius:12px; transition:color 0.15s, transform 0.1s; }
+.tab-btn svg { width:23px; height:23px; display:block; }
+.tab-btn:active { transform:scale(0.92); }
+.tab-btn.active { color:var(--t-emphasis); font-weight:600; }
+.tab-ico { position:relative; padding:3px 14px; border-radius:999px; transition:background 0.2s; }
+.tab-btn.active .tab-ico { background:var(--tg); }
+
+/* QUICK PAIRS */
+.quick-pairs { display:flex; gap:8px; overflow-x:auto; margin:0 -14px 12px; padding:2px 14px; scrollbar-width:none; }
+.quick-pairs::-webkit-scrollbar { display:none; }
+.qp { flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:9px 13px; cursor:pointer; transition:border-color 0.15s, transform 0.1s; }
+.qp:active { transform:scale(0.96); }
+.qp.active { border-color:var(--t); }
+.qp-pair { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; }
+.qp-rate { font-size:11px; color:var(--sub); margin-top:3px; white-space:nowrap; }
 
 /* CARD */
 .card { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:14px 14px 14px; margin-bottom:8px; }
@@ -80,16 +97,18 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .cur-select { background:#000; border:none; border-radius:12px; padding:14px 14px; font-size:14px; font-weight:600; color:var(--text); outline:none; cursor:pointer; font-family:'Inter',sans-serif; width:100%; -webkit-appearance:none; display:block; }
 
 /* UNIFIED CONVERTER CARD */
-.converter-card { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:4px; margin-bottom:10px; position:relative; }
+.converter-card { background:var(--card); background:linear-gradient(155deg, color-mix(in srgb, var(--t) 16%, var(--card)) 0%, var(--card) 58%); border:1px solid var(--border); border-color:color-mix(in srgb, var(--t) 28%, var(--border)); border-radius:24px; padding:4px; margin-bottom:10px; position:relative; box-shadow:0 14px 34px -18px color-mix(in srgb, var(--t) 55%, transparent); }
 .conv-row { padding:16px 14px 18px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
-.conv-amount { background:transparent; border:none; outline:none; font-size:28px; font-weight:600; letter-spacing:-0.4px; color:var(--text); font-family:'Inter',sans-serif; width:100%; padding:0; min-width:0; }
-.conv-result-num { font-size:28px; font-weight:600; letter-spacing:-0.4px; color:var(--t-emphasis); line-height:1; word-break:break-all; }
+.conv-amount { background:transparent; border:none; outline:none; font-size:32px; font-weight:600; letter-spacing:-0.4px; color:var(--text); font-family:'Inter',sans-serif; width:100%; padding:0; min-width:0; }
+.conv-result-num { font-size:32px; font-weight:600; letter-spacing:-0.4px; color:var(--t-emphasis); line-height:1; word-break:break-all; }
 .conv-divider { height:1px; background:var(--border); margin:0 14px; }
 .cur-pill-wrap { position:relative; flex-shrink:0; }
 .cur-pill { background:var(--card2); border:none; border-radius:var(--rf); padding:10px 30px 10px 16px; font-size:14px; font-weight:600; color:var(--text); font-family:'Inter',sans-serif; outline:none; cursor:pointer; -webkit-appearance:none; appearance:none; }
 .cur-pill-chevron { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:10px; color:var(--sub); pointer-events:none; }
-.swap-btn-float { position:absolute; right:14px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:var(--t); display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--card); font-size:13px; color:var(--t-contrast); transition:transform 0.2s; }
+.swap-btn-float { position:absolute; left:50%; margin-left:-16px; right:auto; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:var(--t); display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--card); font-size:13px; color:var(--t-contrast); transition:transform 0.2s; }
 .swap-btn-float:active { transform:translateY(-50%) rotate(180deg); }
+.swap-btn-float { box-shadow:0 4px 14px -4px color-mix(in srgb, var(--t) 70%, transparent); }
+body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .conv-rate-line { font-size:11px; color:var(--sub); text-align:center; margin-bottom:10px; }
 
 /* ACTIONS */
@@ -100,16 +119,16 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .fav-icon-btn:active { opacity:0.7; transform:scale(0.94); }
 
 /* MULTI */
-.multi-card { background:var(--card); border-radius:var(--rl); padding:12px 14px; margin-bottom:8px; }
+.multi-card { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:12px 14px; margin-bottom:8px; }
 .multi-label { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:10px; }
-.multi-item { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); }
+.multi-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; cursor:pointer; border-bottom:1px solid var(--border); }
 .multi-item:last-child { border-bottom:none; }
-.multi-name { font-size:12px; color:var(--sub); }
-.multi-val { font-size:13px; font-weight:500; color:var(--t-emphasis); }
+.multi-name { font-size:13px; color:var(--sub2); }
+.multi-val { font-size:14px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }
 
 /* RATES */
 .group-title { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin:16px 0 8px; padding:0 4px; }
-.rate-item { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:12px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; cursor:pointer; transition:background 0.12s, transform 0.1s; }
+.rate-item { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:12px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; cursor:pointer; transition:background 0.12s, transform 0.1s; }
 .rate-item:active { transform:scale(0.98); }
 .rate-item:active { background:var(--card2); }
 .rate-left { display:flex; align-items:center; gap:13px; }
@@ -118,12 +137,23 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .rate-name { font-size:13px; font-weight:500; color:var(--text); }
 .rate-code { font-size:11px; color:var(--sub); margin-top:2px; }
 .rate-right { text-align:right; }
-.rate-val { font-size:14px; font-weight:500; color:var(--text); }
+.rate-val { font-size:14px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }
 .rate-chg, .rate-change { font-size:11px; margin-top:2px; font-weight:600; }
 .rate-chg.up, .rate-change.up { color:var(--up); }
 .rate-chg.down, .rate-change.down { color:var(--down); }
 .rate-chg.flat, .rate-change.flat { color:var(--sub); }
 .coin-img { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:block; }
+
+/* MARKET LIST — одна карточка с разделителями, как в биржевых приложениях */
+.list { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+.list .rate-item, .list .metal-item { background:transparent; border:none; border-radius:0; margin:0; padding:13px 15px; border-bottom:1px solid var(--border); }
+.list .rate-item:last-child, .list .metal-item:last-child { border-bottom:none; }
+.list .rate-item:active { background:var(--card2); transform:none; }
+.rate-change { display:inline-block; min-width:62px; text-align:center; padding:3px 7px; border-radius:7px; font-size:11px; font-weight:600; margin-top:4px; font-variant-numeric:tabular-nums; }
+.rate-change:empty { display:none; }
+.rate-change.up { background:color-mix(in srgb, var(--up) 16%, transparent); }
+.rate-change.down { background:color-mix(in srgb, var(--down) 16%, transparent); }
+.rate-change.flat { background:var(--card2); }
 
 /* SEARCH */
 .search-wrap { position:relative; margin-bottom:12px; }
@@ -201,12 +231,6 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .stat-label { font-size:9px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
 .stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; }
 
-/* THEME PANEL */
-.theme-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; align-items:flex-end; backdrop-filter:blur(4px); }
-.theme-overlay.open { display:flex; }
-.theme-panel { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); max-height:72vh; overflow-y:auto; }
-.theme-head { font-size:16px; font-weight:700; color:var(--text); margin-bottom:18px; }
-.theme-grid { display:flex; flex-direction:column; gap:2px; }
 
 /* COMPARE SELECT */
 .cmp-row { display:flex; gap:8px; margin-bottom:0; }
@@ -265,7 +289,6 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="header-right">
     <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
-    <div class="theme-btn-wrap" onclick="openTheme()" id="theme-btn"><div class="theme-color-dot" id="theme-color-dot"></div><span class="theme-btn-text" id="theme-btn-text">Theme</span></div>
     <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
@@ -291,6 +314,7 @@ body.light-theme .footer { color:#555; }
 <div class="ptr-indicator" id="ptr-indicator">↓ Потяни, чтобы обновить</div>
 <!-- КОНВЕРТЕР -->
 <div class="section active" id="tab-conv">
+  <div class="quick-pairs" id="quick-pairs"></div>
   <div class="converter-card">
     <div class="conv-row">
       <div>
@@ -334,6 +358,7 @@ body.light-theme .footer { color:#555; }
 
 <!-- ПЕРЕВОДЫ -->
 <div class="section" id="tab-transfer">
+  <div class="page-title" data-ru="Переводы" data-en="Transfers">Переводы</div>
   <div class="card">
     <div class="card-label" data-ru="Где выгоднее перевести" data-en="Cheapest way to send">Где выгоднее перевести</div>
     <div class="tr-form">
@@ -351,6 +376,7 @@ body.light-theme .footer { color:#555; }
 
 <!-- ФИАТ -->
 <div class="section" id="tab-fiat">
+  <div class="page-title" data-ru="Курсы валют" data-en="Exchange rates">Курсы валют</div>
   <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()"></div>
   <div class="loading" id="fiat-load"><div class="spinner"></div>Загрузка...</div>
   <div id="fiat-list"></div>
@@ -358,6 +384,7 @@ body.light-theme .footer { color:#555; }
 
 <!-- КРИПТА -->
 <div class="section" id="tab-crypto">
+  <div class="page-title" data-ru="Криптовалюты" data-en="Crypto">Криптовалюты</div>
   <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()"></div>
   <div class="loading" id="crypto-load"><div class="spinner"></div>Загрузка...</div>
   <div id="crypto-list"></div>
@@ -365,12 +392,14 @@ body.light-theme .footer { color:#555; }
 
 <!-- МЕТАЛЛЫ -->
 <div class="section" id="tab-metals">
+  <div class="page-title" data-ru="Металлы" data-en="Metals">Металлы</div>
   <div class="loading" id="metals-load"><div class="spinner"></div>Загрузка...</div>
   <div id="metals-list"></div>
 </div>
 
 <!-- СРАВНИ -->
 <div class="section" id="tab-compare">
+  <div class="page-title" data-ru="Сравни" data-en="Compare">Сравни</div>
   <div class="card">
     <div class="card-label" data-ru="Базовая валюта" data-en="Base currency">Базовая валюта</div>
     <div class="cmp-row">
@@ -385,6 +414,7 @@ body.light-theme .footer { color:#555; }
 
 <!-- КАЛЬКУЛЯТОР -->
 <div class="section" id="tab-calc">
+  <div class="page-title" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div>
   <div class="calc-display">
     <div class="calc-expr" id="c-expr"></div>
     <div class="calc-result-num" id="c-res">0</div>
@@ -414,9 +444,18 @@ body.light-theme .footer { color:#555; }
 
 <!-- СОХРАНЕНО -->
 <div class="section" id="tab-saved">
+  <div class="page-title" data-ru="Сохранено" data-en="Saved">Сохранено</div>
   <div id="fav-section"></div>
   <div id="hist-section"></div>
 </div>
+
+<nav class="tabbar" id="tabbar">
+  <button class="tab-btn active" id="tb-conv" onclick="switchTab('conv')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Конвертер" data-en="Converter">Конвертер</span></button>
+  <button class="tab-btn" id="tb-transfer" onclick="switchTab('transfer')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Переводы" data-en="Transfers">Переводы</span></button>
+  <button class="tab-btn" id="tb-fiat" onclick="switchTab('fiat')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><span data-ru="Курсы" data-en="Rates">Курсы</span></button>
+  <button class="tab-btn" id="tb-crypto" onclick="switchTab('crypto')"><span class="tab-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 7.5v9M9.5 8h4a2 2 0 0 1 0 4h-4m0 0h4.5a2 2 0 0 1 0 4H9.5M11 6.5V8m0 8v1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Крипта" data-en="Crypto">Крипта</span></button>
+  <button class="tab-btn" id="tb-saved" onclick="switchTab('saved')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span data-ru="Сохранено" data-en="Saved">Сохранено</span></button>
+</nav>
 
 <!-- CHART MODAL -->
 <div class="modal-overlay" id="chart-modal" onclick="closeModalBg(event)">
@@ -436,14 +475,6 @@ body.light-theme .footer { color:#555; }
       <div class="stat-box"><div class="stat-label" id="sl-max">Макс</div><div class="stat-val" id="stat-max">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
-  </div>
-</div>
-
-<!-- THEME PANEL -->
-<div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
-  <div class="theme-panel">
-    <div class="theme-head" id="theme-header">Выбери тему</div>
-    <div class="theme-grid" id="theme-grid"></div>
   </div>
 </div>
 
@@ -750,12 +781,12 @@ function renderFiat() {
   const title = T('Курсы к доллару США (нажми для графика)','Rates vs US dollar (tap for chart)');
   document.getElementById('fiat-list').innerHTML =
     `<div class="group-title">${title}</div>` +
-    FIAT.map(c => {
+    '<div class="list">' + FIAT.map(c => {
       const v = fiatView(c.code);
       let cls = 'flat', pctText = '';
       if (v.pct !== null && Math.abs(v.pct) >= 0.005) {
         cls = v.pct > 0 ? 'up' : 'down';
-        pctText = (v.pct > 0 ? '▲ +' : '▼ ') + v.pct.toFixed(2) + '%';
+        pctText = (v.pct > 0 ? '+' : '') + v.pct.toFixed(2) + '%';
       }
       return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang].replace(/'/g,"")}')">
         <div class="rate-left"><div class="rate-flag">${c.flag}</div>
@@ -766,7 +797,7 @@ function renderFiat() {
           <div class="rate-change ${cls}">${pctText}</div>
         </div>
       </div>`;
-    }).join('') + `<div class="footer">${T('ExchangeRate-API · изменение за сутки','ExchangeRate-API · 24h change')}</div>`;
+    }).join('') + '</div>' + `<div class="footer">${T('ExchangeRate-API · изменение за сутки','ExchangeRate-API · 24h change')}</div>`;
   filterFiat();
 }
 
@@ -776,7 +807,7 @@ function renderCrypto() {
   const title = lang==='ru'?'Топ криптовалют (нажми для графика)':'Top crypto (tap for chart)';
   document.getElementById('crypto-list').innerHTML =
     `<div class="group-title">${title}</div>` +
-    CRYPTOS.map(c => {
+    '<div class="list">' + CRYPTOS.map(c => {
       const p = cryptoPrices[c.code]||0;
       const chg = cryptoChanges[c.code]||0;
       const cls = Math.abs(chg)<0.01?'flat':chg>0?'up':'down';
@@ -787,10 +818,10 @@ function renderCrypto() {
         </div>
         <div class="rate-right">
           <div class="rate-val">$${fmt(p)}</div>
-          <div class="rate-change ${cls}">${arrow} ${(chg>0?'+':'')+chg.toFixed(2)}%</div>
+          <div class="rate-change ${cls}">${(chg>0?'+':'')+chg.toFixed(2)}%</div>
         </div>
       </div>`;
-    }).join('') + `<div class="footer">CoinGecko · ${lang==='ru'?'изм. за 24ч':'24h change'}</div>`;
+    }).join('') + '</div>' + `<div class="footer">CoinGecko · ${lang==='ru'?'изм. за 24ч':'24h change'}</div>`;
   filterCrypto();
 }
 
@@ -823,12 +854,30 @@ function renderMulti(fromCur, amount) {
   const usd = toUSD(fromCur, amount);
   const items = MULTI_TARGETS.filter(t => t.code !== fromCur).map(t => {
     const val = fromUSD(usd, t.code);
-    return `<div class="multi-item">
+    return `<div class="multi-item" onclick="setPair('${fromCur}','${t.code}')">
       <span class="multi-name">${t.flag} ${(n[t.code]||t.code).split(" ").slice(1).join(" ")}</span>
       <span class="multi-val">${fmt(val)}</span>
     </div>`;
   });
   document.getElementById('multi-list').innerHTML = items.join('');
+}
+
+// Популярные пары для эмигрантов — в одно касание
+const QUICK_PAIRS = [['EUR','UAH'],['USD','UAH'],['PLN','UAH'],['USD','EUR'],['EUR','PLN'],['USD','GEL'],['EUR','GBP'],['BTC','USD'],['TON','USD']];
+function renderQuickPairs(f, t) {
+  const box = document.getElementById('quick-pairs');
+  if (!box) return;
+  box.innerHTML = QUICK_PAIRS.map(([a,b]) => {
+    const r = fromUSD(toUSD(a,1), b);
+    const active = a===f && b===t ? ' active' : '';
+    return `<div class="qp${active}" onclick="setPair('${a}','${b}')"><div class="qp-pair">${a} → ${b}</div><div class="qp-rate">${r ? fmtPairRate(a,b,r) : '…'}</div></div>`;
+  }).join('');
+}
+function setPair(a, b) {
+  haptic('light');
+  document.getElementById('from-cur').value = a;
+  document.getElementById('to-cur').value = b;
+  conv(true);
 }
 
 let historyDebounceTimer = null;
@@ -843,6 +892,7 @@ function conv(userAction=false) {
   document.getElementById('r-cur').textContent=`${n[f]||f} → ${n[t]||t}`;
   document.getElementById('r-rate').textContent=fmtPairRate(f, t, r1);
   renderMulti(f, a);
+  renderQuickPairs(f, t);
   const tb = document.getElementById('conv-transfer-btn');
   if (tb) tb.style.display = (isTransferFiat(f) && isTransferFiat(t) && f !== t) ? '' : 'none';
   // Only log real user-triggered conversions (not background rate refreshes),
@@ -988,13 +1038,11 @@ function applyLang() {
   document.getElementById('add-fav-btn').setAttribute('aria-label', T('Добавить в избранное','Add to favorites'));
   document.getElementById('conv-transfer-btn').textContent=T('💸 Сравнить переводы','💸 Compare transfers');
   document.getElementById('tr-btn').textContent=T('Сравнить','Compare');
-  document.getElementById('theme-btn-text').textContent=T('Тема','Theme');
   document.getElementById('fiat-search').placeholder=T('Поиск валюты...','Search currency...');
   document.getElementById('crypto-search').placeholder=T('Поиск крипты...','Search crypto...');
   document.getElementById('sl-min').textContent=T('Мин','Min');
   document.getElementById('sl-max').textContent=T('Макс','Max');
   document.getElementById('sl-chg').textContent=T('Изм.','Chg.');
-  document.getElementById('theme-header').textContent=T('Выбери тему','Choose theme');
   document.getElementById('ptr-indicator').textContent=T('↓ Потяни, чтобы обновить','↓ Pull to refresh');
   document.querySelectorAll('.loading').forEach(el => { if (el.lastChild?.nodeType === 3) el.lastChild.textContent = T('Загрузка...','Loading...'); });
   fillTransferSelects();
@@ -1039,6 +1087,7 @@ function switchTab(n) {
     badge.textContent='✓';
     navEl.appendChild(badge);
   }
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.id==='tb-'+n));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active');
   if(n==='saved') renderSaved();
@@ -1076,18 +1125,18 @@ function cDel(){if(cNewNum||cCur.length<=1){cCur='0';cNewNum=true;}else{cCur=cCu
 function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
 
 // THEMES
+// Одна фирменная палитра на всё приложение (выбор Рауля). Остальные — для
+// быстрого переключения, если решим поменять: достаточно сменить PALETTE.
 const THEMES = [
-  {id:'teal',     name:'Бирюза',     nameEn:'Teal',      t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
-  {id:'sapphire', name:'Сапфир',     nameEn:'Sapphire',  t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
-  {id:'emerald',  name:'Изумруд',    nameEn:'Emerald',   t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
-  {id:'gold',     name:'Золото',     nameEn:'Gold',      t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
-  {id:'white',    name:'Белый',      nameEn:'White',     t:'#ffffff', t2:'#d0d0d0', t3:'#888888', s1:'#141414', s2:'#1c1c1c', s3:'#242424', b2:'#2e2e2e'},
-  {id:'bw',       name:'Бело-чёрное',nameEn:'Black & White', t:'#000000', t2:'#262626', t3:'#4d4d4d', s1:'#f2f2f2', s2:'#ececec', s3:'#e2e2e2', b2:'#d8d8d8',
-    bg:'#ffffff', card:'#000000', card2:'#141414', text:'#ffffff', border:'#1a1a1a', contrast:'#ffffff',
-    sub:'#a8a8ac', sub2:'#c7c7cc', emphasis:'#d6d6d6', light:true},
+  {id:'gold',   t:'#E8B931', t2:'#c99d1f', t3:'#8a6d17', s1:'#121212', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a',
+   bg:'#0b0d10', card:'#15181c', card2:'#0f1114', border:'#23272d', contrast:'#111111', sub:'#7d838c', sub2:'#a9afb8', text:'#f4f5f6'},
+  {id:'violet', t:'#9B8AFB', t2:'#7f6ef0', t3:'#5b4cc4', s1:'#121018', s2:'#1a1722', s3:'#221e2c', b2:'#2a2536',
+   bg:'#0c0b11', card:'#17151f', card2:'#110f17', border:'#262233', contrast:'#0c0b11', sub:'#827d96', sub2:'#b1abc6', text:'#f5f4fa'},
+  {id:'teal',   t:'#1FD1B2', t2:'#16b398', t3:'#0f7f6c', s1:'#0d1312', s2:'#121a19', s3:'#172221', b2:'#1d2b29',
+   bg:'#090d0d', card:'#131a19', card2:'#0e1413', border:'#1f2a28', contrast:'#06110f', sub:'#7a8c89', sub2:'#a7b6b3', text:'#f2f7f6'},
 ];
-
-let currentTheme = LS.get('lsk_theme', 'teal');
+const PALETTE = 'violet';
+let currentTheme = PALETTE;
 
 const DEFAULTS = { bg:'#000000', card:'#1c1c1e', card2:'#111113', text:'#ffffff', border:'#2a2a2c', contrast:'#000000' };
 
@@ -1121,34 +1170,11 @@ function applyTheme(id) {
   // result card - тёмная подложка результата, для светлой темы тоже тёмная
   // (плашка результата остаётся акцентной подложкой, не белой)
   r.setProperty('--result-bg', th.light ? '#0f0f10ee' : th.s1+'ee');
-  const dot = document.getElementById('theme-color-dot');
-  if(dot) dot.style.background = th.t;
   document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
   currentTheme = id;
-  LS.set('lsk_theme', id);
 }
 
-function renderThemeGrid() {
-  const grid = document.getElementById('theme-grid');
-  if(!grid) return;
-  grid.innerHTML = THEMES.map(function(th) {
-    var name = lang==='en'?(th.nameEn||th.name):th.name;
-    var isActive = th.id===currentTheme;
-    var check = isActive ? '<span style="color:var(--t-emphasis);font-weight:700;font-size:16px;">✓</span>' : '';
-    return '<div onclick="applyTheme(\''+th.id+'\');renderThemeGrid()" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">' +
-      '<div style="display:flex;align-items:center;gap:12px;">' +
-        '<div style="width:36px;height:20px;border-radius:5px;background:linear-gradient(90deg,'+th.t+','+th.t3+');flex-shrink:0;"></div>' +
-        '<span style="font-size:14px;color:#fff;font-weight:'+(isActive?'600':'400')+';">'+name+'</span>' +
-      '</div>' +
-      check +
-    '</div>';
-  }).join('');
-}
-
-function openTheme() { renderThemeGrid(); document.getElementById('theme-overlay').classList.add('open'); }
-function closeThemePanel() { document.getElementById('theme-overlay').classList.remove('open'); }
-function closeTheme(e) { if(e.target.id==='theme-overlay') closeThemePanel(); }
-applyTheme(currentTheme);
+applyTheme(PALETTE);
 
 // LOCAL STORAGE
 let lsHistory = LS.json('lsk_hist', []);
@@ -1253,7 +1279,7 @@ function renderMetals() {
   const footer = metalsLive ? T('Цены за сутки, источник: currency-api', 'Daily prices, source: currency-api')
                             : T('Приблизительные цены (источник недоступен)', 'Approximate prices (source unavailable)');
   listEl.innerHTML = '<div class="group-title">'+title+'</div>' +
-    METALS_LIST.map(m => {
+    '<div class="list">' + METALS_LIST.map(m => {
       const oz = metalPricesUSD[m.code]||0, g = oz/31.1035;
       return '<div class="metal-item">' +
       '<div class="rate-left">' +
@@ -1264,7 +1290,7 @@ function renderMetals() {
         '<div class="metal-val">$'+fmt(oz)+' · $'+fmt(g)+'</div>' +
         (eur ? '<div class="metal-sub">€'+fmt(oz*eur)+' · €'+fmt(g*eur)+'</div>' : '') +
       '</div>' +
-    '</div>'; }).join('') +
+    '</div>'; }).join('') + '</div>' +
     '<div class="footer">'+footer+'</div>';
 }
 
@@ -1357,7 +1383,7 @@ document.addEventListener('touchmove', e => {
   const scrollTop = document.documentElement.scrollTop;
   const diff = e.touches[0].clientY - ptrStartY;
   const indicator = document.getElementById('ptr-indicator');
-  if(document.querySelector('.modal-overlay.open,.theme-overlay.open,.side-menu.open')) return;
+  if(document.querySelector('.modal-overlay.open,.side-menu.open')) return;
   if(scrollTop === 0 && diff > 40) {
     ptrActive = true;
     if(indicator) { indicator.classList.add('visible'); indicator.textContent = diff > 80 ? (lang==='ru'?'Отпусти для обновления':'Release to refresh') : (lang==='ru'?'↓ Потяни для обновления':'↓ Pull to refresh'); }
