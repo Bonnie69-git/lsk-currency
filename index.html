@@ -59,11 +59,6 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .lang-btn span.on { background:var(--t); color:var(--t-contrast); }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.menu-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
-.menu-btn span { width:16px; height:1.5px; background:var(--sub2); border-radius:2px; transition:all 0.2s; }
-.menu-btn.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
-.menu-btn.open span:nth-child(2) { opacity:0; }
-.menu-btn.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
 
 /* SECTIONS */
 .section { display:none; padding:10px 14px 14px; }
@@ -146,6 +141,18 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .rate-chg.flat, .rate-change.flat { color:var(--sub); }
 .coin-img { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:block; }
 
+/* SEGMENTED */
+.seg { display:flex; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:3px; gap:3px; margin-bottom:4px; }
+.seg-btn { flex:1; background:none; border:none; border-radius:11px; padding:9px 0; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--sub2); cursor:pointer; transition:background 0.15s, color 0.15s; }
+.seg-btn.active { background:var(--t); color:var(--t-contrast); }
+#markets-head + .section { padding-top:8px; }
+
+/* ICONS: флаги и металлы в круглых значках */
+.flag-ico { width:38px; height:38px; border-radius:50%; flex-shrink:0; object-fit:cover; display:block; box-shadow:0 0 0 1px var(--border); }
+.flag-fb { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; background:var(--card2); }
+.metal-ico { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; letter-spacing:-0.3px; color:#1d1d1f; box-shadow:inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -2px 3px rgba(0,0,0,0.25); }
+.metal-item { cursor:pointer; }
+
 /* MARKET LIST — одна карточка с разделителями, как в биржевых приложениях */
 .list { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
 .list .rate-item, .list .metal-item { background:transparent; border:none; border-radius:0; margin:0; padding:13px 15px; border-bottom:1px solid var(--border); }
@@ -168,12 +175,6 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .metal-val { font-size:15px; font-weight:600; color:var(--text); text-align:right; }
 .metal-sub { font-size:11px; color:var(--sub); margin-top:2px; text-align:right; }
 
-/* COMPARE */
-.compare-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-.compare-name { font-size:13px; font-weight:600; color:var(--text); }
-.compare-bar-wrap { height:3px; background:var(--border); border-radius:2px; margin-top:5px; width:100px; }
-.compare-bar { height:3px; background:var(--t); border-radius:2px; transition:width 0.4s; }
-.compare-val { font-size:15px; font-weight:600; color:var(--t-emphasis); }
 
 /* CALCULATOR */
 .calc-display { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:20px 18px; margin-bottom:10px; min-height:110px; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; }
@@ -201,41 +202,30 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .fav-rate { font-size:14px; font-weight:600; color:var(--t-emphasis); }
 .fav-del { color:var(--sub); font-size:16px; cursor:pointer; padding:0 4px; }
 
-/* SIDE MENU */
-.menu-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:150; backdrop-filter:blur(4px); }
-.menu-overlay.open { display:block; }
-.side-menu { position:fixed; top:0; right:-270px; width:250px; height:100vh; background:#1c1c1e; z-index:200; transition:right 0.28s cubic-bezier(0.4,0,0.2,1); padding:24px 16px; overflow-y:auto; border-left:1px solid var(--border); }
-.side-menu.open { right:0; }
-.menu-head { display:flex; align-items:center; gap:12px; margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid var(--border); }
-.menu-logo { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:var(--t-contrast); }
-.menu-brand { font-size:15px; font-weight:700; color:var(--text); }
-.menu-item { display:flex; align-items:center; gap:13px; padding:12px 13px; border-radius:var(--r); cursor:pointer; transition:background 0.12s; margin-bottom:2px; }
-.menu-item:active { background:var(--card2); }
-.menu-item.active { background:var(--card2); }
-.menu-item.active .menu-item-label { color:var(--t-emphasis); font-weight:700; }
-.menu-icon { font-size:20px; width:26px; text-align:center; }
-.menu-item-label { font-size:14px; font-weight:500; color:var(--sub2); }
-.menu-badge { background:var(--t); border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:var(--t-contrast); margin-left:auto; }
 
-/* CHART MODAL */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; backdrop-filter:blur(4px); }
+/* CHART SHEET — как карточка инструмента на бирже */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; align-items:flex-end; justify-content:center; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
 .modal-overlay.open { display:flex; }
-.modal { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); }
-.modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-.modal-title { font-size:17px; font-weight:700; color:var(--text); }
-.modal-close { width:28px; height:28px; border-radius:50%; background:var(--card2); border:none; cursor:pointer; font-size:14px; color:var(--sub2); display:flex; align-items:center; justify-content:center; }
-.period-tabs { display:flex; gap:6px; margin-bottom:14px; }
-.period-btn { flex:1; padding:8px 4px; text-align:center; font-size:12px; font-weight:600; color:var(--sub2); cursor:pointer; border-radius:8px; border:none; background:var(--card2); transition:all 0.15s; }
-.period-btn.active { color:var(--t-contrast); background:var(--t); font-weight:700; }
-.chart-wrap { position:relative; height:180px; }
-.chart-stats { display:flex; gap:8px; margin-top:14px; }
-.stat-box { flex:1; background:var(--card2); border-radius:10px; padding:10px; text-align:center; }
-.stat-label { font-size:9px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
-.stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; }
-
-
-/* COMPARE SELECT */
-.cmp-row { display:flex; gap:8px; margin-bottom:0; }
+.modal { background:var(--bg); border-radius:24px 24px 0 0; padding:8px 16px calc(18px + env(safe-area-inset-bottom)); width:100%; max-width:480px; border-top:1px solid var(--border); animation:sheetUp 0.25s cubic-bezier(0.2,0.8,0.2,1); }
+@keyframes sheetUp { from { transform:translateY(40px); opacity:0; } to { transform:none; opacity:1; } }
+.sheet-grip { width:38px; height:4px; border-radius:2px; background:var(--border); margin:0 auto 12px; }
+.ch-head { display:flex; align-items:center; gap:12px; }
+.ch-names { flex:1; min-width:0; }
+.ch-name { font-size:16px; font-weight:700; color:var(--text); }
+.ch-pair { font-size:12px; color:var(--sub); margin-top:2px; font-weight:500; }
+.modal-close { width:32px; height:32px; border-radius:50%; background:var(--card); border:1px solid var(--border); cursor:pointer; font-size:13px; color:var(--sub2); display:flex; align-items:center; justify-content:center; }
+.ch-price { font-size:32px; font-weight:700; letter-spacing:-0.8px; color:var(--text); margin-top:16px; font-variant-numeric:tabular-nums; line-height:1.1; }
+.ch-sub { display:flex; align-items:center; gap:8px; margin-top:6px; min-height:22px; }
+.ch-date { font-size:12px; color:var(--sub); }
+.chart-wrap { position:relative; height:220px; margin:14px -6px 8px; }
+.period-tabs { display:flex; gap:4px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:3px; margin-bottom:12px; }
+.period-btn { flex:1; padding:8px 2px; text-align:center; font-size:12px; font-weight:600; color:var(--sub2); cursor:pointer; border-radius:9px; border:none; background:none; font-family:'Inter',sans-serif; transition:all 0.15s; }
+.period-btn.active { color:var(--text); background:var(--card2); box-shadow:0 0 0 1px var(--border); }
+.period-btn[hidden] { display:none; }
+.chart-stats { display:flex; gap:8px; margin-bottom:12px; }
+.stat-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px; }
+.stat-label { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; font-variant-numeric:tabular-nums; }
 
 /* LOADING */
 .loading { text-align:center; padding:50px 20px; color:var(--sub); font-size:13px; }
@@ -291,28 +281,10 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="header-right">
     <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn" aria-label="Язык / Language"><span id="lang-ru">RU</span><span id="lang-en">EN</span></button>
-    <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
 
-<!-- SIDE MENU -->
 <div class="update-counter"><span class="live-dot" style="display:inline-block;vertical-align:middle;margin-right:5px;"></span><span id="update-counter">Обновляется...</span></div>
-<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
-<div class="side-menu" id="side-menu">
-  <div class="menu-head">
-    <div class="menu-logo"><svg viewBox="0 0 100 100" width="20" height="20" style="display:block"><path d="M 21.8 39.7 A 30 30 0 0 1 73.0 30.7" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 78.2 60.3 A 30 30 0 0 1 27.0 69.3" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 82.0 41.4 L 65.3 37.1 L 80.6 24.3 Z" fill="currentColor"/><path d="M 18.0 58.6 L 34.7 62.9 L 19.4 75.7 Z" fill="currentColor"/></svg></div>
-    <div class="menu-brand">LSK Currency</div>
-  </div>
-  <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv"><div class="menu-icon">💱</div><div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div><div class="menu-badge" id="badge-conv">✓</div></div>
-  <div class="menu-item" onclick="switchTab('transfer')" id="nav-transfer"><div class="menu-icon">💸</div><div class="menu-item-label" data-ru="Переводы" data-en="Transfers">Переводы</div></div>
-  <div class="menu-item" onclick="switchTab('fiat')" id="nav-fiat"><div class="menu-icon">📊</div><div class="menu-item-label" data-ru="Фиат" data-en="Fiat">Фиат</div></div>
-  <div class="menu-item" onclick="switchTab('crypto')" id="nav-crypto"><div class="menu-icon">₿</div><div class="menu-item-label" data-ru="Крипта" data-en="Crypto">Крипта</div></div>
-  <div class="menu-item" onclick="switchTab('metals')" id="nav-metals"><div class="menu-icon">🥇</div><div class="menu-item-label" data-ru="Металлы" data-en="Metals">Металлы</div></div>
-  <div class="menu-item" onclick="switchTab('compare')" id="nav-compare"><div class="menu-icon">⚖️</div><div class="menu-item-label" data-ru="Сравни" data-en="Compare">Сравни</div></div>
-  <div class="menu-item" onclick="switchTab('calc')" id="nav-calc"><div class="menu-icon">⌗</div><div class="menu-item-label" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div></div>
-  <div class="menu-item" onclick="switchTab('saved')" id="nav-saved"><div class="menu-icon">⭐</div><div class="menu-item-label" data-ru="Сохранено" data-en="Saved">Сохранено</div></div>
-</div>
-
 <div class="ptr-indicator" id="ptr-indicator">↓ Потяни, чтобы обновить</div>
 <!-- КОНВЕРТЕР -->
 <div class="section active" id="tab-conv">
@@ -376,9 +348,18 @@ body.light-theme .footer { color:#555; }
   <div id="tr-result"></div>
 </div>
 
+<!-- РЫНКИ: валюты / крипта / металлы -->
+<div id="markets-head" style="display:none;padding:10px 14px 0;">
+  <div class="page-title" data-ru="Рынки" data-en="Markets">Рынки</div>
+  <div class="seg">
+    <button class="seg-btn active" data-tab="fiat" onclick="switchTab('fiat')" data-ru="Валюты" data-en="Currencies">Валюты</button>
+    <button class="seg-btn" data-tab="crypto" onclick="switchTab('crypto')" data-ru="Крипта" data-en="Crypto">Крипта</button>
+    <button class="seg-btn" data-tab="metals" onclick="switchTab('metals')" data-ru="Металлы" data-en="Metals">Металлы</button>
+  </div>
+</div>
+
 <!-- ФИАТ -->
 <div class="section" id="tab-fiat">
-  <div class="page-title" data-ru="Курсы валют" data-en="Exchange rates">Курсы валют</div>
   <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()"></div>
   <div class="loading" id="fiat-load"><div class="spinner"></div>Загрузка...</div>
   <div id="fiat-list"></div>
@@ -386,7 +367,6 @@ body.light-theme .footer { color:#555; }
 
 <!-- КРИПТА -->
 <div class="section" id="tab-crypto">
-  <div class="page-title" data-ru="Криптовалюты" data-en="Crypto">Криптовалюты</div>
   <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()"></div>
   <div class="loading" id="crypto-load"><div class="spinner"></div>Загрузка...</div>
   <div id="crypto-list"></div>
@@ -394,24 +374,8 @@ body.light-theme .footer { color:#555; }
 
 <!-- МЕТАЛЛЫ -->
 <div class="section" id="tab-metals">
-  <div class="page-title" data-ru="Металлы" data-en="Metals">Металлы</div>
   <div class="loading" id="metals-load"><div class="spinner"></div>Загрузка...</div>
   <div id="metals-list"></div>
-</div>
-
-<!-- СРАВНИ -->
-<div class="section" id="tab-compare">
-  <div class="page-title" data-ru="Сравни" data-en="Compare">Сравни</div>
-  <div class="card">
-    <div class="card-label" data-ru="Базовая валюта" data-en="Base currency">Базовая валюта</div>
-    <div class="cmp-row">
-      <input class="num-input" type="number" id="cmp-amount" value="100" oninput="renderCompare()" style="font-size:20px;width:45%;flex-shrink:0;">
-      <select class="cur-select" id="cmp-base" onchange="renderCompare()" style="flex:1;padding:11px 12px;">
-        <option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option><option value="UAH">🇺🇦 UAH</option><option value="GEL">🇬🇪 GEL</option><option value="RUB">🇷🇺 RUB</option><option value="GBP">🇬🇧 GBP</option><option value="CNY">🇨🇳 CNY</option><option value="BTC">₿ BTC</option><option value="ETH">⟠ ETH</option><option value="TON">💎 TON</option><option value="XAU">🥇 XAU</option>
-      </select>
-    </div>
-  </div>
-  <div id="compare-list"></div>
 </div>
 
 <!-- КАЛЬКУЛЯТОР -->
@@ -454,29 +418,36 @@ body.light-theme .footer { color:#555; }
 <nav class="tabbar" id="tabbar">
   <button class="tab-btn active" id="tb-conv" onclick="switchTab('conv')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Конвертер" data-en="Converter">Конвертер</span></button>
   <button class="tab-btn" id="tb-transfer" onclick="switchTab('transfer')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Переводы" data-en="Transfers">Переводы</span></button>
-  <button class="tab-btn" id="tb-fiat" onclick="switchTab('fiat')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><span data-ru="Курсы" data-en="Rates">Курсы</span></button>
-  <button class="tab-btn" id="tb-crypto" onclick="switchTab('crypto')"><span class="tab-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 7.5v9M9.5 8h4a2 2 0 0 1 0 4h-4m0 0h4.5a2 2 0 0 1 0 4H9.5M11 6.5V8m0 8v1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Крипта" data-en="Crypto">Крипта</span></button>
+  <button class="tab-btn" id="tb-markets" onclick="switchTab('markets')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><span data-ru="Рынки" data-en="Markets">Рынки</span></button>
+  <button class="tab-btn" id="tb-calc" onclick="switchTab('calc')"><span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span data-ru="Калькулятор" data-en="Calculator">Калькулятор</span></button>
   <button class="tab-btn" id="tb-saved" onclick="switchTab('saved')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span data-ru="Сохранено" data-en="Saved">Сохранено</span></button>
 </nav>
 
 <!-- CHART MODAL -->
 <div class="modal-overlay" id="chart-modal" onclick="closeModalBg(event)">
   <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title">Курс</div>
-      <button class="modal-close" onclick="closeChart()">✕</button>
+    <div class="sheet-grip"></div>
+    <div class="ch-head">
+      <div id="ch-ico"></div>
+      <div class="ch-names"><div class="ch-name" id="modal-title"></div><div class="ch-pair" id="ch-pair"></div></div>
+      <button class="modal-close" onclick="closeChart()" aria-label="Close">✕</button>
     </div>
-    <div class="period-tabs">
-      <div class="period-btn active" onclick="setPeriod('7',this)" data-ru="7 дней" data-en="7 days">7 дней</div>
-      <div class="period-btn" onclick="setPeriod('30',this)" data-ru="30 дней" data-en="30 days">30 дней</div>
-      <div class="period-btn" onclick="setPeriod('90',this)" data-ru="3 месяца" data-en="3 months">3 месяца</div>
-    </div>
+    <div class="ch-price" id="ch-price">—</div>
+    <div class="ch-sub"><span class="rate-change flat" id="stat-chg-pill"></span><span class="ch-date" id="ch-date"></span></div>
     <div class="chart-wrap"><canvas id="rateChart"></canvas><div id="chart-empty" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:12px;color:var(--sub);text-align:center;"></div></div>
+    <div class="period-tabs">
+      <button class="period-btn" data-days="1" onclick="setPeriod('1',this)" data-ru="1Д" data-en="1D">1Д</button>
+      <button class="period-btn" data-days="7" onclick="setPeriod('7',this)" data-ru="1Н" data-en="1W">1Н</button>
+      <button class="period-btn active" data-days="30" onclick="setPeriod('30',this)" data-ru="1М" data-en="1M">1М</button>
+      <button class="period-btn" data-days="90" onclick="setPeriod('90',this)" data-ru="3М" data-en="3M">3М</button>
+      <button class="period-btn" data-days="365" onclick="setPeriod('365',this)" data-ru="1Г" data-en="1Y">1Г</button>
+    </div>
     <div class="chart-stats">
       <div class="stat-box"><div class="stat-label" id="sl-min">Мин</div><div class="stat-val" id="stat-min">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-max">Макс</div><div class="stat-val" id="stat-max">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
+    <button class="tr-btn" id="ch-conv" onclick="convertFromChart()">Конвертировать</button>
   </div>
 </div>
 
@@ -493,7 +464,7 @@ const LS = {
 };
 
 let rates = {}, cryptoPrices = {}, cryptoChanges = {}, ratesYesterday = {};
-let chartInstance = null, chartCode = null, chartPeriod = '7';
+let chartInstance = null, chartCode = null, chartPeriod = '30', chartName = '';
 const starsUsd = 0.013;
 
 // Язык как в боте: сначала выбранный вручную, иначе по языку Telegram
@@ -659,6 +630,27 @@ function coinIcon(c) {
   return `<img class="coin-img" src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${file}.svg" alt="${c.code}" loading="lazy" onerror="this.outerHTML=this.dataset.fb" data-fb='${badge.replace(/'/g,"&#39;")}'>`;
 }
 
+// Круглые флаги (как в банковских приложениях); если картинка не загрузилась —
+// эмодзи-флаг в кружке
+const FLAG_CC = {EUR:'eu', XOF:null, XAF:null, ANG:null};
+function flagIcon(code, emoji) {
+  const fb = `<div class="flag-fb">${emoji||'🏳️'}</div>`;
+  const cc = code in FLAG_CC ? FLAG_CC[code] : code.slice(0,2).toLowerCase();
+  if (!cc) return fb;
+  return `<img class="flag-ico" src="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/1x1/${cc}.svg" alt="${code}" loading="lazy" onerror="this.outerHTML=this.dataset.fb" data-fb='${fb.replace(/'/g,"&#39;")}'>`;
+}
+// Значки металлов: «слиток» с химическим символом вместо эмодзи-медалей
+const METAL_STYLE = {
+  XAU:{sym:'Au', bg:'radial-gradient(circle at 30% 25%,#fff3c4 0%,#f2c94c 38%,#b8860b 100%)'},
+  XAG:{sym:'Ag', bg:'radial-gradient(circle at 30% 25%,#ffffff 0%,#d9dde3 40%,#8d949e 100%)'},
+  XPT:{sym:'Pt', bg:'radial-gradient(circle at 30% 25%,#f4f7fb 0%,#c3ccd8 40%,#6f7b8b 100%)'},
+  XPD:{sym:'Pd', bg:'radial-gradient(circle at 30% 25%,#f6f1ea 0%,#cfc6b8 40%,#857a6b 100%)'},
+};
+function metalIcon(code) {
+  const m = METAL_STYLE[code] || {sym:code.slice(1), bg:'var(--card2)'};
+  return `<div class="metal-ico" style="background:${m.bg}">${m.sym}</div>`;
+}
+
 // Знаки валют для строк вида «1 € = 45.25 ₴» (как fmt_pair_rate в боте)
 const SIGNS = {EUR:"€",USD:"$",UAH:"₴",GBP:"£",PLN:"zł",CHF:"₣",RUB:"₽",GEL:"₾",TRY:"₺",KZT:"₸",JPY:"¥",CNY:"¥",ILS:"₪",INR:"₹",AZN:"₼",AMD:"֏",BTC:"₿"};
 const sign = c => SIGNS[c] || c;
@@ -794,7 +786,7 @@ function renderFiat() {
         pctText = (v.pct > 0 ? '+' : '') + v.pct.toFixed(2) + '%';
       }
       return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang].replace(/'/g,"")}')">
-        <div class="rate-left"><div class="rate-flag">${c.flag}</div>
+        <div class="rate-left">${flagIcon(c.code, c.flag)}
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
         <div class="rate-right">
@@ -938,16 +930,37 @@ function filterCrypto() {
   });
 }
 
-// CHART
-async function openChart(code, name) {
-  chartCode=code;
+// CHART — карточка инструмента: цена, изменение, график с перекрестием
+function chartMeta(code) {
+  const crypto = CRYPTOS.find(c => c.code === code);
+  if (crypto) return {icon: coinIcon(crypto), pair: `${code} / USD`, unit: 'USD'};
+  if (METAL_STYLE[code]) return {icon: metalIcon(code), pair: `${code} / USD · ${T('унция','oz')}`, unit: 'USD'};
+  const f = FIAT.find(c => c.code === code);
   const r = rates[code];
-  // Для фиата подписываем, в какую сторону курс — как в списке
-  document.getElementById('modal-title').textContent = (!CRYPTO_SET.has(code) && r)
-    ? `${name} · ${r < 1 ? sign(code)+' → $' : '$ → '+sign(code)}` : name;
+  const inv = r && r < 1;
+  return {icon: flagIcon(code, f?.flag), pair: inv ? `${code} / USD` : `USD / ${code}`, unit: inv ? 'USD' : code};
+}
+function fmtChartPrice(v) {
+  const m = chartMeta(chartCode);
+  return m.unit === 'USD' ? `$${fmt(v)}` : `${fmt(v)} ${sign(m.unit)}`;
+}
+async function openChart(code, name) {
+  chartCode = code; chartName = name;
+  const m = chartMeta(code);
+  document.getElementById('ch-ico').innerHTML = m.icon;
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('ch-pair').textContent = m.pair;
+  document.getElementById('ch-price').textContent = '—';
+  document.getElementById('ch-date').textContent = '';
+  // Внутридневные данные есть только у крипты
+  const oneDay = document.querySelector('.period-btn[data-days="1"]');
+  oneDay.hidden = !CRYPTO_SET.has(code);
+  if (oneDay.hidden && chartPeriod === '1') chartPeriod = '30';
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.days === chartPeriod));
   document.getElementById('chart-empty').style.display = 'flex';
   document.getElementById('chart-empty').textContent = T('Загрузка...','Loading...');
   document.getElementById('chart-modal').classList.add('open');
+  haptic('light');
   await fetchAndDrawChart(code, chartPeriod);
 }
 
@@ -956,9 +969,19 @@ function closeModalBg(e) { if(e.target.id==='chart-modal') closeChart(); }
 
 async function setPeriod(days, btn) {
   chartPeriod=days;
+  haptic('light');
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(chartCode) await fetchAndDrawChart(chartCode, days);
+}
+
+function convertFromChart() {
+  const code = chartCode, r = rates[code];
+  let f = code, t = 'USD';
+  if (!CRYPTO_SET.has(code) && !METAL_STYLE[code] && r && r >= 1) { f = 'USD'; t = code; }
+  const has = v => [...document.getElementById('from-cur').options].some(o => o.value === v);
+  if (has(f) && has(t)) { document.getElementById('from-cur').value = f; document.getElementById('to-cur').value = t; }
+  closeChart(); switchTab('conv'); conv(true);
 }
 
 const dateLoc = () => lang === 'ru' ? 'ru' : 'en-US';
@@ -972,16 +995,16 @@ async function fetchAndDrawChart(code, days) {
       const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${days}`);
       const d=await r.json();
       if(d.prices) {
-        const step=Math.max(1,Math.floor(d.prices.length/60));
-        d.prices.filter((_,i)=>i%step===0).forEach(([ts,p])=>{
-          labels.push(new Date(ts).toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}));
+        const step=Math.max(1,Math.floor(d.prices.length/90));
+        d.prices.filter((_,i)=>i%step===0 || i===d.prices.length-1).forEach(([ts,p])=>{
+          labels.push(ts);
           data.push(p);
         });
       }
     } else {
       // Фиат — реальные дневные курсы. ~16 точек на любой период.
       const n = parseInt(days);
-      const step = Math.max(1, Math.round(n / 15));
+      const step = Math.max(1, Math.round(n / (n > 90 ? 26 : 16)));
       const latest = await fetchSnapshot('latest');
       const end = latest ? new Date(latest.date + 'T00:00:00Z') : new Date();
       const dates = [];
@@ -994,7 +1017,7 @@ async function fetchAndDrawChart(code, days) {
       snaps.forEach((sn, i) => {
         const v = sn?.usd?.[key];
         if (!v) return;
-        labels.push(new Date(dates[i] + 'T00:00:00Z').toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}));
+        labels.push(new Date(dates[i] + 'T12:00:00Z').getTime());
         data.push(inverted ? 1 / v : v);
       });
     }
@@ -1003,6 +1026,38 @@ async function fetchAndDrawChart(code, days) {
   drawChart(labels, data);
 }
 
+function chartDate(ts, withTime) {
+  const o = {day:'numeric', month:'short'};
+  if (chartPeriod === '365') o.year = '2-digit';
+  if (withTime) { o.hour = '2-digit'; o.minute = '2-digit'; }
+  return new Date(ts).toLocaleString(dateLoc(), o);
+}
+function setChartHeader(v, ts, base) {
+  document.getElementById('ch-price').textContent = fmtChartPrice(v);
+  const pct = base ? (v - base) / base * 100 : 0;
+  const pill = document.getElementById('stat-chg-pill');
+  pill.className = 'rate-change ' + (Math.abs(pct) < 0.005 ? 'flat' : pct > 0 ? 'up' : 'down');
+  pill.textContent = (pct > 0 ? '+' : '') + pct.toFixed(2) + '%';
+  document.getElementById('ch-date').textContent = ts ? chartDate(ts, chartPeriod === '1' || chartPeriod === '7' && CRYPTO_SET.has(chartCode)) : T('сейчас', 'now');
+}
+
+// Вертикальная линия-перекрестие и точка под пальцем
+const crosshair = {
+  id: 'crosshair',
+  afterDraw(chart) {
+    const a = chart.tooltip?.getActiveElements?.() || [];
+    if (!a.length) return;
+    const {x, y} = a[0].element, {top, bottom} = chart.chartArea, ctx = chart.ctx;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = chart.data.datasets[0].borderColor;
+    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#000'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+  }
+};
+
 function drawChart(labels, data) {
   if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
   const empty = document.getElementById('chart-empty');
@@ -1010,28 +1065,51 @@ function drawChart(labels, data) {
     empty.style.display = 'flex';
     empty.textContent = T('Не удалось загрузить график. Попробуй позже.', "Couldn't load the chart. Try again later.");
     ['stat-min','stat-max','stat-chg'].forEach(id => document.getElementById(id).textContent = '—');
+    document.getElementById('stat-chg-pill').textContent = '';
     return;
   }
   empty.style.display = 'none';
   const min=Math.min(...data), max=Math.max(...data);
   const first=data[0], last=data[data.length-1];
   const change=first?((last-first)/first*100):0;
-  const upColor = getComputedStyle(document.documentElement).getPropertyValue('--up').trim() || '#34c759';
-  const downColor = getComputedStyle(document.documentElement).getPropertyValue('--down').trim() || '#ff453a';
-  const color=change>=0?upColor:downColor;
-  document.getElementById('stat-min').textContent=fmt(min);
-  document.getElementById('stat-max').textContent=fmt(max);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const color = change>=0 ? (css('--up')||'#34c759') : (css('--down')||'#ff453a');
+  document.getElementById('stat-min').textContent=fmtChartPrice(min);
+  document.getElementById('stat-max').textContent=fmtChartPrice(max);
   const chgEl=document.getElementById('stat-chg');
   chgEl.textContent=(change>=0?'+':'')+change.toFixed(2)+'%';
   chgEl.style.color=change>=0?'var(--up)':'var(--down)';
+  setChartHeader(last, null, first);
   const ctx=document.getElementById('rateChart').getContext('2d');
-  const gradient=ctx.createLinearGradient(0,0,0,180);
-  gradient.addColorStop(0,color+'55'); gradient.addColorStop(1,color+'00');
+  const gradient=ctx.createLinearGradient(0,0,0,220);
+  gradient.addColorStop(0,color+'40'); gradient.addColorStop(1,color+'00');
+  const sub = css('--sub') || '#888';
   chartInstance=new Chart(ctx,{
     type:'line',
-    data:{ labels, datasets:[{ data, borderColor:color, backgroundColor:gradient, borderWidth:2, pointRadius:0, fill:true, tension:0.3 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ticks:{color:'#5a8080',font:{size:9},maxTicksLimit:6},grid:{color:'#0e2020'}}, y:{ticks:{color:'#5a8080',font:{size:9}},grid:{color:'#0e2020'}} } }
+    data:{ labels, datasets:[{ data, borderColor:color, backgroundColor:gradient, borderWidth:2, pointRadius:0, pointHoverRadius:0, fill:true, tension:0.25 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:350},
+      interaction:{ mode:'index', intersect:false },
+      events:['mousemove','mouseout','touchstart','touchmove','touchend'],
+      plugins:{ legend:{display:false}, tooltip:{ enabled:false } },
+      onHover:(e, els) => {
+        if (els.length && e.type !== 'mouseout' && e.type !== 'touchend') {
+          const i = els[0].index; setChartHeader(data[i], labels[i], first);
+        } else setChartHeader(last, null, first);
+      },
+      layout:{ padding:{ left:6, right:0 } },
+      scales:{
+        x:{ display:true, grid:{ display:false }, border:{ display:false },
+            ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:4, maxRotation:0, autoSkipPadding:24,
+                    callback:(v,i)=>chartDate(labels[i], false) } },
+        y:{ position:'right', grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false },
+            ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:5, padding:6, callback:v=>fmt(v) } }
+      }
+    },
+    plugins:[crosshair]
   });
+  // Сбросить заголовок, когда палец отпущен
+  ctx.canvas.ontouchend = ctx.canvas.onmouseleave = () => { chartInstance?.tooltip?.setActiveElements([], {x:0,y:0}); chartInstance?.update('none'); setChartHeader(last, null, first); };
 }
 
 function applyLang() {
@@ -1049,12 +1127,12 @@ function applyLang() {
   document.getElementById('sl-min').textContent=T('Мин','Min');
   document.getElementById('sl-max').textContent=T('Макс','Max');
   document.getElementById('sl-chg').textContent=T('Изм.','Chg.');
+  document.getElementById('ch-conv').textContent=T('Конвертировать','Convert');
   document.getElementById('ptr-indicator').textContent=T('↓ Потяни, чтобы обновить','↓ Pull to refresh');
   document.querySelectorAll('.loading').forEach(el => { if (el.lastChild?.nodeType === 3) el.lastChild.textContent = T('Загрузка...','Loading...'); });
   fillTransferSelects();
   renderFiat(); renderCrypto(); renderMetals(); conv(); updateCounter();
   if (document.getElementById('tab-saved').classList.contains('active')) renderSaved();
-  if (document.getElementById('tab-compare').classList.contains('active')) renderCompare();
   if (lastTransfer) renderTransfer(lastTransfer);
 }
 
@@ -1064,42 +1142,20 @@ function toggleLang() {
   applyLang();
 }
 
-function toggleMenu() {
-  const menu = document.getElementById('side-menu');
-  const overlay = document.getElementById('menu-overlay');
-  const btn = document.getElementById('hamburger');
-  const isOpen = menu.classList.contains('open');
-  menu.classList.toggle('open', !isOpen);
-  overlay.classList.toggle('open', !isOpen);
-  btn.classList.toggle('open', !isOpen);
-}
-
-function closeMenu() {
-  document.getElementById('side-menu').classList.remove('open');
-  document.getElementById('menu-overlay').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('open');
-}
-
+const MARKET_TABS = ['fiat','crypto','metals'];
+let lastMarket = 'fiat';
 function switchTab(n) {
   haptic('light');
-  document.querySelectorAll('.menu-item').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('[id^="badge-"]').forEach(b=>b.remove());
-  const navEl = document.getElementById('nav-'+n);
-  if(navEl) {
-    navEl.classList.add('active');
-    const badge = document.createElement('div');
-    badge.className='menu-badge';
-    badge.id='badge-'+n;
-    badge.textContent='✓';
-    navEl.appendChild(badge);
-  }
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.id==='tb-'+n));
+  if (n === 'markets') n = lastMarket;
+  const isMarket = MARKET_TABS.includes(n);
+  if (isMarket) lastMarket = n;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.id==='tb-'+(isMarket?'markets':n)));
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===n));
+  document.getElementById('markets-head').style.display = isMarket ? '' : 'none';
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active');
   if(n==='saved') renderSaved();
-  if(n==='compare') renderCompare();
   window.scrollTo(0,0);
-  closeMenu();
 }
 
 // CALCULATOR
@@ -1176,7 +1232,7 @@ function applyTheme(id) {
   // result card - тёмная подложка результата, для светлой темы тоже тёмная
   // (плашка результата остаётся акцентной подложкой, не белой)
   r.setProperty('--result-bg', th.light ? '#0f0f10ee' : th.s1+'ee');
-  document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
+  document.querySelectorAll('.brand-icon').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
   currentTheme = id;
 }
 
@@ -1287,9 +1343,9 @@ function renderMetals() {
   listEl.innerHTML = '<div class="group-title">'+title+'</div>' +
     '<div class="list">' + METALS_LIST.map(m => {
       const oz = metalPricesUSD[m.code]||0, g = oz/31.1035;
-      return '<div class="metal-item">' +
+      return '<div class="metal-item" onclick="openChart(\''+m.code+'\',\''+m[lang]+'\')">' +
       '<div class="rate-left">' +
-        '<div class="rate-flag">'+m.flag+'</div>' +
+        metalIcon(m.code) +
         '<div><div class="rate-name">'+m[lang]+'</div><div class="rate-code">'+m.code+'</div></div>' +
       '</div>' +
       '<div>' +
@@ -1310,55 +1366,6 @@ async function loadMetals() {
     }
   }
   renderMetals(); conv();
-}
-
-// COMPARE
-const COMPARE_LIST = [
-  {code:"UAH",name:"Гривна",nameEn:"Hryvnia",flag:"🇺🇦"},
-  {code:"USD",name:"Доллар",nameEn:"Dollar",flag:"🇺🇸"},
-  {code:"EUR",name:"Евро",nameEn:"Euro",flag:"🇪🇺"},
-  {code:"GEL",name:"Лари",nameEn:"Lari",flag:"🇬🇪"},
-  {code:"RUB",name:"Рубль",nameEn:"Ruble",flag:"🇷🇺"},
-  {code:"GBP",name:"Фунт",nameEn:"Pound",flag:"🇬🇧"},
-  {code:"CNY",name:"Юань",nameEn:"Yuan",flag:"🇨🇳"},
-  {code:"TRY",name:"Лира",nameEn:"Lira",flag:"🇹🇷"},
-  {code:"PLN",name:"Злотый",nameEn:"Zloty",flag:"🇵🇱"},
-  {code:"CHF",name:"Франк",nameEn:"Franc",flag:"🇨🇭"},
-  {code:"JPY",name:"Йена",nameEn:"Yen",flag:"🇯🇵"},
-  {code:"KZT",name:"Тенге",nameEn:"Tenge",flag:"🇰🇿"},
-  {code:"AED",name:"Дирхам",nameEn:"Dirham",flag:"🇦🇪"},
-  {code:"BYN",name:"Бел. рубль",nameEn:"Bel. Ruble",flag:"🇧🇾"},
-  {code:"CAD",name:"Канад. доллар",nameEn:"CAD",flag:"🇨🇦"},
-  {code:"AUD",name:"Австрал. доллар",nameEn:"AUD",flag:"🇦🇺"},
-  {code:"BTC",name:"Биткоин",nameEn:"Bitcoin",flag:"₿"},
-  {code:"ETH",name:"Эфириум",nameEn:"Ethereum",flag:"⟠"},
-  {code:"TON",name:"TON",nameEn:"TON",flag:"💎"},
-  {code:"USDT",name:"USDT",nameEn:"USDT",flag:"💵"},
-  {code:"SOL",name:"Solana",nameEn:"Solana",flag:"◎"},
-  {code:"XAU",name:"Золото",nameEn:"Gold",flag:"🥇"},
-  {code:"XAG",name:"Серебро",nameEn:"Silver",flag:"🥈"},
-];
-
-function renderCompare() {
-  const a = parseFloat(document.getElementById('cmp-amount').value)||1;
-  const base = document.getElementById('cmp-base').value;
-  const usd = toUSD(base, a);
-  const items = COMPARE_LIST.filter(c=>c.code!==base);
-  const vals = items.map(c=>({...c, val:fromUSD(usd,c.code)}));
-  const maxVal = Math.max(...vals.map(v=>v.val));
-  const baseName = COMPARE_LIST.find(c=>c.code===base);
-  const baseLabel = baseName ? baseName[lang==='en'?'nameEn':'name'] : base;
-  document.getElementById('compare-list').innerHTML =
-    '<div class="group-title">'+(lang==='ru'?fmt(a)+' '+baseLabel+' равно...':fmt(a)+' '+baseLabel+' equals...')+'</div>' +
-    vals.map(v=>`<div class="compare-card">
-      <div style="flex:1">
-        <div class="compare-name">${v.flag} ${lang==='en'?v.nameEn:v.name}</div>
-        <div class="compare-bar-wrap" style="width:100%;max-width:160px;margin-top:4px">
-          <div class="compare-bar" style="width:${maxVal?Math.min(100,v.val/maxVal*100):0}%"></div>
-        </div>
-      </div>
-      <div class="compare-val">${fmt(v.val)}</div>
-    </div>`).join('');
 }
 
 // === FEATURE 2: Real-time update counter ===
@@ -1389,7 +1396,7 @@ document.addEventListener('touchmove', e => {
   const scrollTop = document.documentElement.scrollTop;
   const diff = e.touches[0].clientY - ptrStartY;
   const indicator = document.getElementById('ptr-indicator');
-  if(document.querySelector('.modal-overlay.open,.side-menu.open')) return;
+  if(document.querySelector('.modal-overlay.open')) return;
   if(scrollTop === 0 && diff > 40) {
     ptrActive = true;
     if(indicator) { indicator.classList.add('visible'); indicator.textContent = diff > 80 ? (lang==='ru'?'Отпусти для обновления':'Release to refresh') : (lang==='ru'?'↓ Потяни для обновления':'↓ Pull to refresh'); }
