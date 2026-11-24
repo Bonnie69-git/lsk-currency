@@ -17,6 +17,7 @@
   --t2: #00c4ae;
   --t3: #008f7e;
   --t-contrast: #000000;
+  --t-emphasis: #00e5cc;
   --tg: #00e5cc18;
   --result-bg: #1c2333;
   --text: #ffffff;
@@ -118,10 +119,11 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .rate-code { font-size:11px; color:var(--sub); margin-top:2px; }
 .rate-right { text-align:right; }
 .rate-val { font-size:14px; font-weight:500; color:var(--text); }
-.rate-chg { font-size:11px; margin-top:2px; font-weight:600; }
-.rate-chg.up { color:var(--up); }
-.rate-chg.down { color:var(--down); }
-.rate-chg.flat { color:var(--sub); }
+.rate-chg, .rate-change { font-size:11px; margin-top:2px; font-weight:600; }
+.rate-chg.up, .rate-change.up { color:var(--up); }
+.rate-chg.down, .rate-change.down { color:var(--down); }
+.rate-chg.flat, .rate-change.flat { color:var(--sub); }
+.coin-img { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:block; }
 
 /* SEARCH */
 .search-wrap { position:relative; margin-bottom:12px; }
@@ -213,16 +215,32 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .loading { text-align:center; padding:50px 20px; color:var(--sub); font-size:13px; }
 .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--t-emphasis); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }
 @keyframes spin { to { transform:rotate(360deg); } }
-.footer-note { text-align:center; font-size:11px; color:var(--sub); margin-top:16px; }
+.footer-note, .footer { text-align:center; font-size:11px; color:var(--sub); margin-top:16px; }
+body.light-theme .footer { color:#555; }
+
+/* TRANSFERS */
+.tr-form { display:flex; flex-direction:column; gap:8px; }
+.tr-row { display:flex; gap:8px; align-items:center; }
+.tr-row .cur-select { flex:1; padding:12px; }
+.tr-arrow { color:var(--sub); font-size:14px; flex-shrink:0; }
+.tr-btn { background:var(--t); border:none; border-radius:var(--rf); padding:13px 0; font-size:14px; font-weight:600; color:var(--t-contrast); cursor:pointer; font-family:'Inter',sans-serif; width:100%; margin-top:4px; }
+.tr-btn:active { opacity:0.85; }
+.tr-btn:disabled { opacity:0.5; }
+.tr-offer { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:12px 15px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+.tr-offer.best { border-color:var(--t); }
+.tr-left { display:flex; align-items:center; gap:12px; min-width:0; }
+.tr-medal { font-size:20px; width:26px; text-align:center; flex-shrink:0; }
+.tr-name { font-size:14px; font-weight:600; color:var(--text); }
+.tr-det { font-size:11px; color:var(--sub); margin-top:2px; }
+.tr-recv { font-size:15px; font-weight:700; color:var(--t-emphasis); text-align:right; white-space:nowrap; }
+.tr-note { font-size:11px; color:var(--sub); background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:10px 13px; margin-top:8px; line-height:1.45; }
+.tr-tip { font-size:12px; color:var(--text); background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:10px 13px; margin:8px 0; }
 .empty-state { text-align:center; padding:30px 20px; color:var(--sub); font-size:13px; }
 
 /* PULL TO REFRESH */
 .ptr-indicator { text-align:center; padding:12px; font-size:12px; color:var(--sub); display:none; }
 .ptr-indicator.visible { display:block; }
 
-/* SPARKLINE */
-.sparkline-wrap { display:inline-block; vertical-align:middle; margin-left:8px; }
-.sparkline-canvas { display:block; }
 
 /* COUNTER */
 .update-counter { font-size:10px; color:var(--sub); text-align:center; padding:6px; }
@@ -231,7 +249,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
 @keyframes numFade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 .conv-result-num.animating { animation: numFade 0.25s ease-out; }
 
-/* RATE ITEM with sparkline */
+/* RATE ITEM */
 .rate-item-inner { display:flex; align-items:center; justify-content:space-between; width:100%; }
 </style>
 </head>
@@ -242,7 +260,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
     <div class="brand-icon"><svg viewBox="0 0 100 100" width="20" height="20" style="display:block"><path d="M 21.8 39.7 A 30 30 0 0 1 73.0 30.7" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 78.2 60.3 A 30 30 0 0 1 27.0 69.3" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 82.0 41.4 L 65.3 37.1 L 80.6 24.3 Z" fill="currentColor"/><path d="M 18.0 58.6 L 34.7 62.9 L 19.4 75.7 Z" fill="currentColor"/></svg></div>
     <div>
       <div class="brand-text-main">LSK Currency</div>
-      <div class="brand-text-sub">LIVE EXCHANGE RATES</div>
+      <div class="brand-text-sub" id="brand-sub">LIVE EXCHANGE RATES</div>
     </div>
   </div>
   <div class="header-right">
@@ -261,6 +279,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
     <div class="menu-brand">LSK Currency</div>
   </div>
   <div class="menu-item active" onclick="switchTab('conv')" id="nav-conv"><div class="menu-icon">💱</div><div class="menu-item-label" data-ru="Конвертер" data-en="Converter">Конвертер</div><div class="menu-badge" id="badge-conv">✓</div></div>
+  <div class="menu-item" onclick="switchTab('transfer')" id="nav-transfer"><div class="menu-icon">💸</div><div class="menu-item-label" data-ru="Переводы" data-en="Transfers">Переводы</div></div>
   <div class="menu-item" onclick="switchTab('fiat')" id="nav-fiat"><div class="menu-icon">📊</div><div class="menu-item-label" data-ru="Фиат" data-en="Fiat">Фиат</div></div>
   <div class="menu-item" onclick="switchTab('crypto')" id="nav-crypto"><div class="menu-icon">₿</div><div class="menu-item-label" data-ru="Крипта" data-en="Crypto">Крипта</div></div>
   <div class="menu-item" onclick="switchTab('metals')" id="nav-metals"><div class="menu-icon">🥇</div><div class="menu-item-label" data-ru="Металлы" data-en="Metals">Металлы</div></div>
@@ -269,7 +288,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
   <div class="menu-item" onclick="switchTab('saved')" id="nav-saved"><div class="menu-icon">⭐</div><div class="menu-item-label" data-ru="Сохранено" data-en="Saved">Сохранено</div></div>
 </div>
 
-<div class="ptr-indicator" id="ptr-indicator">↓ Потяни чтобы обновить</div>
+<div class="ptr-indicator" id="ptr-indicator">↓ Потяни, чтобы обновить</div>
 <!-- КОНВЕРТЕР -->
 <div class="section active" id="tab-conv">
   <div class="converter-card">
@@ -306,10 +325,28 @@ body.light-theme .empty-state { color:#0a0a0a; }
     <button class="copy-btn" id="copy-btn" onclick="copyResult()">Копировать</button>
     <button class="fav-icon-btn" id="add-fav-btn" onclick="addFav()" aria-label="Добавить в избранное">⭐</button>
   </div>
+  <button class="tr-btn" id="conv-transfer-btn" onclick="openTransferFromConv()" style="background:var(--card);color:var(--text);border:1px solid var(--border);margin:0 0 8px;">💸 Сравнить переводы</button>
   <div class="multi-card">
     <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
     <div id="multi-list"></div>
   </div>
+</div>
+
+<!-- ПЕРЕВОДЫ -->
+<div class="section" id="tab-transfer">
+  <div class="card">
+    <div class="card-label" data-ru="Где выгоднее перевести" data-en="Cheapest way to send">Где выгоднее перевести</div>
+    <div class="tr-form">
+      <input class="num-input" type="number" id="tr-amount" value="200" min="1" inputmode="decimal" style="font-size:20px;">
+      <div class="tr-row">
+        <select class="cur-select" id="tr-from"></select>
+        <span class="tr-arrow">→</span>
+        <select class="cur-select" id="tr-to"></select>
+      </div>
+      <button class="tr-btn" id="tr-btn" onclick="runTransfer()">Сравнить</button>
+    </div>
+  </div>
+  <div id="tr-result"></div>
 </div>
 
 <!-- ФИАТ -->
@@ -393,7 +430,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
       <div class="period-btn" onclick="setPeriod('30',this)" data-ru="30 дней" data-en="30 days">30 дней</div>
       <div class="period-btn" onclick="setPeriod('90',this)" data-ru="3 месяца" data-en="3 months">3 месяца</div>
     </div>
-    <div class="chart-wrap"><canvas id="rateChart"></canvas></div>
+    <div class="chart-wrap"><canvas id="rateChart"></canvas><div id="chart-empty" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:12px;color:var(--sub);text-align:center;"></div></div>
     <div class="chart-stats">
       <div class="stat-box"><div class="stat-label" id="sl-min">Мин</div><div class="stat-val" id="stat-min">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-max">Макс</div><div class="stat-val" id="stat-max">—</div></div>
@@ -411,12 +448,33 @@ body.light-theme .empty-state { color:#0a0a0a; }
 </div>
 
 <script>
-if (window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+const TG = window.Telegram?.WebApp;
+if (TG) { TG.ready(); TG.expand(); }
 
-let rates = {}, cryptoPrices = {}, cryptoChanges = {}, prevRates = {}, prevCrypto = {};
+// localStorage может быть недоступен (приватный режим, старые WebView) —
+// все чтения/записи через обёртку, чтобы приложение не падало
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  json(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } },
+};
+
+let rates = {}, cryptoPrices = {}, cryptoChanges = {}, ratesYesterday = {};
 let chartInstance = null, chartCode = null, chartPeriod = '7';
 const starsUsd = 0.013;
-let lang = 'ru';
+
+// Язык как в боте: сначала выбранный вручную, иначе по языку Telegram
+// (русский для ru/uk/be/kk/... — тот же список, что TG_RU_LANGS в боте)
+const TG_RU_LANGS = ['ru','uk','be','kk','ky','uz','tg','hy','az','ka'];
+function detectLang() {
+  const saved = LS.get('lsk_lang', null);
+  if (saved === 'ru' || saved === 'en') return saved;
+  const code = (TG?.initDataUnsafe?.user?.language_code || navigator.language || '').split('-')[0].toLowerCase();
+  if (!code) return 'ru';
+  return TG_RU_LANGS.includes(code) ? 'ru' : 'en';
+}
+let lang = detectLang();
+const T = (ru, en) => lang === 'ru' ? ru : en;
 
 const NAMES = {
   ru: { USD:"🇺🇸 Доллар",EUR:"🇪🇺 Евро",UAH:"🇺🇦 Гривна",GEL:"🇬🇪 Лари",RUB:"🇷🇺 Рубль",TRY:"🇹🇷 Лира",GBP:"🇬🇧 Фунт",JPY:"🇯🇵 Йена",CNY:"🇨🇳 Юань",PLN:"🇵🇱 Злотый",KZT:"🇰🇿 Тенге",AZN:"🇦🇿 Манат",AED:"🇦🇪 Дирхам",BYN:"🇧🇾 Бел.рубль",CHF:"🇨🇭 Франк",XTR:"⭐ Stars",BTC:"₿ Биткоин",ETH:"⟠ Эфириум",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" },
@@ -544,7 +602,7 @@ const CRYPTOS = [
   {code:"ADA", short:"ADA", color:"#3468D1", ru:"Cardano",     en:"Cardano",      id:"cardano"},
   {code:"TRX", short:"TRX", color:"#EF4444", ru:"TRON",        en:"TRON",         id:"tron"},
   {code:"AVAX",short:"AVAX",color:"#E84142", ru:"Avalanche",   en:"Avalanche",    id:"avalanche-2"},
-  {code:"MATIC",short:"MATIC",color:"#8247E5",ru:"Polygon",     en:"Polygon",      id:"matic-network"},
+  {code:"POL", short:"POL", color:"#8247E5", ru:"Polygon",     en:"Polygon",      id:"polygon-ecosystem-token", icon:"matic"},
   {code:"DOT", short:"DOT", color:"#E6007A", ru:"Polkadot",    en:"Polkadot",     id:"polkadot"},
   {code:"LTC", short:"LTC", color:"#5D9CD6", ru:"Litecoin",    en:"Litecoin",     id:"litecoin"},
   {code:"BCH", short:"BCH", color:"#8DC351", ru:"Bitcoin Cash",en:"Bitcoin Cash", id:"bitcoin-cash"},
@@ -555,35 +613,105 @@ const CRYPTOS = [
 ];
 const CRYPTO_IDS = Object.fromEntries(CRYPTOS.map(c=>[c.code,c.id]));
 const CRYPTO_SET = new Set(CRYPTOS.map(c=>c.code));
+// Логотипы монет (в вебе кастомные эмодзи Telegram не отображаются).
+// Если иконки нет (TON) или CDN недоступен — показываем цветной кружок с тикером.
+const NO_ICON = new Set(['TON']);
+function coinIcon(c) {
+  const badge = `<div class="coin-badge" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}40">${c.short.slice(0,4)}</div>`;
+  if (NO_ICON.has(c.code)) return badge;
+  const file = (c.icon || c.code).toLowerCase();
+  return `<img class="coin-img" src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${file}.svg" alt="${c.code}" loading="lazy" onerror="this.outerHTML=this.dataset.fb" data-fb='${badge.replace(/'/g,"&#39;")}'>`;
+}
+
+// Знаки валют для строк вида «1 € = 45.25 ₴» (как fmt_pair_rate в боте)
+const SIGNS = {EUR:"€",USD:"$",UAH:"₴",GBP:"£",PLN:"zł",CHF:"₣",RUB:"₽",GEL:"₾",TRY:"₺",KZT:"₸",JPY:"¥",CNY:"¥",ILS:"₪",INR:"₹",AZN:"₼",AMD:"֏",BTC:"₿"};
+const sign = c => SIGNS[c] || c;
+function fmtPairRate(f, t, rate, invertBelow = 0.1) {
+  if (!rate || !isFinite(rate)) return '—';
+  if (rate < invertBelow) { [f, t] = [t, f]; rate = 1 / rate; }
+  return `1 ${sign(f)} = ${fmt(rate)} ${sign(t)}`;
+}
+function fmtMoney(n, cur) {
+  const loc = lang === 'ru' ? 'ru' : 'en-US';
+  const num = n >= 100 ? n.toLocaleString(loc, {maximumFractionDigits:0})
+                       : n.toLocaleString(loc, {maximumFractionDigits:2});
+  return `${num} ${sign(cur)}`;
+}
 
 function fmt(n) {
   if (!n||isNaN(n)) return "—";
+  const loc = lang === 'ru' ? 'ru' : 'en-US';
   if (n>=1e9) return (n/1e9).toFixed(3)+"B";
   if (n>=1e6) return (n/1e6).toFixed(3)+"M";
-  if (n>=1000) return n.toLocaleString('ru',{maximumFractionDigits:0});
-  if (n>=1) return n.toLocaleString('ru',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if (n>=1000) return n.toLocaleString(loc,{maximumFractionDigits:0});
+  if (n>=1) return n.toLocaleString(loc,{minimumFractionDigits:2,maximumFractionDigits:2});
   if (n>=0.01) return n.toFixed(4);
   return n.toFixed(8);
 }
 
+// Дневные снимки курсов (fawazahmed0/currency-api) — для настоящих графиков
+// фиата, изменения за сутки и цен металлов. Раньше график фиата рисовался
+// случайными числами, а металлы брались из несуществующего эндпоинта.
+const snapCache = {};
+const isoDate = d => d.toISOString().slice(0,10);
+async function fetchSnapshot(tag) {
+  if (snapCache[tag]) return snapCache[tag];
+  const p = (async () => {
+    const urls = [
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${tag}/v1/currencies/usd.min.json`,
+      `https://${tag}.currency-api.pages.dev/v1/currencies/usd.min.json`,
+    ];
+    for (const u of urls) {
+      try {
+        const r = await fetch(u, {signal: AbortSignal.timeout(8000)});
+        if (r.ok) { const d = await r.json(); if (d.usd) return d; }
+      } catch {}
+    }
+    return null;
+  })();
+  snapCache[tag] = p;
+  const res = await p;
+  if (!res) delete snapCache[tag];
+  return res;
+}
+
 async function loadFiat() {
-  try {
-    prevRates = {...rates};
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const d = await r.json();
-    rates = d.rates||{};
-    rates['USD']=1; rates['XTR']=1/starsUsd;
-    renderFiat(); conv();
-    lastUpdateTime = Date.now();
-    updateCounter();
-    updateSparklineHistory();
-    setTimeout(addSparklinesToRates, 500);
-  } catch(e) {}
+  const sources = [
+    ['https://api.exchangerate-api.com/v4/latest/USD', 'rates'],
+    ['https://open.er-api.com/v6/latest/USD', 'rates'],
+  ];
+  for (const [url, key] of sources) {
+    try {
+      const d = await (await fetch(url, {signal: AbortSignal.timeout(8000)})).json();
+      if (d[key] && Object.keys(d[key]).length) {
+        rates = d[key];
+        rates['USD']=1; rates['XTR']=1/starsUsd;
+        break;
+      }
+    } catch {}
+  }
+  renderFiat(); conv();
+  lastUpdateTime = Date.now();
+  updateCounter();
+}
+
+// Изменение за сутки: сравниваем два дневных снимка одного источника
+async function loadDailyChanges() {
+  const today = await fetchSnapshot('latest');
+  if (!today) return;
+  const d = new Date(today.date + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - 1);
+  const prev = await fetchSnapshot(isoDate(d));
+  if (!prev) return;
+  ratesYesterday = {};
+  for (const k in today.usd) {
+    const a = today.usd[k], b = prev.usd[k];
+    if (a && b) ratesYesterday[k.toUpperCase()] = (a - b) / b; // относит. изменение «валюта за 1 USD»
+  }
+  renderFiat();
 }
 
 async function loadCrypto() {
   try {
-    prevCrypto = {...cryptoPrices};
     const ids = CRYPTOS.map(c=>c.id).join(',');
     const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
     const d = await r.json();
@@ -601,33 +729,49 @@ async function loadCrypto() {
     }
   }
   renderCrypto(); conv();
+  lastUpdateTime = Date.now();
+}
+
+// Показываем курс в ту сторону, где число не мелкое: «1 $ = 45.39 ₴»,
+// но «1 € = 1.09 $» вместо «0.9161». Изменение — для показанного числа.
+function fiatView(code) {
+  const r = rates[code] || 0;
+  const inverted = r && r < 1;
+  const text = r ? fmtPairRate('USD', code, r, 1) : '—';
+  const chg = ratesYesterday[code];
+  let pct = null;
+  if (chg !== undefined) pct = inverted ? (1/(1+chg) - 1) * 100 : chg * 100;
+  return {text, pct, inverted};
 }
 
 function renderFiat() {
+  if (!Object.keys(rates).length) return;
   document.getElementById('fiat-load').style.display='none';
-  const title = lang==='ru'?'Курсы к доллару США (нажми для графика)':'Rates to USD (tap for chart)';
+  const title = T('Курсы к доллару США (нажми для графика)','Rates vs US dollar (tap for chart)');
   document.getElementById('fiat-list').innerHTML =
     `<div class="group-title">${title}</div>` +
     FIAT.map(c => {
-      const r = rates[c.code]||0;
-      const prev = prevRates[c.code]||r;
-      const diff = prev ? (r-prev)/prev*100 : 0;
-      const cls = Math.abs(diff)<0.001?'flat':diff>0?'up':'down';
-      const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
-      const pctText = Math.abs(diff)<0.001 ? '' : (diff>0?'+':'')+diff.toFixed(2)+'%';
-      return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
+      const v = fiatView(c.code);
+      let cls = 'flat', pctText = '';
+      if (v.pct !== null && Math.abs(v.pct) >= 0.005) {
+        cls = v.pct > 0 ? 'up' : 'down';
+        pctText = (v.pct > 0 ? '▲ +' : '▼ ') + v.pct.toFixed(2) + '%';
+      }
+      return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang].replace(/'/g,"")}')">
         <div class="rate-left"><div class="rate-flag">${c.flag}</div>
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
         <div class="rate-right">
-          <div class="rate-val">${fmt(r)}</div>
-          <div class="rate-change ${cls}">${arrow} ${pctText}</div>
+          <div class="rate-val">${v.text}</div>
+          <div class="rate-change ${cls}">${pctText}</div>
         </div>
       </div>`;
-    }).join('') + `<div class="footer">${lang==='ru'?'Обновляется каждые 30 секунд':'Updated every 30 seconds'}</div>`;
+    }).join('') + `<div class="footer">${T('ExchangeRate-API · изменение за сутки','ExchangeRate-API · 24h change')}</div>`;
+  filterFiat();
 }
 
 function renderCrypto() {
+  if (!Object.keys(cryptoPrices).some(k => cryptoPrices[k])) return;
   document.getElementById('crypto-load').style.display='none';
   const title = lang==='ru'?'Топ криптовалют (нажми для графика)':'Top crypto (tap for chart)';
   document.getElementById('crypto-list').innerHTML =
@@ -638,7 +782,7 @@ function renderCrypto() {
       const cls = Math.abs(chg)<0.01?'flat':chg>0?'up':'down';
       const arrow = cls==='up'?'▲':cls==='down'?'▼':'';
       return `<div class="rate-item" data-code="${c.code}" onclick="openChart('${c.code}','${c[lang]}')">
-        <div class="rate-left"><div class="coin-badge" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}40">${c.short.slice(0,4)}</div>
+        <div class="rate-left">${coinIcon(c)}
           <div><div class="rate-name">${c[lang]}</div><div class="rate-code">${c.code}</div></div>
         </div>
         <div class="rate-right">
@@ -647,6 +791,7 @@ function renderCrypto() {
         </div>
       </div>`;
     }).join('') + `<div class="footer">CoinGecko · ${lang==='ru'?'изм. за 24ч':'24h change'}</div>`;
+  filterCrypto();
 }
 
 function toUSD(c,a) {
@@ -696,8 +841,10 @@ function conv(userAction=false) {
   const r1=fromUSD(toUSD(f,1),t);
   animateResult(fmt(res));
   document.getElementById('r-cur').textContent=`${n[f]||f} → ${n[t]||t}`;
-  document.getElementById('r-rate').textContent=`1 ${f} = ${fmt(r1)} ${t}`;
+  document.getElementById('r-rate').textContent=fmtPairRate(f, t, r1);
   renderMulti(f, a);
+  const tb = document.getElementById('conv-transfer-btn');
+  if (tb) tb.style.display = (isTransferFiat(f) && isTransferFiat(t) && f !== t) ? '' : 'none';
   // Only log real user-triggered conversions (not background rate refreshes),
   // and debounce so typing "1" -> "10" -> "100" doesn't create 3 entries.
   if(userAction && a>0 && res>0) {
@@ -739,7 +886,12 @@ function filterCrypto() {
 // CHART
 async function openChart(code, name) {
   chartCode=code;
-  document.getElementById('modal-title').textContent=name;
+  const r = rates[code];
+  // Для фиата подписываем, в какую сторону курс — как в списке
+  document.getElementById('modal-title').textContent = (!CRYPTO_SET.has(code) && r)
+    ? `${name} · ${r < 1 ? sign(code)+' → $' : '$ → '+sign(code)}` : name;
+  document.getElementById('chart-empty').style.display = 'flex';
+  document.getElementById('chart-empty').textContent = T('Загрузка...','Loading...');
   document.getElementById('chart-modal').classList.add('open');
   await fetchAndDrawChart(code, chartPeriod);
 }
@@ -754,7 +906,10 @@ async function setPeriod(days, btn) {
   if(chartCode) await fetchAndDrawChart(chartCode, days);
 }
 
+const dateLoc = () => lang === 'ru' ? 'ru' : 'en-US';
+let chartReq = 0;
 async function fetchAndDrawChart(code, days) {
+  const req = ++chartReq;
   let labels=[], data=[];
   try {
     if(CRYPTO_SET.has(code)) {
@@ -762,39 +917,47 @@ async function fetchAndDrawChart(code, days) {
       const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${days}`);
       const d=await r.json();
       if(d.prices) {
-        // Берём каждую N-ю точку чтобы не перегружать
         const step=Math.max(1,Math.floor(d.prices.length/60));
         d.prices.filter((_,i)=>i%step===0).forEach(([ts,p])=>{
-          labels.push(new Date(ts).toLocaleDateString('ru',{month:'short',day:'numeric'}));
+          labels.push(new Date(ts).toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}));
           data.push(p);
         });
       }
     } else {
-      // Фиат — симулируем тренд на основе текущего курса
-      const base=rates[code]||1;
-      const volatility=0.008;
-      let val=base*(1-(Math.random()*volatility*parseInt(days)));
-      for(let i=parseInt(days);i>=0;i--) {
-        const d=new Date(); d.setDate(d.getDate()-i);
-        labels.push(d.toLocaleDateString('ru',{month:'short',day:'numeric'}));
-        val=val*(1+(Math.random()-0.48)*volatility);
-        data.push(val);
-      }
-      data[data.length-1]=base;
+      // Фиат — реальные дневные курсы. ~16 точек на любой период.
+      const n = parseInt(days);
+      const step = Math.max(1, Math.round(n / 15));
+      const latest = await fetchSnapshot('latest');
+      const end = latest ? new Date(latest.date + 'T00:00:00Z') : new Date();
+      const dates = [];
+      for (let i = n; i > 0; i -= step) { const d = new Date(end); d.setUTCDate(d.getUTCDate() - i); dates.push(isoDate(d)); }
+      const snaps = await Promise.all(dates.map(fetchSnapshot));
+      snaps.push(latest); dates.push(isoDate(end));
+      const key = code.toLowerCase();
+      const r0 = rates[code] || latest?.usd?.[key] || 0;
+      const inverted = r0 && r0 < 1;
+      snaps.forEach((sn, i) => {
+        const v = sn?.usd?.[key];
+        if (!v) return;
+        labels.push(new Date(dates[i] + 'T00:00:00Z').toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}));
+        data.push(inverted ? 1 / v : v);
+      });
     }
-  } catch(e) {
-    const base=(rates[code]||cryptoPrices[code]||1);
-    for(let i=parseInt(days);i>=0;i--) {
-      const d=new Date(); d.setDate(d.getDate()-i);
-      labels.push(d.toLocaleDateString('ru',{month:'short',day:'numeric'}));
-      data.push(base*(1+(Math.random()-0.5)*0.04));
-    }
-  }
+  } catch(e) {}
+  if (req !== chartReq) return; // пользователь уже переключил период/валюту
   drawChart(labels, data);
 }
 
 function drawChart(labels, data) {
-  if(chartInstance) chartInstance.destroy();
+  if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  const empty = document.getElementById('chart-empty');
+  if (data.length < 2) {
+    empty.style.display = 'flex';
+    empty.textContent = T('Не удалось загрузить график. Попробуй позже.', "Couldn't load the chart. Try again later.");
+    ['stat-min','stat-max','stat-chg'].forEach(id => document.getElementById(id).textContent = '—');
+    return;
+  }
+  empty.style.display = 'none';
   const min=Math.min(...data), max=Math.max(...data);
   const first=data[0], last=data[data.length-1];
   const change=first?((last-first)/first*100):0;
@@ -816,23 +979,35 @@ function drawChart(labels, data) {
   });
 }
 
-function toggleLang() {
-  lang=lang==='ru'?'en':'ru';
+function applyLang() {
+  document.documentElement.lang = lang;
   document.getElementById('lang-btn').textContent=lang==='ru'?'EN':'RU';
-  document.querySelectorAll('.tab[data-ru]').forEach(t=>t.textContent=t.dataset[lang]);
-  document.querySelectorAll('[data-ru].card-label').forEach(el=>el.textContent=el.dataset[lang]);
-  document.getElementById('copy-btn').textContent=lang==='ru'?'Копировать':'Copy';
-  document.getElementById('fiat-search').placeholder=lang==='ru'?'Поиск валюты...':'Search currency...';
-  document.getElementById('crypto-search').placeholder=lang==='ru'?'Поиск крипты...':'Search crypto...';
-  document.querySelectorAll('.period-btn[data-ru]').forEach(b=>b.textContent=b.dataset[lang]);
-  document.getElementById('sl-min').textContent=lang==='ru'?'Мин':'Min';
-  document.getElementById('sl-max').textContent=lang==='ru'?'Макс':'Max';
-  document.getElementById('sl-chg').textContent=lang==='ru'?'Изм.':'Chg.';
-  document.querySelectorAll('.menu-item-label[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
-  const th=document.getElementById('theme-header');if(th)th.textContent=lang==='ru'?'Выбери тему':'Choose theme';
-  const mt = document.getElementById('multi-title');
-  if(mt) mt.textContent = mt.dataset[lang];
-  renderFiat(); renderCrypto(); conv();
+  document.querySelectorAll('[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
+  document.getElementById('brand-sub').textContent=T('КУРСЫ ВАЛЮТ ОНЛАЙН','LIVE EXCHANGE RATES');
+  document.getElementById('copy-btn').textContent=T('Копировать','Copy');
+  document.getElementById('add-fav-btn').setAttribute('aria-label', T('Добавить в избранное','Add to favorites'));
+  document.getElementById('conv-transfer-btn').textContent=T('💸 Сравнить переводы','💸 Compare transfers');
+  document.getElementById('tr-btn').textContent=T('Сравнить','Compare');
+  document.getElementById('theme-btn-text').textContent=T('Тема','Theme');
+  document.getElementById('fiat-search').placeholder=T('Поиск валюты...','Search currency...');
+  document.getElementById('crypto-search').placeholder=T('Поиск крипты...','Search crypto...');
+  document.getElementById('sl-min').textContent=T('Мин','Min');
+  document.getElementById('sl-max').textContent=T('Макс','Max');
+  document.getElementById('sl-chg').textContent=T('Изм.','Chg.');
+  document.getElementById('theme-header').textContent=T('Выбери тему','Choose theme');
+  document.getElementById('ptr-indicator').textContent=T('↓ Потяни, чтобы обновить','↓ Pull to refresh');
+  document.querySelectorAll('.loading').forEach(el => { if (el.lastChild?.nodeType === 3) el.lastChild.textContent = T('Загрузка...','Loading...'); });
+  fillTransferSelects();
+  renderFiat(); renderCrypto(); renderMetals(); conv(); updateCounter();
+  if (document.getElementById('tab-saved').classList.contains('active')) renderSaved();
+  if (document.getElementById('tab-compare').classList.contains('active')) renderCompare();
+  if (lastTransfer) renderTransfer(lastTransfer);
+}
+
+function toggleLang() {
+  lang = lang==='ru'?'en':'ru';
+  LS.set('lsk_lang', lang);
+  applyLang();
 }
 
 function toggleMenu() {
@@ -859,7 +1034,7 @@ function switchTab(n) {
   if(navEl) {
     navEl.classList.add('active');
     const badge = document.createElement('div');
-    badge.className='current-tab-badge';
+    badge.className='menu-badge';
     badge.id='badge-'+n;
     badge.textContent='✓';
     navEl.appendChild(badge);
@@ -868,6 +1043,7 @@ function switchTab(n) {
   document.getElementById('tab-'+n).classList.add('active');
   if(n==='saved') renderSaved();
   if(n==='compare') renderCompare();
+  window.scrollTo(0,0);
   closeMenu();
 }
 
@@ -911,7 +1087,7 @@ const THEMES = [
     sub:'#a8a8ac', sub2:'#c7c7cc', emphasis:'#d6d6d6', light:true},
 ];
 
-let currentTheme = localStorage.getItem('lsk_theme') || 'teal';
+let currentTheme = LS.get('lsk_theme', 'teal');
 
 const DEFAULTS = { bg:'#000000', card:'#1c1c1e', card2:'#111113', text:'#ffffff', border:'#2a2a2c', contrast:'#000000' };
 
@@ -949,7 +1125,7 @@ function applyTheme(id) {
   if(dot) dot.style.background = th.t;
   document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
   currentTheme = id;
-  localStorage.setItem('lsk_theme', id);
+  LS.set('lsk_theme', id);
 }
 
 function renderThemeGrid() {
@@ -975,20 +1151,32 @@ function closeTheme(e) { if(e.target.id==='theme-overlay') closeThemePanel(); }
 applyTheme(currentTheme);
 
 // LOCAL STORAGE
-let lsHistory = JSON.parse(localStorage.getItem('lsk_hist')||'[]');
-let lsFavs = JSON.parse(localStorage.getItem('lsk_favs')||'[]');
+let lsHistory = LS.json('lsk_hist', []);
+let lsFavs = LS.json('lsk_favs', []);
+
+// «сегодня 14:05» / «вчера 09:12» / «12 нояб., 18:40» — как история в боте
+function histWhen(h) {
+  if (!h.ts) return h.time || '';
+  const d = new Date(h.ts), now = new Date();
+  const hm = d.toLocaleTimeString(dateLoc(), {hour:'2-digit', minute:'2-digit'});
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 86400000);
+  if (diff === 0) return T('сегодня ','today ') + hm;
+  if (diff === 1) return T('вчера ','yesterday ') + hm;
+  return d.toLocaleDateString(dateLoc(), {day:'numeric', month:'short'}) + ', ' + hm;
+}
 
 function saveHistory(fromCur, amount, toCur, result) {
   const entry = {
     from: fmt(amount)+' '+fromCur,
     to: toCur,
     res: fmt(result)+' '+toCur,
-    time: new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})
+    ts: Date.now()
   };
   const last = lsHistory[0];
   if(last && last.from===entry.from && last.to===entry.to && last.res===entry.res) return;
   lsHistory = [entry,...lsHistory].slice(0,10);
-  localStorage.setItem('lsk_hist', JSON.stringify(lsHistory));
+  LS.set('lsk_hist', JSON.stringify(lsHistory));
 }
 
 function addFav() {
@@ -997,7 +1185,7 @@ function addFav() {
   const key=f+'-'+t;
   if(!lsFavs.includes(key)&&lsFavs.length<10) {
     lsFavs.push(key);
-    localStorage.setItem('lsk_favs', JSON.stringify(lsFavs));
+    LS.set('lsk_favs', JSON.stringify(lsFavs));
     const btn=document.getElementById('add-fav-btn');
     if(btn){btn.textContent='✓';btn.style.color='var(--t-emphasis)';setTimeout(()=>{btn.textContent='⭐';btn.style.color='';},1500);}
   }
@@ -1005,7 +1193,7 @@ function addFav() {
 
 function removeFav(key) {
   lsFavs=lsFavs.filter(f=>f!==key);
-  localStorage.setItem('lsk_favs',JSON.stringify(lsFavs));
+  LS.set('lsk_favs',JSON.stringify(lsFavs));
   renderSaved();
 }
 
@@ -1026,17 +1214,17 @@ function renderSaved() {
         <div><div class="fav-pair">${n[f]||f} → ${n[t]||t}</div>
         <div style="font-size:10px;color:var(--sub2);margin-top:2px">${lang==='ru'?'Нажми для конвертации':'Tap to convert'}</div></div>
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="fav-rate">${fmt(rate)}</div>
+          <div class="fav-rate">${fmtPairRate(f,t,rate)}</div>
           <div class="fav-del" onclick="event.stopPropagation();removeFav('${key}')">✕</div>
         </div>
       </div>`;
     }).join('') :
-    '<div style="text-align:center;padding:20px;color:var(--sub2);font-size:13px">'+(lang==='ru'?'Нет избранных.<br>Добавь из конвертера!':'No favorites yet.')+'</div>';
+    '<div style="text-align:center;padding:20px;color:var(--sub2);font-size:13px">'+(lang==='ru'?'Нет избранных.<br>Добавь из конвертера ⭐':'No favorites yet.<br>Add one from the converter ⭐')+'</div>';
 
   const histHtml = lsHistory.length ?
     '<div class="group-title" style="margin-top:16px">'+(lang==='ru'?'🕐 История конвертаций':'🕐 Conversion history')+'</div>' +
     lsHistory.map(h=>`<div class="hist-item">
-      <div><div class="hist-from">${h.from} → ${h.to}</div><div class="hist-time">${h.time}</div></div>
+      <div><div class="hist-from">${h.from} → ${h.to}</div><div class="hist-time">${histWhen(h)}</div></div>
       <div class="hist-res">${h.res}</div>
     </div>`).join('') : '';
 
@@ -1048,50 +1236,48 @@ function renderSaved() {
 const METALS_LIST = [
   {code:"XAU",flag:"🥇",ru:"Золото",en:"Gold"},
   {code:"XAG",flag:"🥈",ru:"Серебро",en:"Silver"},
-  {code:"XBR",flag:"🥉",ru:"Бронза",en:"Bronze"},
-  {code:"XRH",flag:"⚪",ru:"Родий",en:"Rhodium"},
-  {code:"XIR",flag:"🔘",ru:"Иридий",en:"Iridium"},
-  {code:"XRU",flag:"🩶",ru:"Рутений",en:"Ruthenium"},
   {code:"XPT",flag:"⬜",ru:"Платина",en:"Platinum"},
   {code:"XPD",flag:"🔲",ru:"Палладий",en:"Palladium"},
-  {code:"XCU",flag:"🟤",ru:"Медь",en:"Copper"},
 ];
-let metalPricesUSD = {XAU:3320,XAG:33,XBR:8.5,XRH:4500,XIR:5200,XRU:520,XPT:975,XPD:1060,XCU:9.5};
+// Запасные цены на случай, если источник недоступен (ноябрь 2026)
+let metalPricesUSD = {XAU:3600,XAG:42,XPT:1290,XPD:880};
+let metalsLive = false;
 
 function renderMetals() {
   const loadEl = document.getElementById('metals-load');
   const listEl = document.getElementById('metals-list');
   if(loadEl) loadEl.style.display='none';
   if(!listEl) return;
-  const gel = rates['GEL'] || 2.65;
-  const title = lang==='ru' ? 'Цена за 1 тройскую унцию (31.1г)' : 'Price per troy ounce (31.1g)';
-  const footer = lang==='ru' ? 'Приблизительные цены' : 'Approximate prices';
+  const eur = rates['EUR'] || 0;
+  const title = T('Цена за тройскую унцию (31.1 г) · за грамм', 'Per troy ounce (31.1 g) · per gram');
+  const footer = metalsLive ? T('Цены за сутки, источник: currency-api', 'Daily prices, source: currency-api')
+                            : T('Приблизительные цены (источник недоступен)', 'Approximate prices (source unavailable)');
   listEl.innerHTML = '<div class="group-title">'+title+'</div>' +
-    METALS_LIST.map(m => '<div class="metal-item">' +
+    METALS_LIST.map(m => {
+      const oz = metalPricesUSD[m.code]||0, g = oz/31.1035;
+      return '<div class="metal-item">' +
       '<div class="rate-left">' +
         '<div class="rate-flag">'+m.flag+'</div>' +
         '<div><div class="rate-name">'+m[lang]+'</div><div class="rate-code">'+m.code+'</div></div>' +
       '</div>' +
       '<div>' +
-        '<div class="metal-val">$'+fmt(metalPricesUSD[m.code]||0)+'</div>' +
-        '<div class="metal-sub">≈ '+fmt((metalPricesUSD[m.code]||0)*gel)+' ₾</div>' +
+        '<div class="metal-val">$'+fmt(oz)+' · $'+fmt(g)+'</div>' +
+        (eur ? '<div class="metal-sub">€'+fmt(oz*eur)+' · €'+fmt(g*eur)+'</div>' : '') +
       '</div>' +
-    '</div>').join('') +
+    '</div>'; }).join('') +
     '<div class="footer">'+footer+'</div>';
 }
 
 async function loadMetals() {
-  // Show metals immediately with default prices
   renderMetals();
-  // Then try to update from API
-  try {
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/XAU', {signal: AbortSignal.timeout(5000)});
-    const d = await r.json();
-    if(d.rates && d.rates.USD) {
-      metalPricesUSD['XAU'] = d.rates.USD;
+  const snap = await fetchSnapshot('latest');
+  if (snap) {
+    for (const m of METALS_LIST) {
+      const v = snap.usd[m.code.toLowerCase()];
+      if (v) { metalPricesUSD[m.code] = 1 / v; metalsLive = true; }
     }
-  } catch(e) {}
-  renderMetals();
+  }
+  renderMetals(); conv();
 }
 
 // COMPARE
@@ -1149,9 +1335,9 @@ function updateCounter() {
   const el = document.getElementById('update-counter');
   if(!el) return;
   const sec = Math.round((Date.now() - lastUpdateTime) / 1000);
-  if(sec < 5) el.textContent = lang==='ru' ? 'Только что обновлено' : 'Just updated';
-  else if(sec < 60) el.textContent = (lang==='ru' ? 'Обновлено ' : 'Updated ') + sec + (lang==='ru' ? ' сек назад' : 's ago');
-  else el.textContent = lang==='ru' ? 'Обновляется...' : 'Updating...';
+  if(sec < 5) el.textContent = T('Только что обновлено', 'Just updated');
+  else if(sec < 60) el.textContent = T('Обновлено '+sec+' сек назад', 'Updated '+sec+'s ago');
+  else { const m = Math.floor(sec/60); el.textContent = T('Обновлено '+m+' мин назад', 'Updated '+m+' min ago'); }
 }
 setInterval(updateCounter, 3000);
 
@@ -1171,6 +1357,7 @@ document.addEventListener('touchmove', e => {
   const scrollTop = document.documentElement.scrollTop;
   const diff = e.touches[0].clientY - ptrStartY;
   const indicator = document.getElementById('ptr-indicator');
+  if(document.querySelector('.modal-overlay.open,.theme-overlay.open,.side-menu.open')) return;
   if(scrollTop === 0 && diff > 40) {
     ptrActive = true;
     if(indicator) { indicator.classList.add('visible'); indicator.textContent = diff > 80 ? (lang==='ru'?'Отпусти для обновления':'Release to refresh') : (lang==='ru'?'↓ Потяни для обновления':'↓ Pull to refresh'); }
@@ -1182,7 +1369,7 @@ document.addEventListener('touchend', () => {
     const indicator = document.getElementById('ptr-indicator');
     if(indicator) { indicator.textContent = lang==='ru'?'⟳ Обновляю...':'⟳ Refreshing...'; }
     haptic('medium');
-    Promise.all([loadFiat(), loadCrypto(), loadMetals()]).then(() => {
+    Promise.all([loadFiat(), loadCrypto(), loadMetals(), loadDailyChanges()]).then(() => {
       if(indicator) { indicator.classList.remove('visible'); }
       haptic('success');
       lastUpdateTime = Date.now();
@@ -1191,67 +1378,6 @@ document.addEventListener('touchend', () => {
   }
   ptrStartY = 0;
 });
-
-// === FEATURE 4: Sparklines ===
-const sparklineHistory = {};
-function updateSparklineHistory() {
-  // Store last 10 rate values for sparkline
-  for(const code in rates) {
-    if(!sparklineHistory[code]) sparklineHistory[code] = [];
-    sparklineHistory[code].push(rates[code]);
-    if(sparklineHistory[code].length > 10) sparklineHistory[code].shift();
-  }
-  for(const code in cryptoPrices) {
-    if(!sparklineHistory[code]) sparklineHistory[code] = [];
-    sparklineHistory[code].push(cryptoPrices[code]);
-    if(sparklineHistory[code].length > 10) sparklineHistory[code].shift();
-  }
-}
-
-function drawSparkline(canvas, data, color) {
-  if(!canvas || !data || data.length < 2) return;
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width, h = canvas.height;
-  ctx.clearRect(0,0,w,h);
-  const min = Math.min(...data), max = Math.max(...data);
-  const range = max - min || 1;
-  ctx.beginPath();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
-  ctx.lineJoin = 'round';
-  data.forEach((v, i) => {
-    const x = (i / (data.length-1)) * w;
-    const y = h - ((v - min) / range) * h;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-}
-
-function addSparklinesToRates() {
-  document.querySelectorAll('.rate-item[data-code]').forEach(item => {
-    const code = item.dataset.code;
-    const hist = sparklineHistory[code];
-    // Wait for a few real polls before drawing anything, and skip if
-    // there's no actual variance yet (a flat line at this point would
-    // just be a visual artifact of a freshly-opened session, not data).
-    if(!hist || hist.length < 4) return;
-    if(Math.min(...hist) === Math.max(...hist)) return;
-    let canvas = item.querySelector('.sparkline-canvas');
-    if(!canvas) {
-      canvas = document.createElement('canvas');
-      canvas.className = 'sparkline-canvas';
-      canvas.width = 48; canvas.height = 20;
-      const wrap = document.createElement('div');
-      wrap.className = 'sparkline-wrap';
-      wrap.appendChild(canvas);
-      const rateRight = item.querySelector('.rate-right');
-      if(rateRight) rateRight.appendChild(wrap);
-    }
-    const first = hist[0], last = hist[hist.length-1];
-    const color = last >= first ? 'var(--up)' : 'var(--down)';
-    drawSparkline(canvas, hist, last >= first ? '#34c759' : '#ff453a');
-  });
-}
 
 // === FEATURE 9: Animated number ===
 function animateResult(newVal) {
@@ -1263,8 +1389,143 @@ function animateResult(newVal) {
   el.classList.add('animating');
 }
 
-loadFiat(); loadCrypto(); loadMetals();
-setInterval(loadFiat,30000); setInterval(loadCrypto,60000);
+// === ПЕРЕВОДЫ: где выгоднее перевести (как /transfer в боте) ===
+// Wise comparison API отдаёт котировки Wise, Western Union, MoneyGram,
+// Xoom (PayPal) и др. Monobank — оценка (продажа валюты по курсу банка).
+// USDT P2P из браузера недоступен (Binance не пускает) — он есть в боте.
+const TRANSFER_SEND_COUNTRY = 'DE';
+const TRANSFER_PROVIDER_NAMES = {"xoom":"PayPal (Xoom)","moneygram":"MoneyGram","western-union":"Western Union","wise":"Wise"};
+const MONO_ISO = {USD:840, EUR:978, GBP:826, PLN:985, CHF:756};
+const TRANSFER_CURS = ['USD', ...FIAT.map(c=>c.code)];
+const trCache = {};
+let lastTransfer = null, monoCache = null;
+function isTransferFiat(c) { return TRANSFER_CURS.includes(c); }
+
+function fillTransferSelects() {
+  const opts = TRANSFER_CURS.map(code => {
+    const f = FIAT.find(x=>x.code===code);
+    const flag = f ? f.flag : '🇺🇸';
+    return `<option value="${code}">${flag} ${code}</option>`;
+  }).join('');
+  for (const id of ['tr-from','tr-to']) {
+    const el = document.getElementById(id), v = el.value;
+    el.innerHTML = opts;
+    el.value = v || (id === 'tr-from' ? 'EUR' : 'UAH');
+  }
+}
+
+function openTransferFromConv() {
+  document.getElementById('tr-from').value = document.getElementById('from-cur').value;
+  document.getElementById('tr-to').value = document.getElementById('to-cur').value;
+  const a = parseFloat(document.getElementById('amount').value) || 0;
+  document.getElementById('tr-amount').value = a >= 1 ? a : 200;
+  switchTab('transfer');
+  runTransfer();
+}
+
+async function fetchWise(amount, from, to) {
+  try {
+    const u = `https://api.wise.com/v3/comparisons/?sourceCurrency=${from}&targetCurrency=${to}&sendAmount=${amount}`;
+    const r = await fetch(u, {signal: AbortSignal.timeout(12000)});
+    if (!r.ok) return [];
+    const d = await r.json();
+    const out = [];
+    for (const p of d.providers || []) {
+      const quotes = (p.quotes || []).filter(q => q.receivedAmount);
+      if (!quotes.length) continue;
+      const q = quotes.find(q => q.sourceCountry === TRANSFER_SEND_COUNTRY) || quotes.find(q => !q.sourceCountry) || quotes[0];
+      out.push({ name: TRANSFER_PROVIDER_NAMES[p.alias] || p.name || p.alias || '?',
+                 received: +q.receivedAmount, fee: +(q.fee || 0), rate: +(q.rate || 0), approx: false });
+    }
+    return out;
+  } catch { return []; }
+}
+
+async function fetchMono(amount, from, to) {
+  if (to !== 'UAH' || !MONO_ISO[from]) return null;
+  try {
+    if (!monoCache || Date.now() - monoCache.t > 300000) {
+      const r = await fetch('https://api.monobank.ua/bank/currency', {signal: AbortSignal.timeout(8000)});
+      if (r.ok) monoCache = {t: Date.now(), d: await r.json()};
+    }
+    const row = (monoCache?.d || []).find(x => x.currencyCodeA === MONO_ISO[from] && x.currencyCodeB === 980);
+    if (!row?.rateBuy) return null;
+    return {name:'Monobank', received: amount * row.rateBuy, fee: 0, rate: row.rateBuy, approx: true};
+  } catch { return null; }
+}
+
+async function runTransfer() {
+  const amount = Math.min(parseFloat(document.getElementById('tr-amount').value) || 0, 1e7);
+  const from = document.getElementById('tr-from').value, to = document.getElementById('tr-to').value;
+  const box = document.getElementById('tr-result');
+  if (amount <= 0) { box.innerHTML = `<div class="empty-state">${T('Введи сумму больше нуля','Enter an amount above zero')}</div>`; return; }
+  if (from === to) { box.innerHTML = `<div class="empty-state">${T('Выбери разные валюты','Pick two different currencies')}</div>`; return; }
+  haptic('light');
+  const key = `${from}-${to}-${amount}`;
+  const btn = document.getElementById('tr-btn');
+  let res = trCache[key] && Date.now() - trCache[key].t < 120000 ? trCache[key] : null;
+  if (!res) {
+    btn.disabled = true;
+    box.innerHTML = `<div class="loading"><div class="spinner"></div>${T('Сравниваю предложения...','Comparing offers...')}</div>`;
+    const [wise, mono] = await Promise.all([fetchWise(amount, from, to), fetchMono(amount, from, to)]);
+    btn.disabled = false;
+    res = {t: Date.now(), amount, from, to, offers: [...wise, ...(mono ? [mono] : [])].sort((a,b)=>b.received-a.received)};
+    if (res.offers.length) trCache[key] = res;
+  }
+  lastTransfer = res;
+  renderTransfer(res);
+}
+
+function renderTransfer({amount, from, to, offers}) {
+  const box = document.getElementById('tr-result');
+  if (!offers.length) {
+    box.innerHTML = `<div class="empty-state">${T('Сейчас не удалось получить предложения для этой пары. Попробуй другую пару или чуть позже.',"Couldn't get transfer quotes for this pair right now. Try another pair or a bit later.")}</div>`;
+    return;
+  }
+  const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmt(o.rate)}` : ''].filter(Boolean).join(' · ');
+  const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const quoted = offers.filter(o => !o.approx), est = offers.filter(o => o.approx);
+  const medals = ['🥇','🥈','🥉'];
+  let h = `<div class="group-title">${fmtMoney(amount, from)} → ${to} · ${T('сколько получит получатель','what the recipient gets')}</div>`;
+  h += quoted.map((o,i) => `<div class="tr-offer${i===0?' best':''}">
+      <div class="tr-left"><div class="tr-medal">${medals[i]||'▫️'}</div>
+        <div><div class="tr-name">${esc(o.name)}</div><div class="tr-det">${details(o)}</div></div></div>
+      <div class="tr-recv">${fmtMoney(o.received, to)}</div></div>`).join('');
+  if (quoted.length > 1 && quoted[0].received > quoted[quoted.length-1].received)
+    h += `<div class="tr-tip">💡 ${T('Лучший выгоднее худшего на','Best vs worst:')} <b>${fmtMoney(quoted[0].received - quoted[quoted.length-1].received, to)}</b></div>`;
+  if (est.length) {
+    h += `<div class="group-title">≈ ${T('Оценки','Estimates')}</div>`;
+    h += est.map(o => `<div class="tr-offer"><div class="tr-left"><div class="tr-medal">▫️</div>
+        <div><div class="tr-name">${esc(o.name)}</div><div class="tr-det">${details(o)}</div></div></div>
+      <div class="tr-recv" style="color:var(--text)">${fmtMoney(o.received, to)}</div></div>`).join('');
+  }
+  const mid = fromUSD(toUSD(from, 1), to);
+  if (mid) h += `<div class="tr-tip">📊 ${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
+  const notes = [];
+  if (est.some(o => o.name === 'Monobank')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
+  notes.push(T('Вариант через USDT P2P (Binance) — в боте: команда /transfer.','The USDT P2P (Binance) option is in the bot: /transfer.'));
+  h += `<div class="tr-note">ℹ️ ${notes.join('<br>ℹ️ ')}</div>`;
+  box.innerHTML = h;
+}
+
+// Ссылка вида ?from=EUR&to=UAH&amount=200 или startapp=EUR_UAH_200 —
+// открывает конвертер сразу с нужной парой
+function applyStartParams() {
+  const q = new URLSearchParams(location.search);
+  let from = q.get('from'), to = q.get('to'), amount = q.get('amount');
+  const sp = TG?.initDataUnsafe?.start_param || q.get('tgWebAppStartParam');
+  if (sp) { const [a,b,c] = sp.split('_'); from = from || a; to = to || b; amount = amount || c; }
+  const has = (id, v) => v && [...document.getElementById(id).options].some(o => o.value === v.toUpperCase());
+  if (has('from-cur', from)) document.getElementById('from-cur').value = from.toUpperCase();
+  if (has('to-cur', to)) document.getElementById('to-cur').value = to.toUpperCase();
+  if (amount && parseFloat(amount) > 0) document.getElementById('amount').value = parseFloat(amount);
+}
+
+applyStartParams();
+applyLang();
+document.getElementById('tr-amount').addEventListener('keydown', e => { if (e.key === 'Enter') runTransfer(); });
+loadFiat(); loadCrypto(); loadMetals(); loadDailyChanges();
+setInterval(loadFiat,60000); setInterval(loadCrypto,60000); setInterval(loadDailyChanges, 3600000);
 </script>
 </body>
 </html>
