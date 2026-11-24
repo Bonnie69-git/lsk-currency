@@ -49,7 +49,7 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); background:color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
 .brand { display:flex; align-items:center; gap:12px; }
 .brand-icon img { width:100%; height:100%; display:block; }
-.brand-icon { width:34px; height:34px; border-radius:10px; overflow:hidden; background:#0C0A13; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
+.brand-icon { width:34px; height:34px; border-radius:50%; overflow:hidden; background:transparent; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
 .brand-text-main { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.2px; }
 .brand-text-sub { font-size:9px; color:var(--sub); font-weight:500; margin-top:1px; letter-spacing:0.8px; }
 .header-right { display:flex; align-items:center; gap:8px; }
@@ -1136,6 +1136,17 @@ function setChartHeader(v, ts, base) {
 }
 
 // Вертикальная линия-перекрестие и точка под пальцем
+// Пунктирная линия цены начала периода
+const baseline = {
+  id: 'baseline',
+  beforeDatasetsDraw(chart) {
+    const v = chart.data.datasets[0]?.data?.[0];
+    if (v == null) return;
+    const y = chart.scales.y.getPixelForValue(v), {left, right} = chart.chartArea, ctx = chart.ctx;
+    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke(); ctx.restore();
+  }
+};
 const crosshair = {
   id: 'crosshair',
   afterDraw(chart) {
@@ -1145,7 +1156,8 @@ const crosshair = {
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-    ctx.setLineDash([]); ctx.fillStyle = chart.data.datasets[0].borderColor;
+    const ds = chart.data.datasets[0], css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    ctx.setLineDash([]); ctx.fillStyle = ds.data[a[0].index] >= ds.data[0] ? (css('--up')||'#34c759') : (css('--down')||'#ff453a');
     ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#000'; ctx.lineWidth = 2; ctx.stroke();
     ctx.restore();
@@ -1167,7 +1179,8 @@ function drawChart(labels, data) {
   const first=data[0], last=data[data.length-1];
   const change=first?((last-first)/first*100):0;
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const color = change>=0 ? (css('--up')||'#34c759') : (css('--down')||'#ff453a');
+  const UP = css('--up')||'#34c759', DOWN = css('--down')||'#ff453a';
+  const color = change>=0 ? UP : DOWN;
   document.getElementById('stat-min').textContent=fmtChartPrice(min);
   document.getElementById('stat-max').textContent=fmtChartPrice(max);
   const chgEl=document.getElementById('stat-chg');
@@ -1175,12 +1188,15 @@ function drawChart(labels, data) {
   chgEl.style.color=change>=0?'var(--up)':'var(--down)';
   setChartHeader(last, null, first);
   const ctx=document.getElementById('rateChart').getContext('2d');
-  const gradient=ctx.createLinearGradient(0,0,0,220);
-  gradient.addColorStop(0,color+'40'); gradient.addColorStop(1,color+'00');
   const sub = css('--sub') || '#888';
+  // Как на бирже (baseline): выше цены начала периода — зелёным, ниже — красным,
+  // пунктир — цена начала. Раньше весь график красился в один цвет по итогу.
+  const segColor = c => ((c.p0.parsed.y + c.p1.parsed.y) / 2 >= first ? UP : DOWN);
   chartInstance=new Chart(ctx,{
     type:'line',
-    data:{ labels, datasets:[{ data, borderColor:color, backgroundColor:gradient, borderWidth:2, pointRadius:0, pointHoverRadius:0, fill:true, tension:0.25 }] },
+    data:{ labels, datasets:[{ data, borderColor:color, borderWidth:2, pointRadius:0, pointHoverRadius:0, tension:0.25,
+      segment:{ borderColor: segColor },
+      fill:{ target:{ value:first }, above: UP+'2e', below: DOWN+'2e' } }] },
     options:{
       responsive:true, maintainAspectRatio:false, animation:{duration:350},
       interaction:{ mode:'index', intersect:false },
@@ -1200,7 +1216,7 @@ function drawChart(labels, data) {
             ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:5, padding:6, callback:v=>fmt(v) } }
       }
     },
-    plugins:[crosshair]
+    plugins:[crosshair, baseline]
   });
   // Сбросить заголовок, когда палец отпущен
   ctx.canvas.ontouchend = ctx.canvas.onmouseleave = () => { chartInstance?.tooltip?.setActiveElements([], {x:0,y:0}); chartInstance?.update('none'); setChartHeader(last, null, first); };
@@ -1305,7 +1321,7 @@ function applyTheme(id) {
   // result card - тёмная подложка результата, для светлой темы тоже тёмная
   // (плашка результата остаётся акцентной подложкой, не белой)
   r.setProperty('--result-bg', th.light ? '#0f0f10ee' : th.s1+'ee');
-  document.querySelectorAll('.brand-icon').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
+  // Иконка «Орбита» — своя картинка, фон темы под ней не нужен (давал фиолетовые уголки)
   currentTheme = id;
 }
 
