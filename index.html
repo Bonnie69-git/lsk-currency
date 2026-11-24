@@ -48,7 +48,8 @@ body.light-theme .empty-state { color:#0a0a0a; }
 /* HEADER */
 .header { padding:11px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); background:color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-icon { width:34px; height:34px; border-radius:9px; background:var(--t); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
+.brand-icon img { width:100%; height:100%; display:block; }
+.brand-icon { width:34px; height:34px; border-radius:10px; overflow:hidden; background:#0C0A13; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:var(--t-contrast); flex-shrink:0; }
 .brand-text-main { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.2px; }
 .brand-text-sub { font-size:9px; color:var(--sub); font-weight:500; margin-top:1px; letter-spacing:0.8px; }
 .header-right { display:flex; align-items:center; gap:8px; }
@@ -300,7 +301,7 @@ body.light-theme .footer { color:#555; }
 
 <div class="header">
   <div class="brand">
-    <div class="brand-icon"><svg viewBox="0 0 100 100" width="20" height="20" style="display:block"><path d="M 21.8 39.7 A 30 30 0 0 1 73.0 30.7" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 78.2 60.3 A 30 30 0 0 1 27.0 69.3" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/><path d="M 82.0 41.4 L 65.3 37.1 L 80.6 24.3 Z" fill="currentColor"/><path d="M 18.0 58.6 L 34.7 62.9 L 19.4 75.7 Z" fill="currentColor"/></svg></div>
+    <div class="brand-icon"><img src="logo.svg" alt="" width="34" height="34"></div>
     <div>
       <div class="brand-text-main">LSK Currency</div>
       <div class="brand-text-sub" id="brand-sub">LIVE EXCHANGE RATES</div>
@@ -720,8 +721,8 @@ function fmt(n) {
   if (n>=1e6) return (n/1e6).toFixed(3)+"M";
   if (n>=1000) return n.toLocaleString(loc,{maximumFractionDigits:0});
   if (n>=1) return n.toLocaleString(loc,{minimumFractionDigits:2,maximumFractionDigits:2});
-  if (n>=0.01) return n.toFixed(4);
-  return n.toFixed(8);
+  if (n>=0.01) return n.toLocaleString(loc,{minimumFractionDigits:4,maximumFractionDigits:4});
+  return n.toLocaleString(loc,{minimumFractionDigits:8,maximumFractionDigits:8});
 }
 
 // Дневные снимки курсов (fawazahmed0/currency-api) — для настоящих графиков
@@ -785,17 +786,67 @@ async function loadDailyChanges() {
   renderFiat();
 }
 
+// История крипты: сначала Binance (без жёстких лимитов, CORS открыт), потом
+// CoinGecko. Раньше был только CoinGecko — на бесплатном тарифе он часто
+// отвечает «слишком много запросов», и у SOL/ETH графики были пустые.
+const BINANCE_HOSTS = ['https://data-api.binance.vision', 'https://api.binance.com'];
+// USDT меряем через USDC/USDT (перевёрнутый), остальные — к USDT
+const BINANCE_SYM = c => c === 'USDT' ? 'USDCUSDT' : c + 'USDT';
+const KLINES = {'1':['15m',96], '7':['1h',168], '30':['4h',180], '90':['1d',90], '365':['1d',365]};
+const chartCache = {};
+async function cryptoHistory(code, days) {
+  const key = code + ':' + days, hit = chartCache[key];
+  if (hit && Date.now() - hit.t < 5 * 60000) return hit.v;
+  let pts = [];
+  const sym = BINANCE_SYM(code), [iv, lim] = KLINES[days] || KLINES['30'];
+  if (sym) for (const host of BINANCE_HOSTS) {
+    try {
+      const r = await fetch(`${host}/api/v3/klines?symbol=${sym}&interval=${iv}&limit=${lim}`, {signal: AbortSignal.timeout(8000)});
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (Array.isArray(d) && d.length > 1) { pts = d.map(k => [k[6] > Date.now() ? Date.now() : k[6], code === 'USDT' ? 1 / parseFloat(k[4]) : parseFloat(k[4])]); break; }
+    } catch {}
+  }
+  if (pts.length < 2) {
+    try {
+      const r = await fetch(`https://api.coingecko.com/api/v3/coins/${CRYPTO_IDS[code]}/market_chart?vs_currency=usd&days=${days}`, {signal: AbortSignal.timeout(10000)});
+      const d = await r.json();
+      if (Array.isArray(d.prices)) pts = d.prices;
+    } catch {}
+  }
+  if (pts.length > 1) chartCache[key] = {t: Date.now(), v: pts};
+  return pts;
+}
+// Цены и изменение за 24ч с Binance — для монет, которых не дал CoinGecko
+async function fillFromBinance() {
+  const need = CRYPTOS.filter(c => !cryptoPrices[c.code] && BINANCE_SYM(c.code));
+  if (!need.length) return;
+  const syms = encodeURIComponent(JSON.stringify(need.map(c => BINANCE_SYM(c.code))));
+  for (const host of BINANCE_HOSTS) {
+    try {
+      const r = await fetch(`${host}/api/v3/ticker/24hr?symbols=${syms}`, {signal: AbortSignal.timeout(8000)});
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (!Array.isArray(d)) continue;
+      const by = Object.fromEntries(d.map(x => [x.symbol, x]));
+      need.forEach(c => { const x = by[BINANCE_SYM(c.code)]; if (x && +x.lastPrice) { const usdt = c.code === 'USDT'; cryptoPrices[c.code] = usdt ? 1 / +x.lastPrice : +x.lastPrice; cryptoChanges[c.code] = (usdt ? -1 : 1) * (+x.priceChangePercent || 0); } });
+      return;
+    } catch {}
+  }
+}
 async function loadCrypto() {
   try {
     const ids = CRYPTOS.map(c=>c.id).join(',');
     const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
     const d = await r.json();
     CRYPTOS.forEach(c => {
-      cryptoPrices[c.code] = d[c.id]?.usd||0;
-      cryptoChanges[c.code] = d[c.id]?.usd_24h_change||0;
+      // Не затираем цену нулём, если в этот раз CoinGecko её не дал
+      if (d[c.id]?.usd) { cryptoPrices[c.code] = d[c.id].usd; cryptoChanges[c.code] = d[c.id]?.usd_24h_change||0; }
     });
-  } catch {
-    for (const c of CRYPTOS) {
+  } catch {}
+  await fillFromBinance();
+  if (CRYPTOS.some(c => !cryptoPrices[c.code])) {
+    for (const c of CRYPTOS.filter(c => !cryptoPrices[c.code])) {
       try {
         const r = await fetch(`https://api.coinbase.com/v2/prices/${c.code}-USD/spot`);
         const d = await r.json();
@@ -803,6 +854,8 @@ async function loadCrypto() {
       } catch {}
     }
   }
+  // Стейблкоины без цены (все источники недоступны) — считаем 1 $
+  for (const c of ['USDT','USDC']) if (!cryptoPrices[c]) cryptoPrices[c] = 1;
   renderCrypto(); conv();
   lastUpdateTime = Date.now();
 }
@@ -1039,16 +1092,9 @@ async function fetchAndDrawChart(code, days) {
   let labels=[], data=[];
   try {
     if(CRYPTO_SET.has(code)) {
-      const id=CRYPTO_IDS[code];
-      const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${days}`);
-      const d=await r.json();
-      if(d.prices) {
-        const step=Math.max(1,Math.floor(d.prices.length/90));
-        d.prices.filter((_,i)=>i%step===0 || i===d.prices.length-1).forEach(([ts,p])=>{
-          labels.push(ts);
-          data.push(p);
-        });
-      }
+      const pts = await cryptoHistory(code, days);
+      const step=Math.max(1,Math.floor(pts.length/90));
+      pts.filter((_,i)=>i%step===0 || i===pts.length-1).forEach(([ts,p])=>{ labels.push(ts); data.push(p); });
     } else {
       // Фиат — реальные дневные курсы. ~16 точек на любой период.
       const n = parseInt(days);
@@ -1281,15 +1327,27 @@ function histWhen(h) {
   return d.toLocaleDateString(dateLoc(), {day:'numeric', month:'short'}) + ', ' + hm;
 }
 
+// Старые записи хранили готовую строку «1,00 EUR» / «1.00 EUR» — переформатируем
+function parseLooseNum(str) {
+  let t = String(str).replace(/[^\d.,]/g, '');
+  const lc = t.lastIndexOf(','), ld = t.lastIndexOf('.');
+  const dec = Math.max(lc, ld);
+  if (dec >= 0 && t.length - dec - 1 !== 3) t = t.slice(0, dec).replace(/[.,]/g, '') + '.' + t.slice(dec + 1);
+  else t = t.replace(/[.,]/g, '');
+  return parseFloat(t);
+}
+function legacyNum(str) {
+  const code = (String(str).match(/[A-Z]{3,4}$/) || [''])[0];
+  const v = parseLooseNum(String(str).replace(code, ''));
+  return isFinite(v) ? fmt(v) + (code ? ' ' + code : '') : str;
+}
+function histAmount(h) { return h.a != null ? fmt(h.a) + ' ' + h.f : legacyNum(h.from); }
 function saveHistory(fromCur, amount, toCur, result) {
-  const entry = {
-    from: fmt(amount)+' '+fromCur,
-    to: toCur,
-    res: fmt(result)+' '+toCur,
-    ts: Date.now()
-  };
+  // Числа храним как есть и форматируем при показе — раньше строка
+  // форматировалась на языке момента, и в истории было «1,00» и «1.00» вперемешку
+  const entry = { f: fromCur, a: +amount, to: toCur, r: +result, ts: Date.now() };
   const last = lsHistory[0];
-  if(last && last.from===entry.from && last.to===entry.to && last.res===entry.res) return;
+  if(last && last.f===entry.f && last.a===entry.a && last.to===entry.to && Math.abs(last.r-entry.r)<=Math.abs(entry.r)*1e-9) return;
   lsHistory = [entry,...lsHistory].slice(0,10);
   LS.set('lsk_hist', JSON.stringify(lsHistory));
 }
@@ -1345,8 +1403,8 @@ function renderSaved() {
   const histHtml = lsHistory.length ?
     '<div class="group-title" style="margin-top:16px">'+(lang==='ru'?'🕐 История конвертаций':'🕐 Conversion history')+'</div>' +
     lsHistory.map(h=>`<div class="hist-item">
-      <div><div class="hist-from">${h.from} → ${h.to}</div><div class="hist-time">${histWhen(h)}</div></div>
-      <div class="hist-res">${h.res}</div>
+      <div><div class="hist-from">${histAmount(h)} → ${h.to}</div><div class="hist-time">${histWhen(h)}</div></div>
+      <div class="hist-res">${h.r!=null ? fmt(h.r)+' '+h.to : legacyNum(h.res)}</div>
     </div>`).join('') : '';
 
   document.getElementById('fav-section').innerHTML = favHtml;
