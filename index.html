@@ -242,6 +242,9 @@ body.light-theme .footer { color:#555; }
 .tr-btn { background:var(--t); border:none; border-radius:var(--rf); padding:13px 0; font-size:14px; font-weight:600; color:var(--t-contrast); cursor:pointer; font-family:'Inter',sans-serif; width:100%; margin-top:4px; }
 .tr-btn:active { opacity:0.85; }
 .tr-btn:disabled { opacity:0.5; }
+.tr-btn.secondary { background:var(--card); color:var(--text); border:1px solid var(--border); }
+.tr-partners { display:flex; flex-direction:column; gap:6px; margin:10px 0 4px; }
+.tr-partners .tr-btn { margin-top:0; }
 .tr-offer { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:12px 15px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
 .tr-offer.best { border-color:var(--t); }
 .tr-left { display:flex; align-items:center; gap:12px; min-width:0; }
@@ -454,6 +457,20 @@ body.light-theme .footer { color:#555; }
 <script>
 const TG = window.Telegram?.WebApp;
 if (TG) { TG.ready(); TG.expand(); }
+
+// === АНАЛИТИКА: события мини-аппа для /stats в боте ===
+// Пишутся через Supabase Edge Function track (сама функция кладёт строку
+// в events). sendBeacon не блокирует интерфейс и доходит, даже если
+// человек сразу ушёл по ссылке.
+const TRACK_API = 'https://daicafgagkvinbtqifbc.supabase.co/functions/v1/track';
+function track(e, from, to) {
+  try {
+    const body = JSON.stringify({e, uid: TG?.initDataUnsafe?.user?.id || 0, from, to});
+    if (!(navigator.sendBeacon && navigator.sendBeacon(TRACK_API, body)))
+      fetch(TRACK_API, {method: 'POST', body, keepalive: true}).catch(() => {});
+  } catch {}
+}
+track('app_open');
 
 // localStorage может быть недоступен (приватный режим, старые WebView) —
 // все чтения/записи через обёртку, чтобы приложение не падало
@@ -1504,6 +1521,26 @@ async function fetchMono(amount, from, to) {
   } catch { return null; }
 }
 
+// Партнёрские ссылки для кнопок «Перевести через…». Пока партнёрских ID
+// нет — обычные ссылки сервисов. Те же ссылки — в env бота на Render.
+const PARTNER_LINKS = {
+  'Wise': 'https://wise.com/',
+  'Western Union': 'https://www.westernunion.com/',
+  'MoneyGram': 'https://www.moneygram.com/',
+  'PayPal (Xoom)': 'https://www.xoom.com/',
+  'USDT P2P (Binance)': 'https://p2p.binance.com/',
+  'Monobank': 'https://www.monobank.ua/',
+};
+let partnerButtons = [];
+function openPartner(i) {
+  const name = partnerButtons[i];
+  const url = PARTNER_LINKS[name];
+  if (!url) return;
+  haptic('light');
+  track('app_partner_click', name, lastTransfer ? `${lastTransfer.from}-${lastTransfer.to}` : undefined);
+  if (TG?.openLink) TG.openLink(url); else window.open(url, '_blank', 'noopener');
+}
+
 // Сервер сравнения (Supabase Edge Function): Wise + USDT P2P (Binance) +
 // Monobank. Binance P2P из браузера недоступен, поэтому P2P — только через
 // сервер. Если сервер не ответил — считаем сами (Wise + Monobank).
@@ -1539,6 +1576,7 @@ async function runTransfer() {
     btn.disabled = false;
     res = {t: Date.now(), amount, from, to, offers: offers.sort((a,b)=>b.received-a.received)};
     if (res.offers.length) trCache[key] = res;
+    track('app_transfer', from, to);
   }
   lastTransfer = res;
   renderTransfer(res);
@@ -1572,6 +1610,11 @@ function renderTransfer({amount, from, to, offers}) {
         <div><div class="tr-name">${esc(o.name)}</div><div class="tr-det">${details(o)}</div></div></div>
       <div class="tr-recv" style="color:var(--text)">${fmtMoney(o.received, to)}</div></div>`).join('');
   }
+  // Кнопки «Перевести через…» для трёх лучших — в том же порядке, что и выше
+  partnerButtons = [...new Set([...quoted, ...est].map(o => o.name))].filter(n => PARTNER_LINKS[n]).slice(0, 3);
+  if (partnerButtons.length)
+    h += `<div class="tr-partners">${partnerButtons.map((n, i) =>
+      `<button class="tr-btn${i ? ' secondary' : ''}" onclick="openPartner(${i})">↗ ${T('Перевести через','Send with')} ${esc(n)}</button>`).join('')}</div>`;
   const mid = fromUSD(toUSD(from, 1), to);
   if (mid) h += `<div class="tr-tip">📊 ${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
   const notes = [];
