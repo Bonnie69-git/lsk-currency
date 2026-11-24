@@ -177,19 +177,6 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 
 
 /* CALCULATOR */
-.calc-display { background:var(--card); border:1px solid var(--border); border-radius:var(--rl); padding:20px 18px; margin-bottom:10px; min-height:110px; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; }
-.calc-expr { font-size:13px; color:var(--sub); min-height:18px; text-align:right; margin-bottom:6px; word-break:break-all; }
-.calc-result-num { font-size:46px; font-weight:700; color:var(--text); letter-spacing:-2px; text-align:right; line-height:1; word-break:break-all; }
-.calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-.calc-btn { background:var(--card); border:none; border-radius:50%; aspect-ratio:1; padding:0; font-size:19px; font-weight:400; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'Inter',sans-serif; user-select:none; transition:transform 0.1s, background 0.1s; }
-.calc-btn:active { background:var(--card2); transform:scale(0.92); }
-.calc-btn.op { background:var(--card2); color:var(--t-emphasis); font-weight:600; }
-.calc-btn.op:active { background:var(--border); }
-.calc-btn.eq { background:var(--t); color:var(--t-contrast); font-weight:700; }
-.calc-btn.eq:active { opacity:0.85; }
-.calc-btn.del { background:var(--card2); color:var(--down); }
-.calc-btn.clr { background:var(--card2); color:var(--sub2); }
-.calc-btn.span2 { grid-column:span 2; aspect-ratio:auto; border-radius:var(--rf); justify-content:flex-start; padding-left:26px; }
 
 /* SAVED */
 .hist-item { background:var(--card); border-radius:var(--r); padding:13px 15px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
@@ -226,6 +213,43 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .stat-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px; }
 .stat-label { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
 .stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; font-variant-numeric:tabular-nums; }
+
+/* ALERTS */
+.ch-bell { margin-right:-4px; font-size:14px; }
+.ch-bell[hidden] { display:none; }
+.al-bell { width:38px; height:38px; border-radius:50%; background:var(--tg); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.al-swap { width:38px; height:38px; flex-shrink:0; border-radius:50%; border:1px solid var(--border); background:var(--card); color:var(--t-emphasis); font-size:16px; cursor:pointer; }
+.al-now { font-size:12px; color:var(--sub); margin:10px 4px 0; }
+.al-now b { color:var(--text); font-weight:600; }
+.al-target { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:14px 16px; margin-top:10px; }
+.al-input-row { display:flex; align-items:baseline; gap:8px; }
+.al-input-row .conv-amount { flex:1; min-width:0; }
+.al-unit { font-size:18px; font-weight:600; color:var(--sub2); }
+.al-dir { font-size:12px; font-weight:600; margin-top:4px; min-height:16px; }
+.al-dir.up { color:var(--up); } .al-dir.down { color:var(--down); }
+.al-chips { display:flex; gap:6px; margin:10px 0 4px; }
+.al-chip { flex:1; padding:8px 0; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--sub2); font-family:'Inter',sans-serif; font-size:12px; font-weight:600; cursor:pointer; font-variant-numeric:tabular-nums; }
+.al-chip:active { background:var(--card2); }
+.al-hint { font-size:11px; color:var(--sub); text-align:center; margin-top:10px; line-height:1.45; min-height:16px; }
+.al-hint.err { color:var(--down); }
+.al-hint.ok { color:var(--up); }
+.al-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 15px; border-bottom:1px solid var(--border); }
+.al-item:last-child { border-bottom:none; }
+.al-pair { font-size:14px; font-weight:600; color:var(--text); }
+.al-cond { font-size:11px; color:var(--sub); margin-top:2px; }
+.al-cond .up { color:var(--up); } .al-cond .down { color:var(--down); }
+.al-add { display:block; width:100%; margin:8px 0 0; background:var(--card); color:var(--t-emphasis); border:1px dashed var(--border); border-radius:var(--rf); padding:12px 0; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+.al-empty { font-size:12px; color:var(--sub); padding:14px 15px; line-height:1.45; }
+
+/* NEWS */
+.news-item { display:flex; gap:12px; padding:13px 15px; border-bottom:1px solid var(--border); cursor:pointer; text-decoration:none; }
+.news-item:last-child { border-bottom:none; }
+.news-item:active { background:var(--card2); }
+.news-body { flex:1; min-width:0; }
+.news-title { font-size:14px; font-weight:600; color:var(--text); line-height:1.35; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.news-meta { font-size:11px; color:var(--sub); margin-top:5px; display:flex; gap:6px; align-items:center; }
+.news-src { color:var(--t-emphasis); font-weight:600; }
+.news-img { width:64px; height:64px; border-radius:12px; object-fit:cover; flex-shrink:0; background:var(--card2); }
 
 /* LOADING */
 .loading { text-align:center; padding:50px 20px; color:var(--sub); font-size:13px; }
@@ -324,6 +348,7 @@ body.light-theme .footer { color:#555; }
   <div id="r-cur" style="display:none"></div>
   <div class="conv-actions">
     <button class="copy-btn" id="copy-btn" onclick="copyResult()">Копировать</button>
+    <button class="fav-icon-btn" id="add-alert-btn" onclick="openAlertFromConv()" aria-label="Уведомить о курсе">🔔</button>
     <button class="fav-icon-btn" id="add-fav-btn" onclick="addFav()" aria-label="Добавить в избранное">⭐</button>
   </div>
   <button class="tr-btn" id="conv-transfer-btn" onclick="openTransferFromConv()" style="background:var(--card);color:var(--text);border:1px solid var(--border);margin:0 0 8px;">💸 Сравнить переводы</button>
@@ -381,39 +406,17 @@ body.light-theme .footer { color:#555; }
   <div id="metals-list"></div>
 </div>
 
-<!-- КАЛЬКУЛЯТОР -->
-<div class="section" id="tab-calc">
-  <div class="page-title" data-ru="Калькулятор" data-en="Calculator">Калькулятор</div>
-  <div class="calc-display">
-    <div class="calc-expr" id="c-expr"></div>
-    <div class="calc-result-num" id="c-res">0</div>
-  </div>
-  <div class="calc-grid">
-    <div class="calc-btn clr" onclick="cClear()">AC</div>
-    <div class="calc-btn del" onclick="cDel()">⌫</div>
-    <div class="calc-btn op" onclick="cPct()">%</div>
-    <div class="calc-btn op" onclick="cOp('/')">÷</div>
-    <div class="calc-btn" onclick="cNum('7')">7</div>
-    <div class="calc-btn" onclick="cNum('8')">8</div>
-    <div class="calc-btn" onclick="cNum('9')">9</div>
-    <div class="calc-btn op" onclick="cOp('*')">×</div>
-    <div class="calc-btn" onclick="cNum('4')">4</div>
-    <div class="calc-btn" onclick="cNum('5')">5</div>
-    <div class="calc-btn" onclick="cNum('6')">6</div>
-    <div class="calc-btn op" onclick="cOp('-')">−</div>
-    <div class="calc-btn" onclick="cNum('1')">1</div>
-    <div class="calc-btn" onclick="cNum('2')">2</div>
-    <div class="calc-btn" onclick="cNum('3')">3</div>
-    <div class="calc-btn op" onclick="cOp('+')">+</div>
-    <div class="calc-btn span2" onclick="cNum('0')">0</div>
-    <div class="calc-btn" onclick="cDot()">.</div>
-    <div class="calc-btn eq" onclick="cEq()">=</div>
-  </div>
+<!-- НОВОСТИ -->
+<div class="section" id="tab-news">
+  <div class="page-title" data-ru="Новости рынка" data-en="Market news">Новости рынка</div>
+  <div id="news-list"><div class="loading"><div class="spinner"></div>Загрузка...</div></div>
+  <div class="footer-note" id="news-foot"></div>
 </div>
 
 <!-- СОХРАНЕНО -->
 <div class="section" id="tab-saved">
   <div class="page-title" data-ru="Сохранено" data-en="Saved">Сохранено</div>
+  <div id="alerts-section"></div>
   <div id="fav-section"></div>
   <div id="hist-section"></div>
 </div>
@@ -422,7 +425,7 @@ body.light-theme .footer { color:#555; }
   <button class="tab-btn active" id="tb-conv" onclick="switchTab('conv')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Конвертер" data-en="Converter">Конвертер</span></button>
   <button class="tab-btn" id="tb-transfer" onclick="switchTab('transfer')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Переводы" data-en="Transfers">Переводы</span></button>
   <button class="tab-btn" id="tb-markets" onclick="switchTab('markets')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><span data-ru="Рынки" data-en="Markets">Рынки</span></button>
-  <button class="tab-btn" id="tb-calc" onclick="switchTab('calc')"><span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span data-ru="Калькулятор" data-en="Calculator">Калькулятор</span></button>
+  <button class="tab-btn" id="tb-news" onclick="switchTab('news')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M5 4h11a1 1 0 0 1 1 1v14a1.5 1.5 0 0 0 3 0V9h-3M5 4a1 1 0 0 0-1 1v13.5A1.5 1.5 0 0 0 5.5 20H18.5M7.5 8h6M7.5 12h6M7.5 16h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-ru="Новости" data-en="News">Новости</span></button>
   <button class="tab-btn" id="tb-saved" onclick="switchTab('saved')"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span data-ru="Сохранено" data-en="Saved">Сохранено</span></button>
 </nav>
 
@@ -433,6 +436,7 @@ body.light-theme .footer { color:#555; }
     <div class="ch-head">
       <div id="ch-ico"></div>
       <div class="ch-names"><div class="ch-name" id="modal-title"></div><div class="ch-pair" id="ch-pair"></div></div>
+      <button class="modal-close ch-bell" onclick="openAlertFromChart()" aria-label="Alert">🔔</button>
       <button class="modal-close" onclick="closeChart()" aria-label="Close">✕</button>
     </div>
     <div class="ch-price" id="ch-price">—</div>
@@ -451,6 +455,32 @@ body.light-theme .footer { color:#555; }
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
     <button class="tr-btn" id="ch-conv" onclick="convertFromChart()">Конвертировать</button>
+  </div>
+</div>
+
+<!-- ALERT SHEET -->
+<div class="modal-overlay" id="alert-modal" onclick="if(event.target.id==='alert-modal')closeAlert()">
+  <div class="modal">
+    <div class="sheet-grip"></div>
+    <div class="ch-head">
+      <div class="al-bell">🔔</div>
+      <div class="ch-names"><div class="ch-name" id="al-title">Уведомить о курсе</div><div class="ch-pair" id="al-sub"></div></div>
+      <button class="modal-close" onclick="closeAlert()" aria-label="Close">✕</button>
+    </div>
+    <div class="tr-row" style="margin-top:16px">
+      <select class="cur-select" id="al-from" onchange="alertPairChanged()"></select>
+      <button class="al-swap" onclick="swapAlert()" aria-label="Swap">⇄</button>
+      <select class="cur-select" id="al-to" onchange="alertPairChanged()"></select>
+    </div>
+    <div class="al-now" id="al-now"></div>
+    <div class="al-target">
+      <div class="card-label" id="al-target-label">Когда 1 € станет</div>
+      <div class="al-input-row"><input class="conv-amount" type="number" inputmode="decimal" id="al-target" oninput="alertTargetChanged()"><span class="al-unit" id="al-unit"></span></div>
+      <div class="al-dir" id="al-dir"></div>
+    </div>
+    <div class="al-chips" id="al-chips"></div>
+    <button class="tr-btn" id="al-save" onclick="saveAlert()">Уведомить</button>
+    <div class="al-hint" id="al-hint"></div>
   </div>
 </div>
 
@@ -972,6 +1002,7 @@ async function openChart(code, name) {
   // Внутридневные данные есть только у крипты
   const oneDay = document.querySelector('.period-btn[data-days="1"]');
   oneDay.hidden = !CRYPTO_SET.has(code);
+  document.querySelector('.ch-bell').hidden = !ALERT_CODES.has(code);
   if (oneDay.hidden && chartPeriod === '1') chartPeriod = '30';
   document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.days === chartPeriod));
   document.getElementById('chart-empty').style.display = 'flex';
@@ -1151,6 +1182,12 @@ function applyLang() {
   renderFiat(); renderCrypto(); renderMetals(); conv(); updateCounter();
   if (document.getElementById('tab-saved').classList.contains('active')) renderSaved();
   if (lastTransfer) renderTransfer(lastTransfer);
+  renderAlerts();
+  if (document.getElementById('tab-news').classList.contains('active')) loadNews();
+  document.getElementById('add-alert-btn').setAttribute('aria-label', T('Уведомить о курсе','Rate alert'));
+  document.getElementById('al-title').textContent = T('Уведомить о курсе','Rate alert');
+  if (document.getElementById('alert-modal').classList.contains('open')) { alertPairChanged(false); setAlertHint(''); }
+  document.getElementById('al-save').textContent = T('Уведомить','Notify me');
 }
 
 function toggleLang() {
@@ -1171,37 +1208,10 @@ function switchTab(n) {
   document.getElementById('markets-head').style.display = isMarket ? '' : 'none';
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active');
-  if(n==='saved') renderSaved();
+  if(n==='saved') { renderSaved(); loadAlerts(); }
+  if(n==='news') loadNews();
   window.scrollTo(0,0);
 }
-
-// CALCULATOR
-let cExpr='',cCur='0',cNewNum=true,cLastOp='',cLastNum=0;
-function updC(){document.getElementById('c-expr').textContent=cExpr;document.getElementById('c-res').textContent=cCur;}
-function cNum(n){if(cNewNum){cCur=n;cNewNum=false;}else{cCur=cCur==='0'?n:cCur+n;}updC();}
-function cDot(){if(cNewNum){cCur='0.';cNewNum=false;}else if(!cCur.includes('.'))cCur+='.';updC();}
-function cOp(op){
-  if(op==='-'&&cNewNum&&!cLastOp){cCur='-';cNewNum=false;cExpr='-';updC();return;}
-  if(cCur==='-')return;
-  cLastNum=parseFloat(cCur);cLastOp=op;
-  cExpr=cCur+' '+({'+':'+','-':'−','*':'×','/':'÷'}[op]||op);
-  cNewNum=true;updC();
-}
-function cPct(){
-  if(cLastOp&&cLastNum!==0){const p=cLastNum*(parseFloat(cCur)/100);cCur=String(parseFloat(p.toFixed(10)));cExpr=cLastNum+' '+({'+':'+','-':'−','*':'×','/':'÷'}[cLastOp]||cLastOp)+' '+parseFloat(cCur);cNewNum=true;}
-  else{cCur=String(parseFloat((parseFloat(cCur)/100).toFixed(10)));cNewNum=true;}
-  updC();
-}
-function cEq(){
-  if(!cLastOp)return;
-  const a=cLastNum,b=parseFloat(cCur);
-  let r=0;
-  if(cLastOp==='+')r=a+b;else if(cLastOp==='-')r=a-b;else if(cLastOp==='*')r=a*b;else if(cLastOp==='/') r=b!==0?a/b:0;
-  cExpr=a+' '+({'+':'+','-':'−','*':'×','/':'÷'}[cLastOp]||cLastOp)+' '+b+' =';
-  cCur=String(parseFloat(r.toFixed(10)));cLastOp='';cLastNum=0;cNewNum=true;updC();
-}
-function cDel(){if(cNewNum||cCur.length<=1){cCur='0';cNewNum=true;}else{cCur=cCur.slice(0,-1);if(cCur==='-')cCur='0';}updC();}
-function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
 
 // THEMES
 // Одна фирменная палитра на всё приложение (выбор Рауля). Остальные — для
@@ -1630,6 +1640,211 @@ function renderTransfer({amount, from, to, offers}) {
 
 // Ссылка вида ?from=EUR&to=UAH&amount=200 или startapp=EUR_UAH_200 —
 // открывает конвертер сразу с нужной парой
+// ===== УВЕДОМЛЕНИЯ О КУРСЕ =====
+// Ставятся здесь, а присылает их бот: функция miniapp-alerts проверяет подпись
+// Telegram (initData) и пишет в ту же таблицу, что и /alert в боте.
+const FN_BASE = 'https://daicafgagkvinbtqifbc.supabase.co/functions/v1/';
+// Валюты, которые бот умеет проверять (Stars и новые монеты — нет)
+const ALERT_CODES = new Set('ADA AED ALL AMD ARS ATOM AUD AVAX AZN BBD BCH BDT BGN BHD BNB BOB BRL BSD BTC BWP BYN BZD CAD CHF CLP CNY COP CRC CUP CZK DKK DOGE DOP DOT DZD EGP ETB ETH EUR FJD GBP GEL GHS GTQ HKD HNL HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KHR KPW KRW KWD KZT LAK LBP LINK LKR LTC MAD MDL MKD MMK MNT MUR MXN MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB SAR SCR SEK SGD SOL THB TND TON TOP TRX TRY TTD TWD TZS UAH UGX UNI USD USDC USDT UYU UZS VND VUV WST XAF XAG XAU XLM XOF XPD XPT XRP YER ZAR ZMW'.split(' '));
+const MAX_ALERTS = 5;
+let myAlerts = null, alertsState = 'idle';
+const pairRate = (f, t) => { const u = toUSD(f, 1); return u ? fromUSD(u, t) : 0; };
+const niceTarget = v => v > 0 ? Number(v.toPrecision(v >= 1 ? 4 : 3)) : 0;
+
+async function alertsApi(method, body, qs = '') {
+  const r = await fetch(FN_BASE + 'miniapp-alerts' + qs, {
+    method, headers: {'x-init-data': TG?.initData || '', 'Content-Type': 'application/json'},
+    body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(12000),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(d.error || 'http'); e.code = d.error || 'http'; throw e; }
+  return d;
+}
+function alertErrText(code) {
+  return ({
+    limit: T(`Максимум ${MAX_ALERTS} уведомлений. Удали старое во вкладке «Сохранено».`, `Maximum ${MAX_ALERTS} alerts. Delete an old one in the Saved tab.`),
+    unauthorized: T('Не получилось проверить вход. Закрой и снова открой мини-апп из бота.', "Couldn't verify you. Close and reopen the mini app from the bot."),
+    too_close: T('Цель почти равна текущему курсу, выбери другую.', 'Target is almost the current rate, pick another one.'),
+    bad_target: T('Введи цель — положительное число.', 'Enter a positive target.'),
+    unsupported: T('Для этой пары бот пока не шлёт уведомления.', "The bot can't track this pair yet."),
+  })[code] || T('Сервис недоступен, попробуй чуть позже.', 'Service unavailable, try again in a bit.');
+}
+
+async function loadAlerts() {
+  if (!TG?.initData) { alertsState = 'notg'; renderAlerts(); return; }
+  if (alertsState === 'loading') return;
+  alertsState = myAlerts ? 'ready' : 'loading';
+  renderAlerts();
+  try { myAlerts = (await alertsApi('GET')).alerts || []; alertsState = 'ready'; }
+  catch (e) { alertsState = myAlerts ? 'ready' : 'error'; }
+  renderAlerts();
+}
+function renderAlerts() {
+  const el = document.getElementById('alerts-section');
+  if (!el) return;
+  let body;
+  if (alertsState === 'notg') body = `<div class="al-empty">${T('Уведомления работают в Telegram: открой мини-апп из бота.', 'Alerts work inside Telegram: open the mini app from the bot.')}</div>`;
+  else if (alertsState === 'loading') body = `<div class="al-empty">${T('Загрузка...', 'Loading...')}</div>`;
+  else if (alertsState === 'error') body = `<div class="al-empty">${alertErrText('http')}</div>`;
+  else if (!myAlerts?.length) body = `<div class="al-empty">${T('Пока нет. Бот пришлёт сообщение, когда курс дойдёт до твоей цели.', "None yet. The bot will message you when the rate hits your target.")}</div>`;
+  else body = myAlerts.map(a => {
+    const up = a.direction === 'above', now = pairRate(a.from_cur, a.to_cur);
+    const cond = `<span class="${up ? 'up' : 'down'}">${up ? '▲ ' + T('выше', 'above') : '▼ ' + T('ниже', 'below')} ${fmt(a.target)} ${sign(a.to_cur)}</span>`;
+    return `<div class="al-item">
+      <div style="min-width:0"><div class="al-pair">${a.from_cur} → ${a.to_cur}</div>
+      <div class="al-cond">${cond}${now ? ' · ' + T('сейчас', 'now') + ' ' + fmt(now) : ''}</div></div>
+      <div class="fav-del" onclick="deleteAlert(${Number(a.id)})" aria-label="Delete">✕</div>
+    </div>`;
+  }).join('');
+  const canAdd = alertsState !== 'notg' && !(myAlerts && myAlerts.length >= MAX_ALERTS);
+  el.innerHTML = `<div class="group-title">🔔 ${T('Уведомления о курсе', 'Rate alerts')}</div><div class="list">${body}</div>` +
+    (canAdd ? `<button class="al-add" onclick="openAlertFromConv()">＋ ${T('Новое уведомление', 'New alert')}</button>` : '');
+}
+async function deleteAlert(id) {
+  haptic('light');
+  const prev = myAlerts;
+  myAlerts = (myAlerts || []).filter(a => a.id !== id); renderAlerts();
+  try { myAlerts = (await alertsApi('DELETE', null, '?id=' + id)).alerts || myAlerts; }
+  catch { myAlerts = prev; }
+  renderAlerts();
+}
+
+function fillAlertSelects(extra) {
+  const opts = [...document.getElementById('from-cur').options].filter(o => ALERT_CODES.has(o.value)).map(o => `<option value="${o.value}">${o.textContent}</option>`);
+  extra.filter(c => ALERT_CODES.has(c) && !opts.some(o => o.includes(`"${c}"`))).forEach(c => opts.push(`<option value="${c}">${c}</option>`));
+  const html = opts.join('');
+  document.getElementById('al-from').innerHTML = html;
+  document.getElementById('al-to').innerHTML = html;
+}
+function openAlert(f, t) {
+  if (!ALERT_CODES.has(f)) f = 'USD';
+  if (!ALERT_CODES.has(t) || t === f) t = f === 'USD' ? 'EUR' : 'USD';
+  // «1 ₴ = 0.02 €» неудобно — ставим как «1 € = 49 ₴»
+  const r = pairRate(f, t);
+  if (r > 0 && r < 0.1) [f, t] = [t, f];
+  fillAlertSelects([f, t]);
+  document.getElementById('al-from').value = f;
+  document.getElementById('al-to').value = t;
+  alertPairChanged(true);
+  setAlertHint('');
+  document.getElementById('al-save').disabled = false;
+  document.getElementById('alert-modal').classList.add('open');
+  haptic('light');
+}
+function openAlertFromConv() { openAlert(document.getElementById('from-cur').value, document.getElementById('to-cur').value); }
+function openAlertFromChart() {
+  const m = chartMeta(chartCode), code = chartCode;
+  closeChart();
+  m.unit === 'USD' ? openAlert(code, 'USD') : openAlert('USD', code);
+}
+function closeAlert() { document.getElementById('alert-modal').classList.remove('open'); }
+function swapAlert() {
+  const a = document.getElementById('al-from'), b = document.getElementById('al-to');
+  [a.value, b.value] = [b.value, a.value];
+  haptic('light'); alertPairChanged(true);
+}
+function alertPairChanged(resetTarget = true) {
+  const f = document.getElementById('al-from').value, t = document.getElementById('al-to').value;
+  const now = pairRate(f, t);
+  document.getElementById('al-sub').textContent = `${f} → ${t}`;
+  document.getElementById('al-now').innerHTML = now ? `${T('Сейчас', 'Now')}: <b>1 ${sign(f)} = ${fmt(now)} ${sign(t)}</b>` : '';
+  document.getElementById('al-target-label').textContent = T(`Когда 1 ${sign(f)} будет`, `When 1 ${sign(f)} is`);
+  document.getElementById('al-unit').textContent = sign(t);
+  if (resetTarget) document.getElementById('al-target').value = niceTarget(now * 1.02) || '';
+  document.getElementById('al-chips').innerHTML = now ? [-5, -2, 2, 5].map(p =>
+    `<button class="al-chip" onclick="setAlertPct(${p})">${p > 0 ? '+' : '−'}${Math.abs(p)}%</button>`).join('') : '';
+  alertTargetChanged();
+}
+function setAlertPct(p) {
+  const f = document.getElementById('al-from').value, t = document.getElementById('al-to').value;
+  document.getElementById('al-target').value = niceTarget(pairRate(f, t) * (1 + p / 100));
+  haptic('light'); alertTargetChanged();
+}
+function alertTargetChanged() {
+  const f = document.getElementById('al-from').value, t = document.getElementById('al-to').value;
+  const now = pairRate(f, t), v = parseFloat(document.getElementById('al-target').value);
+  const el = document.getElementById('al-dir');
+  if (!now || !(v > 0) || f === t) { el.textContent = ''; el.className = 'al-dir'; return; }
+  const up = v > now, pct = (v / now - 1) * 100;
+  el.className = 'al-dir ' + (up ? 'up' : 'down');
+  el.textContent = (up ? '▲ ' + T('вырастет до', 'rises to') : '▼ ' + T('упадёт до', 'drops to')) + ` ${fmt(v)} ${sign(t)} (${pct > 0 ? '+' : ''}${pct.toFixed(1)}%)`;
+}
+function setAlertHint(text, cls = '') {
+  const el = document.getElementById('al-hint');
+  el.className = 'al-hint' + (cls ? ' ' + cls : '');
+  el.textContent = text || T('Бот пришлёт сообщение в чат, когда курс дойдёт до цели.', 'The bot will message you when the rate hits the target.');
+}
+async function saveAlert() {
+  const f = document.getElementById('al-from').value, t = document.getElementById('al-to').value;
+  const target = parseFloat(document.getElementById('al-target').value);
+  if (f === t) return setAlertHint(T('Выбери две разные валюты.', 'Pick two different currencies.'), 'err');
+  if (!(target > 0)) return setAlertHint(alertErrText('bad_target'), 'err');
+  if (!TG?.initData) return setAlertHint(T('Уведомления работают в Telegram: открой мини-апп из бота.', 'Alerts work inside Telegram: open the mini app from the bot.'), 'err');
+  const btn = document.getElementById('al-save');
+  btn.disabled = true; btn.textContent = T('Сохраняю...', 'Saving...');
+  try {
+    const d = await alertsApi('POST', {from: f, to: t, target, lang, current: pairRate(f, t)});
+    myAlerts = d.alerts || myAlerts; alertsState = 'ready';
+    haptic('success');
+    setAlertHint(T('Готово! Бот напишет, когда курс дойдёт до цели.', "Done! The bot will message you when it's there."), 'ok');
+    renderAlerts();
+    setTimeout(closeAlert, 1400);
+  } catch (e) {
+    setAlertHint(alertErrText(e.code), 'err');
+    btn.disabled = false;
+  }
+  btn.textContent = T('Уведомить', 'Notify me');
+}
+
+// ===== НОВОСТИ РЫНКА =====
+// Заголовки из открытых RSS на языке интерфейса (функция market-news)
+const newsCache = {};
+let newsLoadingLang = null;
+const escHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+function timeAgo(ts) {
+  const m = Math.max(1, Math.round((Date.now() - ts) / 60000));
+  if (m < 60) return T(`${m} мин назад`, `${m} min ago`);
+  const h = Math.round(m / 60);
+  if (h < 24) return T(`${h} ч назад`, `${h} h ago`);
+  const d = Math.round(h / 24);
+  return T(`${d} дн. назад`, `${d} d ago`);
+}
+async function loadNews(force) {
+  const l = lang, c = newsCache[l];
+  if (c && !force && Date.now() - c.t < 5 * 60000) return renderNews();
+  if (newsLoadingLang === l) return;
+  newsLoadingLang = l;
+  if (!c) renderNews();
+  try {
+    const r = await fetch(`${FN_BASE}market-news?lang=${l}`, {signal: AbortSignal.timeout(15000)});
+    const d = await r.json();
+    if (!r.ok || !Array.isArray(d.items)) throw new Error('bad');
+    newsCache[l] = {t: Date.now(), items: d.items};
+  } catch { if (!newsCache[l]) newsCache[l] = {t: 0, items: null}; }
+  newsLoadingLang = null;
+  if (lang === l) renderNews();
+}
+function renderNews() {
+  const el = document.getElementById('news-list'), foot = document.getElementById('news-foot');
+  const c = newsCache[lang];
+  foot.textContent = '';
+  if (!c) { el.innerHTML = `<div class="loading"><div class="spinner"></div>${T('Загрузка...', 'Loading...')}</div>`; return; }
+  if (!c.items) { el.innerHTML = `<div class="empty-state">${T('Новости сейчас недоступны.', 'News is unavailable right now.')}<br><button class="al-add" style="max-width:220px;margin:12px auto 0" onclick="loadNews(true)">${T('Повторить', 'Retry')}</button></div>`; return; }
+  if (!c.items.length) { el.innerHTML = `<div class="empty-state">${T('Свежих новостей пока нет.', 'No fresh news yet.')}</div>`; return; }
+  el.innerHTML = '<div class="list">' + c.items.map((n, i) => `<div class="news-item" onclick="openNews(${i})">
+      <div class="news-body"><div class="news-title">${escHtml(n.title)}</div>
+      <div class="news-meta"><span class="news-src">${escHtml(n.source)}</span><span>·</span><span>${timeAgo(n.ts)}</span></div></div>
+      ${n.image ? `<img class="news-img" src="${escHtml(n.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+    </div>`).join('') + '</div>';
+  foot.textContent = T('Заголовки и ссылки на источники. Не инвестиционный совет.', 'Headlines link to the original sources. Not investment advice.');
+}
+function openNews(i) {
+  const n = newsCache[lang]?.items?.[i];
+  if (!n || !/^https:\/\//.test(n.link)) return;
+  haptic('light');
+  if (TG?.openLink) TG.openLink(n.link); else window.open(n.link, '_blank', 'noopener');
+}
+
 function applyStartParams() {
   const q = new URLSearchParams(location.search);
   let from = q.get('from'), to = q.get('to'), amount = q.get('amount');
