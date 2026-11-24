@@ -30,7 +30,7 @@
   --rl: 22px;
   --rf: 999px;
 }
-html { background:#000; }
+html { background:#0c0b11; }
 body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:calc(86px + env(safe-area-inset-bottom)); -webkit-font-smoothing:antialiased; max-width:480px; margin:0 auto; box-shadow:0 0 60px rgba(0,0,0,0.6); }
 
 /* Светлая тема: эти элементы лежат прямо на фоне страницы (не внутри
@@ -55,10 +55,6 @@ body.light-theme .empty-state { color:#0a0a0a; }
 .hbtn { height:30px; border-radius:var(--rf); border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; display:flex; align-items:center; padding:0 12px; transition:opacity 0.15s; }
 .hbtn:active { opacity:0.7; }
 .lang-btn { background:var(--card); color:var(--sub2); }
-.theme-btn-wrap { height:30px; border-radius:var(--rf); background:var(--card); border:none; cursor:pointer; padding:0 12px; display:flex; align-items:center; gap:6px; flex-shrink:0; transition:background 0.15s; }
-.theme-btn-wrap:active { background:var(--card2); }
-.theme-color-dot { width:10px; height:10px; border-radius:3px; background:var(--t); flex-shrink:0; transition:background 0.2s; }
-.theme-btn-text { font-size:11px; font-weight:500; color:var(--sub2); font-family:'Inter',sans-serif; letter-spacing:0.2px; }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--up); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .menu-btn { width:30px; height:30px; border-radius:50%; background:var(--card); border:none; cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; }
@@ -113,7 +109,6 @@ body.light-theme .page-title { color:#0a0a0a; }
 .swap-btn-float:active { transform:translateY(-50%) rotate(180deg); }
 .swap-btn-float { box-shadow:0 4px 14px -4px color-mix(in srgb, var(--t) 70%, transparent); }
 body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
-body.light-theme .theme-color-dot { box-shadow:0 0 0 1.5px #ffffff; }
 .conv-rate-line { font-size:11px; color:var(--sub); text-align:center; margin-bottom:10px; }
 
 /* ACTIONS */
@@ -236,12 +231,6 @@ body.light-theme .theme-color-dot { box-shadow:0 0 0 1.5px #ffffff; }
 .stat-label { font-size:9px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
 .stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; }
 
-/* THEME PANEL */
-.theme-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; align-items:flex-end; backdrop-filter:blur(4px); }
-.theme-overlay.open { display:flex; }
-.theme-panel { background:#1c1c1e; border-radius:20px 20px 0 0; padding:20px 18px 32px; width:100%; border-top:1px solid var(--border); max-height:72vh; overflow-y:auto; }
-.theme-head { font-size:16px; font-weight:700; color:var(--text); margin-bottom:18px; }
-.theme-grid { display:flex; flex-direction:column; gap:2px; }
 
 /* COMPARE SELECT */
 .cmp-row { display:flex; gap:8px; margin-bottom:0; }
@@ -300,7 +289,6 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="header-right">
     <button class="hbtn lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
-    <div class="theme-btn-wrap" onclick="openTheme()" id="theme-btn"><div class="theme-color-dot" id="theme-color-dot"></div><span class="theme-btn-text" id="theme-btn-text">Theme</span></div>
     <div class="menu-btn" onclick="toggleMenu()" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </div>
@@ -487,14 +475,6 @@ body.light-theme .footer { color:#555; }
       <div class="stat-box"><div class="stat-label" id="sl-max">Макс</div><div class="stat-val" id="stat-max">—</div></div>
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
-  </div>
-</div>
-
-<!-- THEME PANEL -->
-<div class="theme-overlay" id="theme-overlay" onclick="closeTheme(event)">
-  <div class="theme-panel">
-    <div class="theme-head" id="theme-header">Выбери тему</div>
-    <div class="theme-grid" id="theme-grid"></div>
   </div>
 </div>
 
@@ -1058,13 +1038,11 @@ function applyLang() {
   document.getElementById('add-fav-btn').setAttribute('aria-label', T('Добавить в избранное','Add to favorites'));
   document.getElementById('conv-transfer-btn').textContent=T('💸 Сравнить переводы','💸 Compare transfers');
   document.getElementById('tr-btn').textContent=T('Сравнить','Compare');
-  document.getElementById('theme-btn-text').textContent=T('Тема','Theme');
   document.getElementById('fiat-search').placeholder=T('Поиск валюты...','Search currency...');
   document.getElementById('crypto-search').placeholder=T('Поиск крипты...','Search crypto...');
   document.getElementById('sl-min').textContent=T('Мин','Min');
   document.getElementById('sl-max').textContent=T('Макс','Max');
   document.getElementById('sl-chg').textContent=T('Изм.','Chg.');
-  document.getElementById('theme-header').textContent=T('Выбери тему','Choose theme');
   document.getElementById('ptr-indicator').textContent=T('↓ Потяни, чтобы обновить','↓ Pull to refresh');
   document.querySelectorAll('.loading').forEach(el => { if (el.lastChild?.nodeType === 3) el.lastChild.textContent = T('Загрузка...','Loading...'); });
   fillTransferSelects();
@@ -1147,18 +1125,18 @@ function cDel(){if(cNewNum||cCur.length<=1){cCur='0';cNewNum=true;}else{cCur=cCu
 function cClear(){cExpr='';cCur='0';cNewNum=true;cLastOp='';cLastNum=0;updC();}
 
 // THEMES
+// Одна фирменная палитра на всё приложение (выбор Рауля). Остальные — для
+// быстрого переключения, если решим поменять: достаточно сменить PALETTE.
 const THEMES = [
-  {id:'teal',     name:'Бирюза',     nameEn:'Teal',      t:'#00e5cc', t2:'#00c4ae', t3:'#008f7e', s1:'#0c1414', s2:'#111e1e', s3:'#162828', b2:'#183030'},
-  {id:'sapphire', name:'Сапфир',     nameEn:'Sapphire',  t:'#1e88e5', t2:'#1565c0', t3:'#0d47a1', s1:'#080c14', s2:'#0d1420', s3:'#121c28', b2:'#102535'},
-  {id:'emerald',  name:'Изумруд',    nameEn:'Emerald',   t:'#00d68f', t2:'#00b574', t3:'#007a4d', s1:'#0a130f', s2:'#0f1e17', s3:'#14281e', b2:'#153020'},
-  {id:'gold',     name:'Золото',     nameEn:'Gold',      t:'#ffd700', t2:'#e0b800', t3:'#a08500', s1:'#141000', s2:'#201800', s3:'#282000', b2:'#352800'},
-  {id:'white',    name:'Белый',      nameEn:'White',     t:'#ffffff', t2:'#d0d0d0', t3:'#888888', s1:'#141414', s2:'#1c1c1c', s3:'#242424', b2:'#2e2e2e'},
-  {id:'bw',       name:'Бело-чёрное',nameEn:'Black & White', t:'#000000', t2:'#262626', t3:'#4d4d4d', s1:'#f2f2f2', s2:'#ececec', s3:'#e2e2e2', b2:'#d8d8d8',
-    bg:'#ffffff', card:'#000000', card2:'#141414', text:'#ffffff', border:'#1a1a1a', contrast:'#ffffff',
-    sub:'#a8a8ac', sub2:'#c7c7cc', emphasis:'#d6d6d6', light:true},
+  {id:'gold',   t:'#E8B931', t2:'#c99d1f', t3:'#8a6d17', s1:'#121212', s2:'#1a1a1a', s3:'#222222', b2:'#2a2a2a',
+   bg:'#0b0d10', card:'#15181c', card2:'#0f1114', border:'#23272d', contrast:'#111111', sub:'#7d838c', sub2:'#a9afb8', text:'#f4f5f6'},
+  {id:'violet', t:'#9B8AFB', t2:'#7f6ef0', t3:'#5b4cc4', s1:'#121018', s2:'#1a1722', s3:'#221e2c', b2:'#2a2536',
+   bg:'#0c0b11', card:'#17151f', card2:'#110f17', border:'#262233', contrast:'#0c0b11', sub:'#827d96', sub2:'#b1abc6', text:'#f5f4fa'},
+  {id:'teal',   t:'#1FD1B2', t2:'#16b398', t3:'#0f7f6c', s1:'#0d1312', s2:'#121a19', s3:'#172221', b2:'#1d2b29',
+   bg:'#090d0d', card:'#131a19', card2:'#0e1413', border:'#1f2a28', contrast:'#06110f', sub:'#7a8c89', sub2:'#a7b6b3', text:'#f2f7f6'},
 ];
-
-let currentTheme = LS.get('lsk_theme', 'teal');
+const PALETTE = 'violet';
+let currentTheme = PALETTE;
 
 const DEFAULTS = { bg:'#000000', card:'#1c1c1e', card2:'#111113', text:'#ffffff', border:'#2a2a2c', contrast:'#000000' };
 
@@ -1192,34 +1170,11 @@ function applyTheme(id) {
   // result card - тёмная подложка результата, для светлой темы тоже тёмная
   // (плашка результата остаётся акцентной подложкой, не белой)
   r.setProperty('--result-bg', th.light ? '#0f0f10ee' : th.s1+'ee');
-  const dot = document.getElementById('theme-color-dot');
-  if(dot) dot.style.background = th.t;
   document.querySelectorAll('.brand-icon,.menu-logo').forEach(el=>{el.style.background=th.t;el.style.color=th.contrast||DEFAULTS.contrast;});
   currentTheme = id;
-  LS.set('lsk_theme', id);
 }
 
-function renderThemeGrid() {
-  const grid = document.getElementById('theme-grid');
-  if(!grid) return;
-  grid.innerHTML = THEMES.map(function(th) {
-    var name = lang==='en'?(th.nameEn||th.name):th.name;
-    var isActive = th.id===currentTheme;
-    var check = isActive ? '<span style="color:var(--t-emphasis);font-weight:700;font-size:16px;">✓</span>' : '';
-    return '<div onclick="applyTheme(\''+th.id+'\');renderThemeGrid()" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;">' +
-      '<div style="display:flex;align-items:center;gap:12px;">' +
-        '<div style="width:36px;height:20px;border-radius:5px;background:linear-gradient(90deg,'+th.t+','+th.t3+');flex-shrink:0;"></div>' +
-        '<span style="font-size:14px;color:#fff;font-weight:'+(isActive?'600':'400')+';">'+name+'</span>' +
-      '</div>' +
-      check +
-    '</div>';
-  }).join('');
-}
-
-function openTheme() { renderThemeGrid(); document.getElementById('theme-overlay').classList.add('open'); }
-function closeThemePanel() { document.getElementById('theme-overlay').classList.remove('open'); }
-function closeTheme(e) { if(e.target.id==='theme-overlay') closeThemePanel(); }
-applyTheme(currentTheme);
+applyTheme(PALETTE);
 
 // LOCAL STORAGE
 let lsHistory = LS.json('lsk_hist', []);
@@ -1428,7 +1383,7 @@ document.addEventListener('touchmove', e => {
   const scrollTop = document.documentElement.scrollTop;
   const diff = e.touches[0].clientY - ptrStartY;
   const indicator = document.getElementById('ptr-indicator');
-  if(document.querySelector('.modal-overlay.open,.theme-overlay.open,.side-menu.open')) return;
+  if(document.querySelector('.modal-overlay.open,.side-menu.open')) return;
   if(scrollTop === 0 && diff > 40) {
     ptrActive = true;
     if(indicator) { indicator.classList.add('visible'); indicator.textContent = diff > 80 ? (lang==='ru'?'Отпусти для обновления':'Release to refresh') : (lang==='ru'?'↓ Потяни для обновления':'↓ Pull to refresh'); }
