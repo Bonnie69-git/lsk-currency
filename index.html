@@ -132,7 +132,11 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .multi-label { font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:10px; }
 .multi-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; cursor:pointer; border-bottom:1px solid var(--border); }
 .multi-item:last-child { border-bottom:none; }
-.multi-name { font-size:13px; color:var(--sub2); }
+.multi-name { font-size:14px; color:var(--text); display:flex; align-items:center; gap:11px; min-width:0; }
+.multi-name .flag-ico, .multi-name .flag-fb, .multi-name .coin-img, .multi-name .coin-badge, .multi-name .metal-ico { width:28px; height:28px; font-size:10px; }
+.multi-name .flag-fb { font-size:16px; }
+.multi-code { color:var(--sub); font-size:11px; margin-left:6px; }
+.multi-more { width:100%; margin-top:6px; padding:11px 0; background:none; border:none; border-top:1px solid var(--border); color:var(--t-emphasis); font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
 .multi-val { font-size:14px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }
 
 /* RATES */
@@ -373,6 +377,7 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="multi-card">
     <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
+    <div class="search-wrap" style="display:none;margin:0 0 6px"><span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><input class="search-input" type="text" id="multi-search" oninput="conv()" placeholder="Поиск валюты..."></div>
     <div id="multi-list"></div>
   </div>
 </div>
@@ -987,24 +992,46 @@ function fromUSD(u,c) {
   return 0;
 }
 
-const MULTI_TARGETS = [
-  {code:"UAH",flag:"🇺🇦"},{code:"USD",flag:"🇺🇸"},{code:"EUR",flag:"🇪🇺"},
-  {code:"GEL",flag:"🇬🇪"},{code:"RUB",flag:"🇷🇺"},{code:"GBP",flag:"🇬🇧"},
-  {code:"CNY",flag:"🇨🇳"},{code:"TRY",flag:"🇹🇷"},{code:"PLN",flag:"🇵🇱"},
-  {code:"BTC",flag:"₿"},{code:"ETH",flag:"⟠"},{code:"TON",flag:"💎"},
-];
-
+// «Сразу во всех валютах»: сначала избранные и популярные, остальное — по кнопке
+// «Показать все» с поиском. Значки как на вкладке «Рынки» (флаги, логотипы).
+const MULTI_TOP = ['UAH','USD','EUR','GEL','RUB','GBP','PLN','TRY','KZT','CNY','BTC','ETH','TON','USDT','XAU'];
+let multiAll = false;
+function assetName(c) {
+  const a = FIAT.find(x => x.code === c) || CRYPTOS.find(x => x.code === c) || METALS_LIST.find(x => x.code === c);
+  if (a) return a[lang] || a.en || c;
+  if (c === 'XTR') return 'Telegram Stars';
+  return c;
+}
+function assetIcon(c) {
+  const cr = CRYPTOS.find(x => x.code === c);
+  if (cr) return coinIcon(cr);
+  if (METAL_STYLE[c]) return metalIcon(c);
+  if (c === 'XTR') return '<div class="coin-badge" style="background:#F5B70122;color:#F5B701;border:1px solid #F5B70140;font-size:14px">★</div>';
+  return flagIcon(c, FIAT.find(x => x.code === c)?.flag);
+}
+function toggleMultiAll() {
+  multiAll = !multiAll; haptic('light');
+  const q = document.getElementById('multi-search');
+  q.value = ''; q.parentElement.style.display = multiAll ? '' : 'none';
+  conv();
+}
 function renderMulti(fromCur, amount) {
-  const n = NAMES[lang];
   const usd = toUSD(fromCur, amount);
-  const items = MULTI_TARGETS.filter(t => t.code !== fromCur).map(t => {
-    const val = fromUSD(usd, t.code);
-    return `<div class="multi-item" onclick="setPair('${fromCur}','${t.code}')">
-      <span class="multi-name">${t.flag} ${(n[t.code]||t.code).split(" ").slice(1).join(" ")}</span>
+  const all = [...new Set([...document.getElementById('from-cur').options].map(o => o.value))].filter(c => c !== fromCur);
+  const favTo = lsFavs.map(k => k.split('-')).filter(([f]) => f === fromCur).map(([, t]) => t);
+  const head = [...new Set([...favTo, ...MULTI_TOP])].filter(c => all.includes(c));
+  let codes = multiAll ? [...head, ...all.filter(c => !head.includes(c))] : head;
+  const q = (document.getElementById('multi-search')?.value || '').trim().toLowerCase();
+  if (multiAll && q) codes = codes.filter(c => c.toLowerCase().includes(q) || assetName(c).toLowerCase().includes(q));
+  const items = codes.map(c => {
+    const val = fromUSD(usd, c);
+    return `<div class="multi-item" onclick="setPair('${fromCur}','${c}')">
+      <span class="multi-name">${assetIcon(c)}<span>${assetName(c)}<span class="multi-code">${c}</span></span></span>
       <span class="multi-val">${fmt(val)}</span>
     </div>`;
   });
-  document.getElementById('multi-list').innerHTML = items.join('');
+  document.getElementById('multi-list').innerHTML = (items.join('') || `<div class="al-empty">${T('Ничего не нашлось','Nothing found')}</div>`) +
+    (q ? '' : `<button class="multi-more" onclick="toggleMultiAll()">${multiAll ? T('Свернуть','Show less') : T(`Показать все валюты (${all.length})`, `Show all currencies (${all.length})`)}</button>`);
 }
 
 // Популярные пары для эмигрантов — в одно касание
@@ -1301,6 +1328,7 @@ function applyLang() {
   document.getElementById('tr-btn').textContent=T('Сравнить','Compare');
   document.getElementById('fiat-search').placeholder=T('Поиск валюты...','Search currency...');
   document.getElementById('crypto-search').placeholder=T('Поиск крипты...','Search crypto...');
+  document.getElementById('multi-search').placeholder=T('Поиск валюты...','Search currency...');
   document.getElementById('sl-min').textContent=T('Мин','Min');
   document.getElementById('sl-max').textContent=T('Макс','Max');
   document.getElementById('sl-chg').textContent=T('Изм.','Chg.');
@@ -1738,8 +1766,25 @@ async function runTransfer() {
   renderTransfer(res);
 }
 
+// Если реальных предложений мало, добавляем оценки по рыночному курсу с
+// типичными комиссиями — чтобы для любой пары был ответ, а не пустой экран.
+// Цифры комиссий — типичные, помечены «оценка».
+function marketEstimates(amount, from, to, offers) {
+  const mid = fromUSD(toUSD(from, 1), to);
+  if (!(mid > 0)) return [];
+  const out = [], usdAmt = toUSD(from, amount);
+  const hasService = offers.some(o => !o.approx), hasP2P = offers.some(o => o.p2p);
+  // Из гривны Wise и другие сервисы не отправляют — такую оценку не показываем
+  if (!hasService && from !== 'UAH') out.push({name: T('Сервис переводов (Wise и др.)', 'Transfer service (Wise etc.)'), received: amount * mid * (1 - 0.012), fee: 0, rate: mid * (1 - 0.012), approx: true, synth: 'service'});
+  if (!hasP2P) out.push({name: 'USDT P2P', received: amount * mid * (1 - 0.015), fee: 0, rate: mid * (1 - 0.015), approx: true, synth: 'p2p'});
+  const bankFeeUsd = 25, bankRecv = (usdAmt - bankFeeUsd) * (1 - 0.025);
+  if (bankRecv > 0) out.push({name: T('Банковский перевод (SWIFT)', 'Bank transfer (SWIFT)'), received: fromUSD(bankRecv, to), fee: fromUSD(bankFeeUsd, from), rate: mid * (1 - 0.025), approx: true, synth: 'bank'});
+  return out;
+}
 function renderTransfer({amount, from, to, offers}) {
   const box = document.getElementById('tr-result');
+  const synth = marketEstimates(amount, from, to, offers);
+  offers = [...offers, ...synth].sort((a, b) => b.received - a.received);
   const botHint = T('Вариант через USDT P2P (Binance) — в боте: команда /transfer.','The USDT P2P (Binance) option is in the bot: /transfer.');
   if (!offers.length) {
     const why = from === 'UAH'
@@ -1749,7 +1794,7 @@ function renderTransfer({amount, from, to, offers}) {
     box.innerHTML = `<div class="empty-state">${why}</div><div class="tr-note"><span class="ico" style="color:var(--sub)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg></span>${botHint}</div>`;
     return;
   }
-  const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmtPairRate(from, to, o.rate)}` : ''].filter(Boolean).join(' · ');
+  const details = o => [o.synth ? T('оценка','estimate') : '', o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmtPairRate(from, to, o.rate)}` : ''].filter(Boolean).join(' · ');
   const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const quoted = offers.filter(o => !o.approx), est = offers.filter(o => o.approx);
   const rank = i => `<div class="tr-rank${i===0?' first':''}">${i+1}</div>`;
@@ -1774,7 +1819,11 @@ function renderTransfer({amount, from, to, offers}) {
   const mid = fromUSD(toUSD(from, 1), to);
   if (mid) h += `<div class="tr-tip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8"/></svg></span>${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
   const notes = [];
-  if (!quoted.length) notes.push(T(`Wise, Western Union, MoneyGram и PayPal не принимают ${from === 'UAH' ? 'гривну' : from} для отправки, поэтому здесь только оценки.`,
+  if (synth.length) notes.push(T('«Оценка» — расчёт по рыночному курсу с типичными комиссиями (сервисы ~1,2%, P2P ~1,5%, банк ~2,5% + 25 $). Точные условия смотри у сервиса.',
+                                 '“Estimate” uses the mid-market rate with typical costs (services ~1.2%, P2P ~1.5%, bank ~2.5% + $25). Check exact terms with the provider.'));
+  if (toUSD(from, amount) < 20) notes.push(T(`Сервисы обычно считают переводы от ~20 $. Для точных котировок введи сумму побольше, например ${fmtMoney(Math.ceil(fromUSD(200, from) / 10) * 10, from)}.`,
+                                             `Providers usually quote from about $20. For real quotes enter a bigger amount, e.g. ${fmtMoney(Math.ceil(fromUSD(200, from) / 10) * 10, from)}.`));
+  if (!quoted.length && from === 'UAH') notes.push(T(`Wise, Western Union, MoneyGram и PayPal не принимают ${from === 'UAH' ? 'гривну' : from} для отправки, поэтому здесь только оценки.`,
                                     `Wise, Western Union, MoneyGram and PayPal don't accept ${from === 'UAH' ? 'hryvnia' : from} as the sending currency, so only estimates are shown.`));
   if (est.some(o => o.monoDir === 'buy')) notes.push(T('Monobank: покупка валюты за гривну по курсу банка. Комиссия за перевод за границу и лимиты НБУ не учтены.','Monobank: buying currency for hryvnia at the bank\'s rate. Fees for sending abroad and NBU limits are not included.'));
   if (est.some(o => o.monoDir === 'sell')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
