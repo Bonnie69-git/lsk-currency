@@ -110,6 +110,17 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .conv-rate-line { font-size:11px; color:var(--sub); text-align:center; margin-bottom:10px; }
 
 /* ACTIONS */
+.act-row { display:flex; justify-content:space-between; gap:8px; margin:6px 2px 14px; }
+.act { flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; background:none; border:none; padding:0; cursor:pointer; font-family:'Inter',sans-serif; color:var(--sub2); -webkit-tap-highlight-color:transparent; }
+.act-ico { width:52px; height:52px; border-radius:50%; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--t-emphasis); transition:transform 0.1s, background 0.15s; }
+.act:first-child .act-ico { background:var(--t); border-color:var(--t); color:var(--t-contrast); }
+.act-ico svg { width:22px; height:22px; }
+.act:active .act-ico { transform:scale(0.92); }
+.act-lbl { font-size:11.5px; font-weight:600; letter-spacing:0.1px; white-space:nowrap; }
+.act.done .act-ico { background:color-mix(in srgb, var(--up) 18%, var(--card)); border-color:var(--up); color:var(--up); }
+.act.off { opacity:0.35; pointer-events:none; }
+.ico { display:inline-flex; width:15px; height:15px; vertical-align:-3px; margin-right:6px; color:var(--t-emphasis); }
+.ico svg { width:100%; height:100%; }
 .conv-actions { display:flex; align-items:stretch; gap:10px; margin-bottom:8px; }
 .copy-btn { background:var(--t); border:none; border-radius:var(--rf); padding:14px 0; font-size:14px; font-weight:600; color:var(--t-contrast); cursor:pointer; font-family:'Inter',sans-serif; flex:1; letter-spacing:0.1px; transition:opacity 0.15s, transform 0.1s; }
 .copy-btn:active { opacity:0.85; transform:scale(0.98); }
@@ -169,7 +180,8 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .search-wrap { position:relative; margin-bottom:12px; }
 .search-input { width:100%; background:var(--card); border:1px solid var(--border); border-radius:var(--rf); padding:12px 14px 12px 40px; font-size:14px; color:var(--text); outline:none; font-family:'Inter',sans-serif; }
 .search-input::placeholder { color:var(--sub); }
-.search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--sub); pointer-events:none; }
+.search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); width:17px; height:17px; color:var(--sub); pointer-events:none; display:flex; }
+.search-icon svg { width:100%; height:100%; }
 
 /* METALS */
 .metal-item { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:13px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
@@ -273,6 +285,12 @@ body.light-theme .footer { color:#555; }
 .tr-offer { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:12px 15px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
 .tr-offer.best { border-color:var(--t); }
 .tr-left { display:flex; align-items:center; gap:12px; min-width:0; }
+.tr-rank { width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--sub2); background:var(--card2); border:1px solid var(--border); font-variant-numeric:tabular-nums; }
+.tr-rank.first { background:var(--t); border-color:var(--t); color:var(--t-contrast); }
+.tr-rank.est { color:var(--sub); }
+.tr-note-row { display:flex; align-items:flex-start; }
+.tr-note-row + .tr-note-row { margin-top:6px; }
+.tr-note-row .ico, .tr-tip .ico, .tr-note > .ico { flex-shrink:0; margin-top:1px; }
 .tr-medal { font-size:20px; width:26px; text-align:center; flex-shrink:0; }
 .tr-name { font-size:14px; font-weight:600; color:var(--text); }
 .tr-det { font-size:11px; color:var(--sub); margin-top:2px; }
@@ -347,12 +365,12 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="conv-rate-line" id="r-rate"></div>
   <div id="r-cur" style="display:none"></div>
-  <div class="conv-actions">
-    <button class="copy-btn" id="copy-btn" onclick="copyResult()">Копировать</button>
-    <button class="fav-icon-btn" id="add-alert-btn" onclick="openAlertFromConv()" aria-label="Уведомить о курсе">🔔</button>
-    <button class="fav-icon-btn" id="add-fav-btn" onclick="addFav()" aria-label="Добавить в избранное">⭐</button>
+  <div class="act-row">
+    <button class="act" id="copy-btn" onclick="copyResult()"><span class="act-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg></span><span class="act-lbl" data-ru="Копировать" data-en="Copy">Копировать</span></button>
+    <button class="act" id="add-alert-btn" onclick="openAlertFromConv()"><span class="act-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span><span class="act-lbl" data-ru="Уведомить" data-en="Alert">Уведомить</span></button>
+    <button class="act" id="add-fav-btn" onclick="addFav()"><span class="act-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg></span><span class="act-lbl" data-ru="В избранное" data-en="Favorite">В избранное</span></button>
+    <button class="act" id="conv-transfer-btn" onclick="openTransferFromConv()"><span class="act-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></svg></span><span class="act-lbl" data-ru="Переводы" data-en="Transfers">Переводы</span></button>
   </div>
-  <button class="tr-btn" id="conv-transfer-btn" onclick="openTransferFromConv()" style="background:var(--card);color:var(--text);border:1px solid var(--border);margin:0 0 8px;">💸 Сравнить переводы</button>
   <div class="multi-card">
     <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
     <div id="multi-list"></div>
@@ -389,14 +407,14 @@ body.light-theme .footer { color:#555; }
 
 <!-- ФИАТ -->
 <div class="section" id="tab-fiat">
-  <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()"></div>
+  <div class="search-wrap"><span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><input class="search-input" type="text" id="fiat-search" placeholder="Поиск валюты..." oninput="filterFiat()"></div>
   <div class="loading" id="fiat-load"><div class="spinner"></div>Загрузка...</div>
   <div id="fiat-list"></div>
 </div>
 
 <!-- КРИПТА -->
 <div class="section" id="tab-crypto">
-  <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()"></div>
+  <div class="search-wrap"><span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><input class="search-input" type="text" id="crypto-search" placeholder="Поиск крипты..." oninput="filterCrypto()"></div>
   <div class="loading" id="crypto-load"><div class="spinner"></div>Загрузка...</div>
   <div id="crypto-list"></div>
 </div>
@@ -437,7 +455,7 @@ body.light-theme .footer { color:#555; }
     <div class="ch-head">
       <div id="ch-ico"></div>
       <div class="ch-names"><div class="ch-name" id="modal-title"></div><div class="ch-pair" id="ch-pair"></div></div>
-      <button class="modal-close ch-bell" onclick="openAlertFromChart()" aria-label="Alert">🔔</button>
+      <button class="modal-close ch-bell" onclick="openAlertFromChart()" aria-label="Alert"><span class="ico" style="margin:0;width:16px;height:16px;color:var(--text)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span></button>
       <button class="modal-close" onclick="closeChart()" aria-label="Close">✕</button>
     </div>
     <div class="ch-price" id="ch-price">—</div>
@@ -464,7 +482,7 @@ body.light-theme .footer { color:#555; }
   <div class="modal">
     <div class="sheet-grip"></div>
     <div class="ch-head">
-      <div class="al-bell">🔔</div>
+      <div class="al-bell"><span class="ico" style="margin:0;width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span></div>
       <div class="ch-names"><div class="ch-name" id="al-title">Уведомить о курсе</div><div class="ch-pair" id="al-sub"></div></div>
       <button class="modal-close" onclick="closeAlert()" aria-label="Close">✕</button>
     </div>
@@ -1021,7 +1039,7 @@ function conv(userAction=false) {
   renderMulti(f, a);
   renderQuickPairs(f, t);
   const tb = document.getElementById('conv-transfer-btn');
-  if (tb) tb.style.display = (isTransferFiat(f) && isTransferFiat(t) && f !== t) ? '' : 'none';
+  if (tb) tb.classList.toggle('off', !(isTransferFiat(f) && isTransferFiat(t) && f !== t));
   // Only log real user-triggered conversions (not background rate refreshes),
   // and debounce so typing "1" -> "10" -> "100" doesn't create 3 entries.
   if(userAction && a>0 && res>0) {
@@ -1030,14 +1048,22 @@ function conv(userAction=false) {
   }
 }
 
+// Кнопка-действие: на 1.5 с зелёная галочка и другая подпись
+const CHECK_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+function flashAct(id, text) {
+  const b = document.getElementById(id); if (!b) return;
+  const ico = b.querySelector('.act-ico'), lbl = b.querySelector('.act-lbl');
+  if (!b.dataset.ico) b.dataset.ico = ico.innerHTML;
+  ico.innerHTML = CHECK_ICO; lbl.textContent = text; b.classList.add('done');
+  clearTimeout(b._t);
+  b._t = setTimeout(() => { ico.innerHTML = b.dataset.ico; lbl.textContent = lbl.dataset[lang]; b.classList.remove('done'); }, 1500);
+}
 function copyResult() {
   const num=document.getElementById('r-num').textContent;
   const cur=document.getElementById('to-cur').value;
   haptic('success');
   navigator.clipboard?.writeText(`${num} ${cur}`).then(()=>{
-    const btn=document.getElementById('copy-btn');
-    btn.textContent=lang==='ru'?'Скопировано':'Copied';
-    setTimeout(()=>btn.textContent=lang==='ru'?'Копировать':'Copy',1500);
+    flashAct('copy-btn', T('Скопировано','Copied'));
   });
 }
 
@@ -1272,9 +1298,6 @@ function applyLang() {
   document.getElementById('lang-en').classList.toggle('on', lang==='en');
   document.querySelectorAll('[data-ru]').forEach(el=>el.textContent=el.dataset[lang]);
   document.getElementById('brand-sub').textContent=T('КУРСЫ ВАЛЮТ ОНЛАЙН','LIVE EXCHANGE RATES');
-  document.getElementById('copy-btn').textContent=T('Копировать','Copy');
-  document.getElementById('add-fav-btn').setAttribute('aria-label', T('Добавить в избранное','Add to favorites'));
-  document.getElementById('conv-transfer-btn').textContent=T('💸 Сравнить переводы','💸 Compare transfers');
   document.getElementById('tr-btn').textContent=T('Сравнить','Compare');
   document.getElementById('fiat-search').placeholder=T('Поиск валюты...','Search currency...');
   document.getElementById('crypto-search').placeholder=T('Поиск крипты...','Search crypto...');
@@ -1290,7 +1313,6 @@ function applyLang() {
   if (lastTransfer) renderTransfer(lastTransfer);
   renderAlerts();
   if (document.getElementById('tab-news').classList.contains('active')) loadNews();
-  document.getElementById('add-alert-btn').setAttribute('aria-label', T('Уведомить о курсе','Rate alert'));
   document.getElementById('al-title').textContent = T('Уведомить о курсе','Rate alert');
   if (document.getElementById('alert-modal').classList.contains('open')) { alertPairChanged(false); setAlertHint(''); }
   document.getElementById('al-save').textContent = T('Уведомить','Notify me');
@@ -1422,8 +1444,7 @@ function addFav() {
   if(!lsFavs.includes(key)&&lsFavs.length<10) {
     lsFavs.push(key);
     LS.set('lsk_favs', JSON.stringify(lsFavs));
-    const btn=document.getElementById('add-fav-btn');
-    if(btn){btn.textContent='✓';btn.style.color='var(--t-emphasis)';setTimeout(()=>{btn.textContent='⭐';btn.style.color='';},1500);}
+    haptic('success'); flashAct('add-fav-btn', T('Добавлено','Added'));
   }
 }
 
@@ -1443,7 +1464,7 @@ function useFav(f,t,a) {
 function renderSaved() {
   const n=NAMES[lang];
   const favHtml = lsFavs.length ?
-    '<div class="group-title">'+(lang==='ru'?'⭐ Избранные пары':'⭐ Favorite pairs')+'</div>' +
+    '<div class="group-title">'+(lang==='ru'?'Избранные пары':'Favorite pairs')+'</div>' +
     lsFavs.map(key=>{
       const [f,t,as]=key.split('-');
       const a=parseFloat(as)>0?parseFloat(as):1;
@@ -1458,10 +1479,10 @@ function renderSaved() {
         </div>
       </div>`;
     }).join('') :
-    '<div style="text-align:center;padding:20px;color:var(--sub2);font-size:13px">'+(lang==='ru'?'Нет избранных.<br>Добавь из конвертера ⭐':'No favorites yet.<br>Add one from the converter ⭐')+'</div>';
+    '<div style="text-align:center;padding:20px;color:var(--sub2);font-size:13px">'+(lang==='ru'?'Нет избранных.<br>Добавь пару кнопкой «В избранное» в конвертере':'No favorites yet.<br>Tap “Favorite” in the converter')+'</div>';
 
   const histHtml = lsHistory.length ?
-    '<div class="group-title" style="margin-top:16px">'+(lang==='ru'?'🕐 История конвертаций':'🕐 Conversion history')+'</div>' +
+    '<div class="group-title" style="margin-top:16px">'+(lang==='ru'?'История конвертаций':'Conversion history')+'</div>' +
     lsHistory.map(h=>`<div class="hist-item">
       <div><div class="hist-from">${histAmount(h)} → ${h.to}</div><div class="hist-time">${histWhen(h)}</div></div>
       <div class="hist-res">${h.r!=null ? fmt(h.r)+' '+h.to : legacyNum(h.res)}</div>
@@ -1604,6 +1625,7 @@ function fillTransferSelects() {
   }
 }
 
+const INFO_ICO = '<span class="ico" style="color:var(--sub)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg></span>';
 function openTransferFromConv() {
   document.getElementById('tr-from').value = document.getElementById('from-cur').value;
   document.getElementById('tr-to').value = document.getElementById('to-cur').value;
@@ -1724,23 +1746,23 @@ function renderTransfer({amount, from, to, offers}) {
       ? T('Wise, Western Union, MoneyGram и PayPal не принимают гривну для отправки, поэтому предложений для перевода из UAH нет. Для гривны есть оценка Monobank: она работает для USD, EUR, GBP, PLN и CHF.',
           "Wise, Western Union, MoneyGram and PayPal don't accept hryvnia as the sending currency, so there are no offers from UAH. For hryvnia there's a Monobank estimate for USD, EUR, GBP, PLN and CHF.")
       : T('Для этой пары нет ни котировок сервисов, ни объявлений USDT P2P. Попробуй перевести через USD или EUR, либо повтори чуть позже.',"There are no provider quotes or USDT P2P ads for this pair. Try routing via USD or EUR, or try again a bit later.");
-    box.innerHTML = `<div class="empty-state">${why}</div><div class="tr-note">ℹ️ ${botHint}</div>`;
+    box.innerHTML = `<div class="empty-state">${why}</div><div class="tr-note"><span class="ico" style="color:var(--sub)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg></span>${botHint}</div>`;
     return;
   }
   const details = o => [o.fee ? `${T('комиссия','fee')} ${fmtMoney(o.fee, from)}` : '', o.rate ? `${T('курс','rate')} ${fmtPairRate(from, to, o.rate)}` : ''].filter(Boolean).join(' · ');
   const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const quoted = offers.filter(o => !o.approx), est = offers.filter(o => o.approx);
-  const medals = ['🥇','🥈','🥉'];
+  const rank = i => `<div class="tr-rank${i===0?' first':''}">${i+1}</div>`;
   let h = `<div class="group-title">${fmtMoney(amount, from)} → ${to} · ${T('сколько получит получатель','what the recipient gets')}</div>`;
   h += quoted.map((o,i) => `<div class="tr-offer${i===0?' best':''}">
-      <div class="tr-left"><div class="tr-medal">${medals[i]||'▫️'}</div>
+      <div class="tr-left">${rank(i)}
         <div><div class="tr-name">${esc(o.name)}</div><div class="tr-det">${details(o)}</div></div></div>
       <div class="tr-recv">${fmtMoney(o.received, to)}</div></div>`).join('');
   if (quoted.length > 1 && quoted[0].received > quoted[quoted.length-1].received)
-    h += `<div class="tr-tip">💡 ${T('Лучший выгоднее худшего на','Best vs worst:')} <b>${fmtMoney(quoted[0].received - quoted[quoted.length-1].received, to)}</b></div>`;
+    h += `<div class="tr-tip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 9l5-5 5 5"/></svg></span>${T('Лучший выгоднее худшего на','Best vs worst:')} <b>${fmtMoney(quoted[0].received - quoted[quoted.length-1].received, to)}</b></div>`;
   if (est.length) {
     h += `<div class="group-title">≈ ${T('Оценки','Estimates')}</div>`;
-    h += est.map(o => `<div class="tr-offer"><div class="tr-left"><div class="tr-medal">▫️</div>
+    h += est.map(o => `<div class="tr-offer"><div class="tr-left"><div class="tr-rank est">≈</div>
         <div><div class="tr-name">${esc(o.name)}</div><div class="tr-det">${details(o)}</div></div></div>
       <div class="tr-recv" style="color:var(--text)">${fmtMoney(o.received, to)}</div></div>`).join('');
   }
@@ -1748,9 +1770,9 @@ function renderTransfer({amount, from, to, offers}) {
   partnerButtons = [...new Set([...quoted, ...est].map(o => o.name))].filter(n => PARTNER_LINKS[n]).slice(0, 3);
   if (partnerButtons.length)
     h += `<div class="tr-partners">${partnerButtons.map((n, i) =>
-      `<button class="tr-btn${i ? ' secondary' : ''}" onclick="openPartner(${i})">↗ ${T('Перевести через','Send with')} ${esc(n)}</button>`).join('')}</div>`;
+      `<button class="tr-btn${i ? ' secondary' : ''}" onclick="openPartner(${i})">${T('Перевести через','Send with')} ${esc(n)}</button>`).join('')}</div>`;
   const mid = fromUSD(toUSD(from, 1), to);
-  if (mid) h += `<div class="tr-tip">📊 ${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
+  if (mid) h += `<div class="tr-tip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8"/></svg></span>${T('Рыночный курс','Mid-market')}: ${fmtPairRate(from, to, mid)} → ${fmtMoney(amount*mid, to)}</div>`;
   const notes = [];
   if (!quoted.length) notes.push(T(`Wise, Western Union, MoneyGram и PayPal не принимают ${from === 'UAH' ? 'гривну' : from} для отправки, поэтому здесь только оценки.`,
                                     `Wise, Western Union, MoneyGram and PayPal don't accept ${from === 'UAH' ? 'hryvnia' : from} as the sending currency, so only estimates are shown.`));
@@ -1758,7 +1780,7 @@ function renderTransfer({amount, from, to, offers}) {
   if (est.some(o => o.monoDir === 'sell')) notes.push(T('Monobank: продажа валюты на счёте Mono по курсу банка, комиссия банка отправителя не учтена.','Monobank: selling currency on a Mono account at the bank\'s rate; sender\'s bank fee not included.'));
   if (est.some(o => o.p2p)) notes.push(T('P2P: покупка USDT за одну валюту и продажа за другую по медиане топ-объявлений Binance. Нужен аккаунт, есть риск контрагента.','P2P: buy USDT with one currency and sell it for the other at the median of top Binance ads. Needs an account; counterparty risk.'));
   else notes.push(botHint);
-  h += `<div class="tr-note">ℹ️ ${notes.join('<br>ℹ️ ')}</div>`;
+  h += `<div class="tr-note">${notes.map(n => `<div class="tr-note-row">${INFO_ICO}${n}</div>`).join('')}</div>`;
   box.innerHTML = h;
 }
 
@@ -1821,7 +1843,7 @@ function renderAlerts() {
     </div>`;
   }).join('');
   const canAdd = alertsState !== 'notg' && !(myAlerts && myAlerts.length >= MAX_ALERTS);
-  el.innerHTML = `<div class="group-title">🔔 ${T('Уведомления о курсе', 'Rate alerts')}</div><div class="list">${body}</div>` +
+  el.innerHTML = `<div class="group-title">${T('Уведомления о курсе', 'Rate alerts')}</div><div class="list">${body}</div>` +
     (canAdd ? `<button class="al-add" onclick="openAlertFromConv()">＋ ${T('Новое уведомление', 'New alert')}</button>` : '');
 }
 async function deleteAlert(id) {
