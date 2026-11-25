@@ -257,6 +257,36 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .pair-ico > * { width:20px !important; height:20px !important; font-size:8px !important; }
 .pair-ico > * + * { margin-left:-6px; box-shadow:0 0 0 2px var(--card); }
 
+/* СВОДКА: колесо времени, валюты, крипта, пояс */
+.dg-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.dg-card:active { background:var(--card2); }
+.dg-time { font-size:26px; font-weight:700; letter-spacing:-0.5px; color:var(--text); font-variant-numeric:tabular-nums; }
+.dg-meta { flex:1; min-width:0; font-size:12px; color:var(--sub); line-height:1.4; }
+.dg-meta b { color:var(--sub2); font-weight:600; }
+.dg-go { color:var(--t-emphasis); font-size:13px; font-weight:600; white-space:nowrap; }
+.dg-sheet { max-height:92vh; overflow-y:auto; }
+.dg-block { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:12px 14px 14px; margin-top:12px; }
+.wheel { position:relative; height:180px; display:flex; justify-content:center; align-items:stretch; gap:6px; user-select:none; }
+.wheel-band { position:absolute; left:0; right:0; top:68px; height:44px; border-radius:12px; background:var(--tg); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--t) 35%, transparent); pointer-events:none; }
+.wheel-col { position:relative; width:84px; height:180px; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+  -webkit-mask-image:linear-gradient(transparent, #000 32%, #000 68%, transparent); mask-image:linear-gradient(transparent, #000 32%, #000 68%, transparent); }
+.wheel-col::-webkit-scrollbar { display:none; }
+.wheel-col div { height:44px; line-height:44px; text-align:center; scroll-snap-align:center; font-size:22px; font-weight:500; color:var(--sub); font-variant-numeric:tabular-nums; transition:color .12s, font-size .12s; }
+.wheel-col div.sel { color:var(--text); font-size:30px; font-weight:700; }
+.wheel-col .pad { scroll-snap-align:none; }
+.wheel-colon { line-height:180px; font-size:28px; font-weight:700; color:var(--t-emphasis); position:relative; }
+.dg-presets { display:flex; gap:6px; margin-top:10px; }
+.dg-presets button { flex:1; background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:8px 0; color:var(--sub2); font:600 13px 'Inter',sans-serif; cursor:pointer; }
+.dg-presets button.on { color:var(--t-contrast); background:var(--t); border-color:var(--t); }
+.dg-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.dg-chip { display:inline-flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--border); border-radius:var(--rf); padding:6px 11px 6px 6px; color:var(--sub2); font:600 13px 'Inter',sans-serif; cursor:pointer; }
+.dg-chip > :first-child { width:20px !important; height:20px !important; font-size:8px !important; }
+.dg-chip.on { background:color-mix(in srgb, var(--t) 22%, var(--card2)); border-color:var(--t); color:var(--text); }
+.dg-tz { width:100%; background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:11px 12px; color:var(--text); font:600 14px 'Inter',sans-serif; }
+.dg-now { font-size:12px; color:var(--sub); margin-top:8px; }
+.dg-err { font-size:12px; color:var(--down); text-align:center; min-height:16px; margin-top:8px; }
+.dg-off { display:block; width:100%; margin-top:8px; background:none; border:none; color:var(--sub); font:600 13px 'Inter',sans-serif; padding:8px 0; cursor:pointer; }
+
 /* ALERTS */
 .ch-bell { margin-right:-4px; font-size:14px; }
 .ch-bell[hidden] { display:none; }
@@ -471,6 +501,7 @@ body.light-theme .footer { color:#555; }
 <!-- СОХРАНЕНО -->
 <div class="section" id="tab-saved">
   <div class="page-title" data-ru="Сохранено" data-en="Saved">Сохранено</div>
+  <div id="digest-section"></div>
   <div id="alerts-section"></div>
   <div id="fav-section"></div>
   <div id="hist-section"></div>
@@ -555,6 +586,30 @@ body.light-theme .footer { color:#555; }
     <div class="al-chips" id="al-chips"></div>
     <button class="tr-btn" id="al-save" onclick="saveAlert()">Уведомить</button>
     <div class="al-hint" id="al-hint"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="digest-modal" onclick="if(event.target.id==='digest-modal')closeDigest()">
+  <div class="modal dg-sheet">
+    <div class="sheet-grip"></div>
+    <div class="ch-head">
+      <div class="al-bell"><span class="ico" style="margin:0;width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 1.6M5 4.5 3 6.5M19 4.5l2 2"/></svg></span></div>
+      <div class="ch-names"><div class="ch-name" id="dg-title"></div><div class="ch-pair" id="dg-sub"></div></div>
+      <button class="modal-close" onclick="closeDigest()" aria-label="Close">✕</button>
+    </div>
+    <div class="dg-block">
+      <div class="card-label" id="dg-l-time"></div>
+      <div class="wheel"><div class="wheel-band"></div>
+        <div class="wheel-col" id="wh-h"></div><div class="wheel-colon">:</div><div class="wheel-col" id="wh-m"></div>
+      </div>
+      <div class="dg-presets" id="dg-presets"></div>
+    </div>
+    <div class="dg-block"><div class="card-label" id="dg-l-fiat"></div><div class="dg-chips" id="dg-fiat"></div></div>
+    <div class="dg-block"><div class="card-label" id="dg-l-crypto"></div><div class="dg-chips" id="dg-crypto"></div></div>
+    <div class="dg-block"><div class="card-label" id="dg-l-tz"></div><select class="dg-tz" id="dg-tz" onchange="dgTzChanged()"></select><div class="dg-now" id="dg-now"></div></div>
+    <div class="dg-err" id="dg-err"></div>
+    <button class="tr-btn" id="dg-save" onclick="saveDigest()"></button>
+    <button class="dg-off" id="dg-off" onclick="digestOff()" hidden></button>
   </div>
 </div>
 
@@ -1573,7 +1628,7 @@ function switchTab(n) {
   document.getElementById('markets-head').style.display = isMarket ? '' : 'none';
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active');
-  if(n==='saved') { renderSaved(); loadAlerts(); }
+  if(n==='saved') { renderSaved(); loadAlerts(); loadDigest(); }
   if(n==='news') loadNews();
   window.scrollTo(0,0);
 }
@@ -2248,11 +2303,196 @@ function openNews(i) {
   if (TG?.openLink) TG.openLink(n.link); else window.open(n.link, '_blank', 'noopener');
 }
 
+// ===== ЕЖЕДНЕВНАЯ СВОДКА =====
+// Настройка той же сводки, что /subscribe в боте: функция miniapp-digest
+// проверяет подпись Telegram и пишет в таблицу subscriptions. Для группы
+// бот передаёт startapp=dgm<id>, а право админа функция берёт из отметки,
+// которую бот ставит, когда админ открывает панель сводки в группе.
+const DG_FIAT = ['USD','EUR','UAH','PLN','GBP','CHF','CZK','GEL','KZT','TRY','CAD','RUB'];
+const DG_CRYPTO = ['BTC','ETH','TON','USDT','SOL','BNB','XRP','DOGE','XAU','XAG'];
+const DG_MAX = 8;
+// Порядок — как TZ_ZONES в боте (значение = 100 + индекс)
+const DG_ZONES = [
+  ['Europe/Kyiv','🇺🇦 Украина','🇺🇦 Ukraine'], ['Europe/Warsaw','🇵🇱 Польша / 🇩🇪 Германия','🇵🇱 Poland / 🇩🇪 Germany'],
+  ['Europe/London','🇬🇧 Лондон','🇬🇧 London'], ['Asia/Tbilisi','🇬🇪 Грузия','🇬🇪 Georgia'],
+  ['Europe/Moscow','🇷🇺 Москва','🇷🇺 Moscow'], ['Europe/Istanbul','🇹🇷 Стамбул','🇹🇷 Istanbul'],
+  ['Asia/Dubai','🇦🇪 Дубай','🇦🇪 Dubai'], ['Asia/Almaty','🇰🇿 Алматы','🇰🇿 Almaty'],
+  ['America/New_York','🇺🇸 Нью-Йорк','🇺🇸 New York'], ['America/Los_Angeles','🇺🇸 Лос-Анджелес','🇺🇸 Los Angeles'],
+  ['America/Sao_Paulo','🇧🇷 Сан-Паулу','🇧🇷 São Paulo'], ['Asia/Shanghai','🇨🇳 Пекин / 🇸🇬 Сингапур','🇨🇳 Beijing / 🇸🇬 Singapore'],
+  ['Asia/Tokyo','🇯🇵 Токио','🇯🇵 Tokyo'], ['UTC','🌍 UTC','🌍 UTC'],
+];
+const DG_PRESETS = [[8,0],[9,0],[12,0],[18,0]];
+const WH_ROW = 44;
+let dgAutoOpen = false, dgChat = null, dgTitle = '', dgState = 'idle', dgSub = null, dgDraft = null;
+
+async function digestApi(method, body) {
+  const qs = dgChat ? '?chat=' + encodeURIComponent(dgChat) : '';
+  const r = await fetch(FN_BASE + 'miniapp-digest' + qs, {
+    method, headers: {'x-init-data': TG?.initData || '', 'Content-Type': 'application/json'},
+    body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(12000),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(d.error || 'http'); e.code = d.error || 'http'; throw e; }
+  return d;
+}
+function digestErrText(code) {
+  return ({
+    unauthorized: T('Не получилось проверить вход. Закрой и снова открой мини-апп из бота.', "Couldn't verify you. Close and reopen the mini app from the bot."),
+    not_admin: T('Сводку группы меняют админы. Открой «Сводку» в группе (/subscribe) и оттуда — приложение.', 'Only admins change the group digest. Run /subscribe in the group and open the app from there.'),
+    empty: T('Выбери хотя бы одну валюту.', 'Pick at least one currency.'),
+  })[code] || T('Сервис недоступен, попробуй чуть позже.', 'Service unavailable, try again in a bit.');
+}
+const dgZoneIdx = tz => (tz >= 100 && tz - 100 < DG_ZONES.length) ? tz - 100 : -1;
+function dgZoneName(tz, short) {
+  const i = dgZoneIdx(tz);
+  if (i < 0) return tz ? `UTC${tz > 0 ? '+' : ''}${tz}` : 'UTC';
+  const n = DG_ZONES[i][lang === 'ru' ? 1 : 2];
+  return short ? n.split(' / ')[0] : n;
+}
+function dgNowIn(tz) {
+  const i = dgZoneIdx(tz);
+  try {
+    if (i >= 0) return new Intl.DateTimeFormat('en-GB', {timeZone: DG_ZONES[i][0], hour:'2-digit', minute:'2-digit', hour12:false}).format(new Date());
+  } catch {}
+  const d = new Date(Date.now() + (tz || 0) * 3600e3);
+  return String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
+}
+const pad2 = n => String(n).padStart(2, '0');
+
+async function loadDigest() {
+  if (!TG?.initData) { dgState = 'notg'; renderDigestCard(); return; }
+  dgState = 'loading'; renderDigestCard();
+  try {
+    const d = await digestApi('GET');
+    dgSub = d.sub || null; dgTitle = d.title || ''; dgState = 'ok';
+  } catch (e) { dgState = e.code === 'not_admin' ? 'not_admin' : 'error'; }
+  renderDigestCard();
+  if (dgAutoOpen && dgState === 'ok') { dgAutoOpen = false; openDigest(); }
+}
+function renderDigestCard() {
+  const el = document.getElementById('digest-section');
+  if (!el) return;
+  const head = `<div class="group-title">${dgChat ? T('Сводка группы', 'Group digest') + (dgTitle ? ' · ' + escHtml(dgTitle) : '') : T('Ежедневная сводка', 'Daily digest')}</div>`;
+  let body;
+  if (dgState === 'notg') body = `<div class="list"><div class="al-empty">${T('Сводка настраивается в Telegram: открой мини-апп из бота.', 'The digest is set up inside Telegram: open the mini app from the bot.')}</div></div>`;
+  else if (dgState === 'loading' || dgState === 'idle') body = `<div class="list"><div class="al-empty">${T('Загрузка...', 'Loading...')}</div></div>`;
+  else if (dgState === 'error' || dgState === 'not_admin') body = `<div class="list"><div class="al-empty">${digestErrText(dgState === 'not_admin' ? 'not_admin' : 'http')}</div></div>`;
+  else if (dgSub) {
+    const codes = dgSub.currencies.split(',').filter(Boolean);
+    body = `<div class="dg-card" onclick="openDigest()"><div class="dg-time">${pad2(dgSub.h)}:${pad2(dgSub.m)}</div>
+      <div class="dg-meta"><b>${escHtml(dgZoneName(dgSub.tz, true))}</b><br>${escHtml(codes.slice(0, 6).join(', '))}${codes.length > 6 ? ' +' + (codes.length - 6) : ''}</div>
+      <div class="dg-go">${T('Изменить', 'Edit')} ›</div></div>`;
+  } else body = `<button class="al-add" onclick="openDigest()">＋ ${T('Включить сводку курсов', 'Turn on the rates digest')}</button>`;
+  el.innerHTML = head + body;
+}
+
+function buildWheel(id, count, value) {
+  const col = document.getElementById(id);
+  // Отступ 68 px сверху и снизу: так 0 и последний ряд встают в центральную полосу
+  col.innerHTML = '<div class="pad" style="height:68px"></div>' +
+    Array.from({length: count}, (_, i) => `<div data-v="${i}">${pad2(i)}</div>`).join('') + '<div class="pad" style="height:68px"></div>';
+  col.scrollTop = value * WH_ROW;
+  let t = null, last = value;
+  const mark = () => {
+    const v = Math.max(0, Math.min(count - 1, Math.round(col.scrollTop / WH_ROW)));
+    col.querySelectorAll('.sel').forEach(x => x.classList.remove('sel'));
+    col.querySelector(`[data-v="${v}"]`)?.classList.add('sel');
+    if (v !== last) { last = v; haptic('light'); }
+    return v;
+  };
+  col.onscroll = () => {
+    const v = mark();
+    clearTimeout(t);
+    t = setTimeout(() => { if (id === 'wh-h') dgDraft.h = v; else dgDraft.m = v; renderPresets(); }, 90);
+  };
+  col.querySelectorAll('[data-v]').forEach(x => x.onclick = () => col.scrollTo({top: Number(x.dataset.v) * WH_ROW, behavior: 'smooth'}));
+  mark();
+}
+function setWheel(id, v) { document.getElementById(id).scrollTo({top: v * WH_ROW, behavior: 'smooth'}); }
+function renderPresets() {
+  document.getElementById('dg-presets').innerHTML = DG_PRESETS.map(([h, m]) =>
+    `<button class="${dgDraft.h === h && dgDraft.m === m ? 'on' : ''}" onclick="dgPreset(${h},${m})">${pad2(h)}:${pad2(m)}</button>`).join('');
+}
+function dgPreset(h, m) { haptic('light'); dgDraft.h = h; dgDraft.m = m; setWheel('wh-h', h); setWheel('wh-m', m); renderPresets(); }
+function renderDgChips() {
+  const chip = (c, kind) => {
+    const on = dgDraft[kind].includes(c);
+    const label = METAL_STYLE[c] ? T(c === 'XAU' ? 'Золото' : 'Серебро', c === 'XAU' ? 'Gold' : 'Silver') : c;
+    return `<button class="dg-chip${on ? ' on' : ''}" onclick="dgToggle('${kind}','${c}')">${assetIcon(c)}${label}</button>`;
+  };
+  document.getElementById('dg-fiat').innerHTML = DG_FIAT.map(c => chip(c, 'fiat')).join('');
+  document.getElementById('dg-crypto').innerHTML = DG_CRYPTO.map(c => chip(c, 'crypto')).join('');
+}
+function dgToggle(kind, c) {
+  const list = dgDraft[kind], order = kind === 'fiat' ? DG_FIAT : DG_CRYPTO;
+  if (list.includes(c)) list.splice(list.indexOf(c), 1);
+  else if (list.length >= DG_MAX) { document.getElementById('dg-err').textContent = T(`Не больше ${DG_MAX}.`, `Up to ${DG_MAX}.`); return; }
+  else { list.push(c); list.sort((a, b) => order.indexOf(a) - order.indexOf(b)); }
+  document.getElementById('dg-err').textContent = '';
+  haptic('light'); renderDgChips();
+}
+function dgTzChanged() {
+  dgDraft.tz = Number(document.getElementById('dg-tz').value);
+  document.getElementById('dg-now').textContent = T('Там сейчас ', "It's ") + dgNowIn(dgDraft.tz) + T('', ' there now');
+}
+function openDigest() {
+  haptic('light');
+  const codes = (dgSub?.currencies || 'USD,EUR,UAH,BTC,ETH,TON').split(',').filter(Boolean);
+  const side = c => DG_CRYPTO.includes(c) || CRYPTO_SET.has(c) || METAL_STYLE[c];
+  dgDraft = {h: dgSub?.h ?? 9, m: dgSub?.m ?? 0, tz: dgSub?.tz ?? 100,
+             fiat: codes.filter(c => !side(c)), crypto: codes.filter(c => side(c))};
+  document.getElementById('dg-title').textContent = dgChat ? T('Сводка группы', 'Group digest') : T('Ежедневная сводка', 'Daily digest');
+  document.getElementById('dg-sub').textContent = dgChat ? dgTitle : T('Бот пришлёт курсы в выбранное время', 'The bot sends rates at your time');
+  document.getElementById('dg-l-time').textContent = T('Время', 'Time');
+  document.getElementById('dg-l-fiat').textContent = T('Валюты', 'Currencies');
+  document.getElementById('dg-l-crypto').textContent = T('Крипта и металлы', 'Crypto and metals');
+  document.getElementById('dg-l-tz').textContent = T('Часовой пояс', 'Timezone');
+  const tzSel = document.getElementById('dg-tz');
+  tzSel.innerHTML = DG_ZONES.map((z, i) => `<option value="${100 + i}">${z[lang === 'ru' ? 1 : 2]}</option>`).join('') +
+    (dgZoneIdx(dgDraft.tz) < 0 ? `<option value="${dgDraft.tz}">${dgZoneName(dgDraft.tz)}</option>` : '');
+  tzSel.value = String(dgDraft.tz);
+  dgTzChanged();
+  document.getElementById('dg-save').textContent = T('Сохранить', 'Save');
+  const off = document.getElementById('dg-off');
+  off.textContent = T('Выключить сводку', 'Turn off the digest'); off.hidden = !dgSub;
+  document.getElementById('dg-err').textContent = '';
+  document.getElementById('digest-modal').classList.add('open');
+  buildWheel('wh-h', 24, dgDraft.h); buildWheel('wh-m', 60, dgDraft.m);
+  renderPresets(); renderDgChips();
+}
+function closeDigest() { document.getElementById('digest-modal').classList.remove('open'); }
+async function saveDigest() {
+  const err = document.getElementById('dg-err');
+  if (!dgDraft.fiat.length && !dgDraft.crypto.length) { err.textContent = digestErrText('empty'); return; }
+  const btn = document.getElementById('dg-save');
+  btn.disabled = true; err.textContent = '';
+  try {
+    const d = await digestApi('POST', {h: dgDraft.h, m: dgDraft.m, tz: dgDraft.tz, currencies: [...dgDraft.fiat, ...dgDraft.crypto], lang});
+    dgSub = d.sub; haptic('success'); closeDigest(); renderDigestCard();
+    TG?.showPopup?.({message: T(`Готово! Сводка будет приходить каждый день в ${pad2(dgSub.h)}:${pad2(dgSub.m)}.`, `Done! The digest will arrive every day at ${pad2(dgSub.h)}:${pad2(dgSub.m)}.`)});
+  } catch (e) { err.textContent = digestErrText(e.code); }
+  btn.disabled = false;
+}
+async function digestOff() {
+  const err = document.getElementById('dg-err');
+  try { await digestApi('DELETE'); dgSub = null; closeDigest(); renderDigestCard(); haptic('success'); }
+  catch (e) { err.textContent = digestErrText(e.code); }
+}
+
+// startapp=dg (своя сводка) или dgm<id> (группа -id); ?screen=digest из кнопки в личке
+function digestStartParam() {
+  const q = new URLSearchParams(location.search);
+  const sp = TG?.initDataUnsafe?.start_param || q.get('tgWebAppStartParam') || '';
+  if (/^dgm\d{5,16}$/.test(sp)) { dgChat = '-' + sp.slice(3); return true; }
+  return sp === 'dg' || q.get('screen') === 'digest';
+}
+const DG_OPEN_ON_START = digestStartParam();
+
 function applyStartParams() {
   const q = new URLSearchParams(location.search);
   let from = q.get('from'), to = q.get('to'), amount = q.get('amount');
   const sp = TG?.initDataUnsafe?.start_param || q.get('tgWebAppStartParam');
-  if (sp) { const [a,b,c] = sp.split('_'); from = from || a; to = to || b; amount = amount || c; }
+  if (sp && !sp.startsWith('dg')) { const [a,b,c] = sp.split('_'); from = from || a; to = to || b; amount = amount || c; }
   const has = (id, v) => v && [...document.getElementById(id).options].some(o => o.value === v.toUpperCase());
   if (has('from-cur', from)) document.getElementById('from-cur').value = from.toUpperCase();
   if (has('to-cur', to)) document.getElementById('to-cur').value = to.toUpperCase();
@@ -2264,6 +2504,7 @@ applyLang();
 initCurPickers();
 document.getElementById('tr-amount').addEventListener('keydown', e => { if (e.key === 'Enter') runTransfer(); });
 loadFiat(); loadCrypto(); loadMetals(); loadDailyChanges();
+if (DG_OPEN_ON_START) { dgAutoOpen = true; switchTab('saved'); }
 setInterval(loadFiat,60000); setInterval(loadCrypto,60000); setInterval(loadDailyChanges, 3600000);
 </script>
 </body>
