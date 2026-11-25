@@ -285,6 +285,14 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .dg-chip.on { background:color-mix(in srgb, var(--t) 22%, var(--card2)); border-color:var(--t); color:var(--text); }
 .dg-tz { width:100%; background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:11px 12px; color:var(--text); font:600 14px 'Inter',sans-serif; }
 .dg-now { font-size:12px; color:var(--sub); margin-top:8px; }
+.tz-flags { display:flex; flex-shrink:0; }
+.tz-flags .flag-ico, .tz-flags .tz-globe { width:30px; height:30px; }
+.tz-flags .flag-ico + .flag-ico { margin-left:-10px; box-shadow:0 0 0 2px var(--bg); }
+.cur-btn .tz-flags .flag-ico, .cur-btn .tz-flags .tz-globe { width:22px; height:22px; }
+.cur-btn .tz-flags .flag-ico + .flag-ico { margin-left:-7px; box-shadow:0 0 0 2px #000; }
+.tz-globe { border-radius:50%; background:rgba(155,138,251,.16); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 1px rgba(155,138,251,.35); }
+.tz-globe svg { width:62%; height:62%; }
+.tz-time { font-size:13px; color:var(--sub); font-variant-numeric:tabular-nums; }
 .dg-err { font-size:12px; color:var(--down); text-align:center; min-height:16px; margin-top:8px; }
 .dg-off { display:block; width:100%; margin-top:8px; background:none; border:none; color:var(--sub); font:600 13px 'Inter',sans-serif; padding:8px 0; cursor:pointer; }
 
@@ -607,10 +615,22 @@ body.light-theme .footer { color:#555; }
     </div>
     <div class="dg-block"><div class="card-label" id="dg-l-fiat"></div><div class="dg-chips" id="dg-fiat"></div></div>
     <div class="dg-block"><div class="card-label" id="dg-l-crypto"></div><div class="dg-chips" id="dg-crypto"></div></div>
-    <div class="dg-block"><div class="card-label" id="dg-l-tz"></div><select class="dg-tz" id="dg-tz" onchange="dgTzChanged()"></select><div class="dg-now" id="dg-now"></div></div>
+    <div class="dg-block"><div class="card-label" id="dg-l-tz"></div><button type="button" class="cur-btn box" id="dg-tz" onclick="openTzPicker()"></button><div class="dg-now" id="dg-now"></div></div>
     <div class="dg-err" id="dg-err"></div>
     <button class="tr-btn" id="dg-save" onclick="saveDigest()"></button>
     <button class="dg-off" id="dg-off" onclick="digestOff()" hidden></button>
+  </div>
+</div>
+
+<!-- ВЫБОР ЧАСОВОГО ПОЯСА (сводка) -->
+<div class="modal-overlay" id="tz-modal" onclick="if(event.target.id==='tz-modal')closeTzPicker()">
+  <div class="modal">
+    <div class="sheet-grip"></div>
+    <div class="ch-head" style="margin-bottom:8px">
+      <div class="ch-names"><div class="ch-name" id="tz-title"></div></div>
+      <button class="modal-close" onclick="closeTzPicker()" aria-label="Close">✕</button>
+    </div>
+    <div class="pick-list" id="tz-list"></div>
   </div>
 </div>
 
@@ -2314,13 +2334,13 @@ const DG_CRYPTO = ['BTC','ETH','TON','USDT','SOL','BNB','XRP','DOGE','XAU','XAG'
 const DG_MAX = 8;
 // Порядок — как TZ_ZONES в боте (значение = 100 + индекс)
 const DG_ZONES = [
-  ['Europe/Kyiv','🇺🇦 Украина','🇺🇦 Ukraine'], ['Europe/Warsaw','🇵🇱 Польша / 🇩🇪 Германия','🇵🇱 Poland / 🇩🇪 Germany'],
-  ['Europe/London','🇬🇧 Лондон','🇬🇧 London'], ['Asia/Tbilisi','🇬🇪 Грузия','🇬🇪 Georgia'],
-  ['Europe/Moscow','🇷🇺 Москва','🇷🇺 Moscow'], ['Europe/Istanbul','🇹🇷 Стамбул','🇹🇷 Istanbul'],
-  ['Asia/Dubai','🇦🇪 Дубай','🇦🇪 Dubai'], ['Asia/Almaty','🇰🇿 Алматы','🇰🇿 Almaty'],
-  ['America/New_York','🇺🇸 Нью-Йорк','🇺🇸 New York'], ['America/Los_Angeles','🇺🇸 Лос-Анджелес','🇺🇸 Los Angeles'],
-  ['America/Sao_Paulo','🇧🇷 Сан-Паулу','🇧🇷 São Paulo'], ['Asia/Shanghai','🇨🇳 Пекин / 🇸🇬 Сингапур','🇨🇳 Beijing / 🇸🇬 Singapore'],
-  ['Asia/Tokyo','🇯🇵 Токио','🇯🇵 Tokyo'], ['UTC','🌍 UTC','🌍 UTC'],
+  ['Europe/Kyiv',['ua'],'Украина','Ukraine'], ['Europe/Warsaw',['pl','de'],'Польша / Германия','Poland / Germany'],
+  ['Europe/London',['gb'],'Лондон','London'], ['Asia/Tbilisi',['ge'],'Грузия','Georgia'],
+  ['Europe/Moscow',['ru'],'Москва','Moscow'], ['Europe/Istanbul',['tr'],'Стамбул','Istanbul'],
+  ['Asia/Dubai',['ae'],'Дубай','Dubai'], ['Asia/Almaty',['kz'],'Алматы','Almaty'],
+  ['America/New_York',['us'],'Нью-Йорк','New York'], ['America/Los_Angeles',['us'],'Лос-Анджелес','Los Angeles'],
+  ['America/Sao_Paulo',['br'],'Сан-Паулу','São Paulo'], ['Asia/Shanghai',['cn','sg'],'Пекин / Сингапур','Beijing / Singapore'],
+  ['Asia/Tokyo',['jp'],'Токио','Tokyo'], ['UTC',[],'UTC','UTC'],
 ];
 const DG_PRESETS = [[8,0],[9,0],[12,0],[18,0]];
 const WH_ROW = 44;
@@ -2347,7 +2367,7 @@ const dgZoneIdx = tz => (tz >= 100 && tz - 100 < DG_ZONES.length) ? tz - 100 : -
 function dgZoneName(tz, short) {
   const i = dgZoneIdx(tz);
   if (i < 0) return tz ? `UTC${tz > 0 ? '+' : ''}${tz}` : 'UTC';
-  const n = DG_ZONES[i][lang === 'ru' ? 1 : 2];
+  const n = DG_ZONES[i][lang === 'ru' ? 2 : 3];
   return short ? n.split(' / ')[0] : n;
 }
 function dgNowIn(tz) {
@@ -2446,8 +2466,26 @@ function dgToggle(kind, c) {
   document.getElementById('dg-err').textContent = '';
   haptic('light'); renderDgChips();
 }
+// Круглые флаги пояса (как в выборе валют); UTC — фиолетовый глобус
+function tzFlags(tz) {
+  const i = dgZoneIdx(tz), cc = i >= 0 ? DG_ZONES[i][1] : [];
+  const globe = '<div class="tz-globe"><svg viewBox="0 0 24 24" fill="none" stroke="#9B8AFB" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9.5h17M3.5 14.5h17M12 3c-2.5 2.6-3.7 5.6-3.7 9s1.2 6.4 3.7 9c2.5-2.6 3.7-5.6 3.7-9S14.5 5.6 12 3z"/></svg></div>';
+  return '<span class="tz-flags">' + (cc.length ? cc.map(c => `<img class="flag-ico" src="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/1x1/${c}.svg" alt="" loading="lazy">`).join('') : globe) + '</span>';
+}
+function openTzPicker() {
+  haptic('light');
+  document.getElementById('tz-title').textContent = T('Часовой пояс', 'Timezone');
+  const vals = DG_ZONES.map((z, i) => 100 + i);
+  if (dgZoneIdx(dgDraft.tz) < 0) vals.push(dgDraft.tz);
+  document.getElementById('tz-list').innerHTML = vals.map(v => `<div class="pick-item${v === dgDraft.tz ? ' on' : ''}" onclick="pickTz(${v})">
+      ${tzFlags(v)}<span class="pick-name">${escHtml(dgZoneName(v))}</span><span class="tz-time">${dgNowIn(v)}</span>${v === dgDraft.tz ? '<span class="pick-check">✓</span>' : ''}
+    </div>`).join('');
+  document.getElementById('tz-modal').classList.add('open');
+}
+function closeTzPicker() { document.getElementById('tz-modal').classList.remove('open'); }
+function pickTz(v) { closeTzPicker(); haptic('light'); dgDraft.tz = v; dgTzChanged(); }
 function dgTzChanged() {
-  dgDraft.tz = Number(document.getElementById('dg-tz').value);
+  document.getElementById('dg-tz').innerHTML = `${tzFlags(dgDraft.tz)}<span>${escHtml(dgZoneName(dgDraft.tz))}</span><span class="cb-chev">▾</span>`;
   document.getElementById('dg-now').textContent = T('Там сейчас ', "It's ") + dgNowIn(dgDraft.tz) + T('', ' there now');
 }
 function openDigest() {
@@ -2462,10 +2500,6 @@ function openDigest() {
   document.getElementById('dg-l-fiat').textContent = T('Валюты', 'Currencies');
   document.getElementById('dg-l-crypto').textContent = T('Крипта и металлы', 'Crypto and metals');
   document.getElementById('dg-l-tz').textContent = T('Часовой пояс', 'Timezone');
-  const tzSel = document.getElementById('dg-tz');
-  tzSel.innerHTML = DG_ZONES.map((z, i) => `<option value="${100 + i}">${z[lang === 'ru' ? 1 : 2]}</option>`).join('') +
-    (dgZoneIdx(dgDraft.tz) < 0 ? `<option value="${dgDraft.tz}">${dgZoneName(dgDraft.tz)}</option>` : '');
-  tzSel.value = String(dgDraft.tz);
   dgTzChanged();
   document.getElementById('dg-save').textContent = T('Сохранить', 'Save');
   const off = document.getElementById('dg-off');
