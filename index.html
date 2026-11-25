@@ -137,6 +137,9 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .multi-name .flag-fb { font-size:16px; }
 .multi-code { color:var(--sub); font-size:11px; margin-left:6px; }
 .multi-more { width:100%; margin-top:6px; padding:11px 0; background:none; border:none; border-top:1px solid var(--border); color:var(--t-emphasis); font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+.mseg { margin:0 0 8px; background:var(--bg); }
+.mseg-btn { flex:1; background:none; border:none; border-radius:11px; padding:8px 0; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--sub2); cursor:pointer; transition:background 0.15s, color 0.15s; }
+.mseg-btn.active { background:var(--t); color:var(--t-contrast); }
 .multi-val { font-size:14px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }
 
 /* RATES */
@@ -377,6 +380,11 @@ body.light-theme .footer { color:#555; }
   </div>
   <div class="multi-card">
     <div class="multi-label" id="multi-title" data-ru="Сразу во всех валютах" data-en="All currencies at once">Сразу во всех валютах</div>
+    <div class="seg mseg" id="multi-seg">
+      <button class="mseg-btn active" data-g="fiat" onclick="setMultiGroup('fiat')" data-ru="Валюты" data-en="Currencies">Валюты</button>
+      <button class="mseg-btn" data-g="crypto" onclick="setMultiGroup('crypto')" data-ru="Крипта" data-en="Crypto">Крипта</button>
+      <button class="mseg-btn" data-g="metals" onclick="setMultiGroup('metals')" data-ru="Металлы" data-en="Metals">Металлы</button>
+    </div>
     <div class="search-wrap" style="display:none;margin:0 0 6px"><span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><input class="search-input" type="text" id="multi-search" oninput="conv()" placeholder="Поиск валюты..."></div>
     <div id="multi-list"></div>
   </div>
@@ -996,6 +1004,20 @@ function fromUSD(u,c) {
 // «Показать все» с поиском. Значки как на вкладке «Рынки» (флаги, логотипы).
 const MULTI_TOP = ['UAH','USD','EUR','GEL','RUB','GBP','PLN','TRY','KZT','CNY','BTC','ETH','TON','USDT','XAU'];
 let multiAll = false;
+let multiGroup = 'fiat';
+function assetGroup(c) {
+  if (METAL_STYLE[c]) return 'metals';
+  if (CRYPTO_SET.has(c) || c === 'XTR') return 'crypto';
+  return 'fiat';
+}
+function setMultiGroup(g) {
+  if (g === multiGroup) return;
+  multiGroup = g; multiAll = false; haptic('light');
+  document.querySelectorAll('.mseg-btn').forEach(b => b.classList.toggle('active', b.dataset.g === g));
+  const q = document.getElementById('multi-search');
+  q.value = ''; q.parentElement.style.display = 'none';
+  conv();
+}
 function assetName(c) {
   const a = FIAT.find(x => x.code === c) || CRYPTOS.find(x => x.code === c) || METALS_LIST.find(x => x.code === c);
   if (a) return a[lang] || a.en || c;
@@ -1017,10 +1039,11 @@ function toggleMultiAll() {
 }
 function renderMulti(fromCur, amount) {
   const usd = toUSD(fromCur, amount);
-  const all = [...new Set([...document.getElementById('from-cur').options].map(o => o.value))].filter(c => c !== fromCur);
+  const all = [...new Set([...document.getElementById('from-cur').options].map(o => o.value))].filter(c => c !== fromCur && assetGroup(c) === multiGroup);
   const favTo = lsFavs.map(k => k.split('-')).filter(([f]) => f === fromCur).map(([, t]) => t);
   const head = [...new Set([...favTo, ...MULTI_TOP])].filter(c => all.includes(c));
-  let codes = multiAll ? [...head, ...all.filter(c => !head.includes(c))] : head;
+  const canMore = multiGroup !== 'metals' && all.length > head.length;
+  let codes = (multiAll || multiGroup === 'metals') ? [...head, ...all.filter(c => !head.includes(c))] : head;
   const q = (document.getElementById('multi-search')?.value || '').trim().toLowerCase();
   if (multiAll && q) codes = codes.filter(c => c.toLowerCase().includes(q) || assetName(c).toLowerCase().includes(q));
   const items = codes.map(c => {
@@ -1031,7 +1054,7 @@ function renderMulti(fromCur, amount) {
     </div>`;
   });
   document.getElementById('multi-list').innerHTML = (items.join('') || `<div class="al-empty">${T('Ничего не нашлось','Nothing found')}</div>`) +
-    (q ? '' : `<button class="multi-more" onclick="toggleMultiAll()">${multiAll ? T('Свернуть','Show less') : T(`Показать все валюты (${all.length})`, `Show all currencies (${all.length})`)}</button>`);
+    (q || !canMore ? '' : `<button class="multi-more" onclick="toggleMultiAll()">${multiAll ? T('Свернуть','Show less') : T(`Показать все (${all.length})`, `Show all (${all.length})`)}</button>`);
 }
 
 // Популярные пары для эмигрантов — в одно касание
