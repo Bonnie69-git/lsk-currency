@@ -229,10 +229,33 @@ body.light-theme .swap-btn-float { background:#ffffff; color:#000000; }
 .period-btn { flex:1; padding:8px 2px; text-align:center; font-size:12px; font-weight:600; color:var(--sub2); cursor:pointer; border-radius:9px; border:none; background:none; font-family:'Inter',sans-serif; transition:all 0.15s; }
 .period-btn.active { color:var(--text); background:var(--card2); box-shadow:0 0 0 1px var(--border); }
 .period-btn[hidden] { display:none; }
+.period-btn.ch-mode { flex:0 0 40px; display:flex; align-items:center; justify-content:center; color:var(--sub2); }
+.period-btn.ch-mode[hidden] { display:none; }
 .chart-stats { display:flex; gap:8px; margin-bottom:12px; }
 .stat-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px; }
 .stat-label { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
 .stat-val { font-size:14px; font-weight:700; color:var(--text); margin-top:4px; font-variant-numeric:tabular-nums; }
+
+/* ВЫБОР ВАЛЮТЫ — своя шторка с круглыми флагами вместо системного списка с эмодзи */
+.cur-btn { display:flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:var(--text); }
+.cur-btn .flag-ico, .cur-btn .flag-fb, .cur-btn .coin-img, .cur-btn .coin-badge, .cur-btn .metal-ico { width:22px; height:22px; font-size:9px; }
+.cur-btn .flag-fb { font-size:9px; }
+.cur-btn .cb-chev { color:var(--sub); font-size:10px; margin-left:2px; }
+.cur-btn.pill { background:var(--card2); border-radius:var(--rf); padding:8px 12px 8px 9px; }
+.cur-btn.box { background:#000; border-radius:12px; padding:11px 12px; width:100%; flex:1; }
+.cur-btn.box .cb-chev { margin-left:auto; }
+.cur-pill-wrap .cur-pill-chevron { display:none; }
+.pick-list { max-height:56vh; overflow-y:auto; margin:0 -4px; padding:0 4px; -webkit-overflow-scrolling:touch; }
+.pick-item { display:flex; align-items:center; gap:11px; padding:10px 2px; border-bottom:1px solid var(--border); cursor:pointer; }
+.pick-item:last-child { border-bottom:none; }
+.pick-item .flag-ico, .pick-item .flag-fb, .pick-item .coin-img, .pick-item .coin-badge, .pick-item .metal-ico { width:30px; height:30px; font-size:10px; }
+.pick-item .flag-fb { font-size:10px; }
+.pick-name { flex:1; font-size:14px; color:var(--text); min-width:0; }
+.pick-item.on .pick-name { font-weight:700; }
+.pick-check { color:var(--t-emphasis); font-weight:700; }
+.pair-ico { display:inline-flex; vertical-align:middle; margin-right:8px; }
+.pair-ico > * { width:20px !important; height:20px !important; font-size:8px !important; }
+.pair-ico > * + * { margin-left:-6px; box-shadow:0 0 0 2px var(--card); }
 
 /* ALERTS */
 .ch-bell { margin-right:-4px; font-size:14px; }
@@ -480,6 +503,7 @@ body.light-theme .footer { color:#555; }
       <button class="period-btn active" data-days="30" onclick="setPeriod('30',this)" data-ru="1М" data-en="1M">1М</button>
       <button class="period-btn" data-days="90" onclick="setPeriod('90',this)" data-ru="3М" data-en="3M">3М</button>
       <button class="period-btn" data-days="365" onclick="setPeriod('365',this)" data-ru="1Г" data-en="1Y">1Г</button>
+      <button class="period-btn ch-mode" id="ch-mode" onclick="toggleChartMode()" aria-label="Chart type" hidden></button>
     </div>
     <div class="chart-stats">
       <div class="stat-box"><div class="stat-label" id="sl-min">Мин</div><div class="stat-val" id="stat-min">—</div></div>
@@ -487,6 +511,24 @@ body.light-theme .footer { color:#555; }
       <div class="stat-box"><div class="stat-label" id="sl-chg">Изм.</div><div class="stat-val" id="stat-chg">—</div></div>
     </div>
     <button class="tr-btn" id="ch-conv" onclick="convertFromChart()">Конвертировать</button>
+  </div>
+</div>
+
+<!-- ВЫБОР ВАЛЮТЫ -->
+<div class="modal-overlay" id="pick-modal" onclick="if(event.target.id==='pick-modal')closePicker()">
+  <div class="modal">
+    <div class="sheet-grip"></div>
+    <div class="ch-head" style="margin-bottom:12px">
+      <div class="ch-names"><div class="ch-name" id="pick-title">Выбери валюту</div></div>
+      <button class="modal-close" onclick="closePicker()" aria-label="Close">✕</button>
+    </div>
+    <div class="seg mseg" id="pick-seg">
+      <button class="mseg-btn" data-g="fiat" onclick="setPickGroup('fiat')" data-ru="Валюты" data-en="Currencies">Валюты</button>
+      <button class="mseg-btn" data-g="crypto" onclick="setPickGroup('crypto')" data-ru="Крипта" data-en="Crypto">Крипта</button>
+      <button class="mseg-btn" data-g="metals" onclick="setPickGroup('metals')" data-ru="Металлы" data-en="Metals">Металлы</button>
+    </div>
+    <div class="search-wrap" style="margin:0 0 6px"><span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></span><input class="search-input" type="text" id="pick-search" oninput="renderPicker()" placeholder="Поиск валюты..."></div>
+    <div class="pick-list" id="pick-list"></div>
   </div>
 </div>
 
@@ -566,6 +608,8 @@ const NAMES = {
   ru: { USD:"🇺🇸 Доллар",EUR:"🇪🇺 Евро",UAH:"🇺🇦 Гривна",GEL:"🇬🇪 Лари",RUB:"🇷🇺 Рубль",TRY:"🇹🇷 Лира",GBP:"🇬🇧 Фунт",JPY:"🇯🇵 Йена",CNY:"🇨🇳 Юань",PLN:"🇵🇱 Злотый",KZT:"🇰🇿 Тенге",AZN:"🇦🇿 Манат",AED:"🇦🇪 Дирхам",BYN:"🇧🇾 Бел.рубль",CHF:"🇨🇭 Франк",XTR:"⭐ Stars",BTC:"₿ Биткоин",ETH:"⟠ Эфириум",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" },
   en: { USD:"🇺🇸 Dollar",EUR:"🇪🇺 Euro",UAH:"🇺🇦 Hryvnia",GEL:"🇬🇪 Lari",RUB:"🇷🇺 Ruble",TRY:"🇹🇷 Lira",GBP:"🇬🇧 Pound",JPY:"🇯🇵 Yen",CNY:"🇨🇳 Yuan",PLN:"🇵🇱 Zloty",KZT:"🇰🇿 Tenge",AZN:"🇦🇿 Manat",AED:"🇦🇪 Dirham",BYN:"🇧🇾 Bel.Ruble",CHF:"🇨🇭 Franc",XTR:"⭐ Stars",BTC:"₿ Bitcoin",ETH:"⟠ Ethereum",USDT:"💵 USDT",TON:"💎 TON",SOL:"◎ Solana",BNB:"🟡 BNB",XRP:"🔵 XRP",DOGE:"🐕 Doge" }
 };
+// Эмодзи-флаги из названий убираем: рядом теперь круглые значки
+for (const l in NAMES) for (const k in NAMES[l]) NAMES[l][k] = NAMES[l][k].replace(/^[^\p{L}\p{N}]+/u, '');
 
 const FIAT = [
   {code:"EUR",flag:"🇪🇺",ru:"Евро",en:"Euro"},
@@ -718,7 +762,7 @@ function coinIcon(c) {
 // эмодзи-флаг в кружке
 const FLAG_CC = {EUR:'eu', XOF:null, XAF:null, ANG:null};
 function flagIcon(code, emoji) {
-  const fb = `<div class="flag-fb">${emoji||'🏳️'}</div>`;
+  const fb = `<div class="flag-fb" style="font-size:11px;font-weight:700;color:var(--sub2)">${code.slice(0,2)}</div>`;
   const cc = code in FLAG_CC ? FLAG_CC[code] : code.slice(0,2).toLowerCase();
   if (!cc) return fb;
   return `<img class="flag-ico" src="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/1x1/${cc}.svg" alt="${code}" loading="lazy" onerror="this.outerHTML=this.dataset.fb" data-fb='${fb.replace(/'/g,"&#39;")}'>`;
@@ -844,7 +888,11 @@ async function cryptoHistory(code, days) {
       const r = await fetch(`${host}/api/v3/klines?symbol=${sym}&interval=${iv}&limit=${lim}`, {signal: AbortSignal.timeout(8000)});
       if (!r.ok) continue;
       const d = await r.json();
-      if (Array.isArray(d) && d.length > 1 && isFresh(Math.min(d[d.length-1][6], Date.now()), 2 * IV_MS[iv] + 36e5)) { pts = d.map(k => [k[6] > Date.now() ? Date.now() : k[6], code === 'USDT' ? 1 / parseFloat(k[4]) : parseFloat(k[4])]); break; }
+      if (Array.isArray(d) && d.length > 1 && isFresh(Math.min(d[d.length-1][6], Date.now()), 2 * IV_MS[iv] + 36e5)) { const inv = code === 'USDT';
+        // [время, закрытие, открытие, макс, мин] — для свечей
+        pts = d.map(k => { const ts = k[6] > Date.now() ? Date.now() : k[6], o = +k[1], h = +k[2], l = +k[3], c = +k[4];
+          return inv ? [ts, 1 / c, 1 / o, 1 / l, 1 / h] : [ts, c, o, h, l]; });
+        break; }
     } catch {}
   }
   if (pts.length < 2) {
@@ -862,7 +910,7 @@ async function cryptoHistory(code, days) {
       const r = await fetch(`https://min-api.cryptocompare.com/data/v2/${unit}?fsym=${code}&tsym=USD&limit=${Math.min(2000, Math.ceil(lim / agg))}&aggregate=${agg}`, {signal: AbortSignal.timeout(10000)});
       const d = await r.json();
       const arr = d?.Data?.Data;
-      if (Array.isArray(arr) && arr.length > 1 && isFresh(arr[arr.length-1].time * 1000, 2 * 864e5)) pts = arr.filter(x => x.close > 0).map(x => [x.time * 1000, x.close]);
+      if (Array.isArray(arr) && arr.length > 1 && isFresh(arr[arr.length-1].time * 1000, 2 * 864e5)) pts = arr.filter(x => x.close > 0).map(x => [x.time * 1000, x.close, x.open, x.high, x.low]);
     } catch {}
   }
   if (pts.length > 1) chartCache[key] = {t: Date.now(), v: pts};
@@ -1021,6 +1069,7 @@ function setMultiGroup(g) {
 function assetName(c) {
   const a = FIAT.find(x => x.code === c) || CRYPTOS.find(x => x.code === c) || METALS_LIST.find(x => x.code === c);
   if (a) return a[lang] || a.en || c;
+  if (NAMES[lang]?.[c]) return NAMES[lang][c];
   if (c === 'XTR') return 'Telegram Stars';
   return c;
 }
@@ -1031,6 +1080,68 @@ function assetIcon(c) {
   if (c === 'XTR') return '<div class="coin-badge" style="background:#F5B70122;color:#F5B701;border:1px solid #F5B70140;font-size:14px">★</div>';
   return flagIcon(c, FIAT.find(x => x.code === c)?.flag);
 }
+// Свой выбор валюты: системный <select> на iPhone показывает только текст
+// с эмодзи-флагами. Селекты остаются (их значение читает весь код), но скрыты;
+// вместо них кнопка с круглым флагом, по нажатию — шторка со списком и поиском.
+const PICK_IDS = ['from-cur','to-cur','tr-from','tr-to','al-from','al-to'];
+let pickSel = null, pickGroup = 'fiat';
+const SEL_VALUE = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+function syncCurBtn(sel) {
+  if (!sel?._btn) return;
+  const c = sel.value;
+  sel._btn.innerHTML = c ? `${assetIcon(c)}<span>${c === 'XTR' ? 'Stars' : c}</span><span class="cb-chev">▾</span>` : '—';
+}
+function initCurPickers() {
+  PICK_IDS.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel || sel._btn) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cur-btn ' + (sel.classList.contains('cur-pill') ? 'pill' : 'box');
+    btn.onclick = () => openPicker(sel);
+    sel.style.display = 'none';
+    sel.after(btn); sel._btn = btn;
+    // Любая смена значения из кода (свап, быстрые пары, избранное) сразу видна на кнопке
+    Object.defineProperty(sel, 'value', { configurable: true, get() { return SEL_VALUE.get.call(this); }, set(v) { SEL_VALUE.set.call(this, v); syncCurBtn(this); } });
+    new MutationObserver(() => syncCurBtn(sel)).observe(sel, {childList: true});
+    syncCurBtn(sel);
+  });
+}
+function openPicker(sel) {
+  pickSel = sel; haptic('light');
+  pickGroup = assetGroup(sel.value);
+  const codes = [...sel.options].map(o => o.value);
+  document.querySelectorAll('#pick-seg .mseg-btn').forEach(b => { b.hidden = !codes.some(c => assetGroup(c) === b.dataset.g); });
+  document.getElementById('pick-seg').style.display = [...document.querySelectorAll('#pick-seg .mseg-btn')].filter(b => !b.hidden).length > 1 ? '' : 'none';
+  document.getElementById('pick-search').value = '';
+  document.getElementById('pick-title').textContent = T('Выбери валюту', 'Choose currency');
+  renderPicker();
+  document.getElementById('pick-modal').classList.add('open');
+  document.getElementById('pick-list').scrollTop = 0;
+}
+function closePicker() { document.getElementById('pick-modal').classList.remove('open'); pickSel = null; }
+function setPickGroup(g) { pickGroup = g; haptic('light'); document.getElementById('pick-search').value = ''; renderPicker(); document.getElementById('pick-list').scrollTop = 0; }
+function renderPicker() {
+  if (!pickSel) return;
+  const q = document.getElementById('pick-search').value.trim().toLowerCase();
+  document.querySelectorAll('#pick-seg .mseg-btn').forEach(b => b.classList.toggle('active', !q && b.dataset.g === pickGroup));
+  let codes = [...new Set([...pickSel.options].map(o => o.value))];
+  // С поиском ищем сразу во всех группах
+  codes = q ? codes.filter(c => c.toLowerCase().includes(q) || assetName(c).toLowerCase().includes(q)) : codes.filter(c => assetGroup(c) === pickGroup);
+  const cur = pickSel.value;
+  document.getElementById('pick-list').innerHTML = codes.map(c => `<div class="pick-item${c === cur ? ' on' : ''}" onclick="pickCur('${c}')">
+      ${assetIcon(c)}<span class="pick-name">${assetName(c)}<span class="multi-code">${c}</span></span>${c === cur ? '<span class="pick-check">✓</span>' : ''}
+    </div>`).join('') || `<div class="al-empty">${T('Ничего не нашлось', 'Nothing found')}</div>`;
+}
+function pickCur(c) {
+  const sel = pickSel;
+  closePicker();
+  if (!sel || sel.value === c) return;
+  sel.value = c;
+  sel.dispatchEvent(new Event('change'));
+  haptic('light');
+}
+
 function toggleMultiAll() {
   multiAll = !multiAll; haptic('light');
   const q = document.getElementById('multi-search');
@@ -1202,10 +1313,11 @@ function liveChartPrice(code) {
 }
 async function fetchAndDrawChart(code, days) {
   const req = ++chartReq;
-  let labels=[], data=[];
+  let labels=[], data=[], candles=null;
   try {
     if(CRYPTO_SET.has(code)) {
       const pts = await cryptoHistory(code, days);
+      if (pts.length > 1 && pts[0].length >= 5) candles = toCandles(pts, 60);
       const step=Math.max(1,Math.floor(pts.length/90));
       pts.filter((_,i)=>i%step===0 || i===pts.length-1).forEach(([ts,p])=>{ labels.push(ts); data.push(p); });
     } else {
@@ -1236,8 +1348,9 @@ async function fetchAndDrawChart(code, days) {
   if (live && lastV && Math.abs(live / lastV - 1) < 0.25) {
     if (Date.now() - labels[labels.length - 1] > 60000) { labels.push(Date.now()); data.push(live); }
     else data[data.length - 1] = live;
+    if (candles?.length) { const k = candles[candles.length - 1]; k.c = live; k.h = Math.max(k.h, live); k.l = Math.min(k.l, live); }
   }
-  drawChart(labels, data);
+  drawChart(labels, data, candles);
 }
 
 function chartDate(ts, withTime) {
@@ -1251,22 +1364,74 @@ function setChartHeader(v, ts, base) {
   const pct = base ? (v - base) / base * 100 : 0;
   const pill = document.getElementById('stat-chg-pill');
   pill.className = 'rate-change ' + (Math.abs(pct) < 0.005 ? 'flat' : pct > 0 ? 'up' : 'down');
-  pill.textContent = (pct > 0 ? '+' : '') + pct.toFixed(2) + '%';
+  const diff = v - base, sg = diff > 0 ? '+' : diff < 0 ? '−' : '';
+  pill.textContent = !base ? '' : Math.abs(pct) < 0.005 ? '0.00%' : `${sg}${fmtChartPrice(Math.abs(diff))} (${sg}${Math.abs(pct).toFixed(2)}%)`;
   document.getElementById('ch-date').textContent = ts ? chartDate(ts, chartPeriod === '1' || chartPeriod === '7' && CRYPTO_SET.has(chartCode)) : T('сейчас', 'now');
 }
 
-// Вертикальная линия-перекрестие и точка под пальцем
-// Пунктирная линия цены начала периода
-const baseline = {
-  id: 'baseline',
+// Свечи: склеиваем соседние свечи Binance, чтобы на экране было не больше ~60
+function toCandles(pts, maxN) {
+  const g = Math.max(1, Math.ceil(pts.length / maxN)), out = [];
+  for (let i = 0; i < pts.length; i += g) {
+    const part = pts.slice(i, i + g);
+    out.push({ t: part[part.length - 1][0], o: part[0][2], c: part[part.length - 1][1],
+               h: Math.max(...part.map(p => p[3])), l: Math.min(...part.map(p => p[4])) });
+  }
+  return out;
+}
+let chartMode = 'candle';
+try { chartMode = localStorage.getItem('chartMode') || 'candle'; } catch {}
+let lastChartArgs = null;
+function toggleChartMode() {
+  chartMode = chartMode === 'candle' ? 'line' : 'candle';
+  try { localStorage.setItem('chartMode', chartMode); } catch {}
+  haptic('light');
+  if (lastChartArgs) drawChart(...lastChartArgs);
+}
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Свечи рисуем сами поверх невидимой линии (линия нужна для касаний и шкал)
+const candlePlugin = {
+  id: 'candles',
   beforeDatasetsDraw(chart) {
-    const v = chart.data.datasets[0]?.data?.[0];
-    if (v == null) return;
-    const y = chart.scales.y.getPixelForValue(v), {left, right} = chart.chartArea, ctx = chart.ctx;
-    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke(); ctx.restore();
+    const ks = chart.$candles;
+    if (!ks) return;
+    const {ctx, scales:{x, y}} = chart, UP = cssVar('--up') || '#34c759', DOWN = cssVar('--down') || '#ff453a';
+    const step = ks.length > 1 ? Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0)) : 10;
+    const w = Math.max(2, Math.min(10, step * 0.62));
+    ctx.save();
+    ks.forEach((k, i) => {
+      const cx = x.getPixelForValue(i), col = k.c >= k.o ? UP : DOWN;
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(Math.round(cx) + 0.5, y.getPixelForValue(k.h)); ctx.lineTo(Math.round(cx) + 0.5, y.getPixelForValue(k.l)); ctx.stroke();
+      const yo = y.getPixelForValue(k.o), yc = y.getPixelForValue(k.c);
+      ctx.fillRect(cx - w / 2, Math.min(yo, yc), w, Math.max(1.5, Math.abs(yc - yo)));
+    });
+    ctx.restore();
   }
 };
+// Пунктир текущей цены и плашка с ценой справа, как на бирже
+const priceLine = {
+  id: 'priceLine',
+  afterDatasetsDraw(chart) {
+    const ds = chart.data.datasets[0], v = ds.data[ds.data.length - 1];
+    if (v == null) return;
+    const {ctx, chartArea:{left, right}, scales:{y}} = chart;
+    const py = y.getPixelForValue(v);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(left, Math.round(py) + 0.5); ctx.lineTo(right, Math.round(py) + 0.5); ctx.stroke();
+    ctx.setLineDash([]);
+    const txt = fmt(v); ctx.font = '600 10px Inter, sans-serif';
+    const tw = ctx.measureText(txt).width + 12, h = 18, bx = right + 3;
+    ctx.fillStyle = cssVar('--card2') || '#222';
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, py - h / 2, tw, h, 9) : ctx.rect(bx, py - h / 2, tw, h); ctx.fill();
+    ctx.fillStyle = cssVar('--text') || '#fff'; ctx.textBaseline = 'middle';
+    ctx.fillText(txt, bx + 6, py + 0.5);
+    ctx.restore();
+  }
+};
+// Вертикальная линия под пальцем (+ точка в режиме линии)
 const crosshair = {
   id: 'crosshair',
   afterDraw(chart) {
@@ -1276,17 +1441,23 @@ const crosshair = {
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-    const ds = chart.data.datasets[0], css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    ctx.setLineDash([]); ctx.fillStyle = ds.data[a[0].index] >= ds.data[0] ? (css('--up')||'#34c759') : (css('--down')||'#ff453a');
-    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#000'; ctx.lineWidth = 2; ctx.stroke();
+    if (!chart.$candles) {
+      ctx.setLineDash([]); ctx.fillStyle = chart.data.datasets[0].borderColor;
+      ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = cssVar('--bg') || '#000'; ctx.lineWidth = 2; ctx.stroke();
+    }
     ctx.restore();
   }
 };
 
-function drawChart(labels, data) {
+function drawChart(labels, data, candles) {
+  lastChartArgs = [labels, data, candles];
   if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
   const empty = document.getElementById('chart-empty');
+  const modeBtn = document.getElementById('ch-mode');
+  modeBtn.hidden = !(candles && candles.length > 4);
+  const useCandles = !modeBtn.hidden && chartMode === 'candle';
+  modeBtn.innerHTML = useCandles ? ICO_LINE : ICO_CANDLE;
   if (data.length < 2) {
     empty.style.display = 'flex';
     empty.textContent = T('Не удалось загрузить график. Попробуй позже.', "Couldn't load the chart. Try again later.");
@@ -1295,30 +1466,38 @@ function drawChart(labels, data) {
     return;
   }
   empty.style.display = 'none';
-  const min=Math.min(...data), max=Math.max(...data);
-  const first=data[0], last=data[data.length-1];
-  const change=first?((last-first)/first*100):0;
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const UP = css('--up')||'#34c759', DOWN = css('--down')||'#ff453a';
-  const color = change>=0 ? UP : DOWN;
-  document.getElementById('stat-min').textContent=fmtChartPrice(min);
-  document.getElementById('stat-max').textContent=fmtChartPrice(max);
+  if (useCandles) { labels = candles.map(k => k.t); data = candles.map(k => k.c); }
+  const lo = useCandles ? Math.min(...candles.map(k => k.l)) : Math.min(...data);
+  const hi = useCandles ? Math.max(...candles.map(k => k.h)) : Math.max(...data);
+  const first = useCandles ? candles[0].o : data[0], last = data[data.length-1];
+  const change = first ? ((last-first)/first*100) : 0;
+  const UP = cssVar('--up')||'#34c759', DOWN = cssVar('--down')||'#ff453a';
+  const color = change >= 0 ? UP : DOWN;
+  document.getElementById('stat-min').textContent=fmtChartPrice(lo);
+  document.getElementById('stat-max').textContent=fmtChartPrice(hi);
   const chgEl=document.getElementById('stat-chg');
   chgEl.textContent=(change>=0?'+':'')+change.toFixed(2)+'%';
   chgEl.style.color=change>=0?'var(--up)':'var(--down)';
   setChartHeader(last, null, first);
   const ctx=document.getElementById('rateChart').getContext('2d');
-  const sub = css('--sub') || '#888';
-  // Как на бирже (baseline): выше цены начала периода — зелёным, ниже — красным,
-  // пунктир — цена начала. Раньше весь график красился в один цвет по итогу.
-  const segColor = c => ((c.p0.parsed.y + c.p1.parsed.y) / 2 >= first ? UP : DOWN);
+  const sub = cssVar('--sub') || '#888';
+  // Линия одного цвета по итогу периода + лёгкий градиент под ней.
+  // Двухцветная заливка от цены начала периода путала — убрали.
+  const grad = c => {
+    const {chartArea} = c.chart;
+    if (!chartArea) return color + '22';
+    const g = c.chart.ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    g.addColorStop(0, color + '40'); g.addColorStop(1, color + '00');
+    return g;
+  };
+  const pad = (hi - lo) * 0.06 || hi * 0.01;
   chartInstance=new Chart(ctx,{
     type:'line',
-    data:{ labels, datasets:[{ data, borderColor:color, borderWidth:2, pointRadius:0, pointHoverRadius:0, tension:0.25,
-      segment:{ borderColor: segColor },
-      fill:{ target:{ value:first }, above: UP+'2e', below: DOWN+'2e' } }] },
+    data:{ labels, datasets:[ useCandles
+      ? { data, borderColor:'rgba(0,0,0,0)', borderWidth:0, pointRadius:0, pointHoverRadius:0, fill:false }
+      : { data, borderColor:color, borderWidth:2, pointRadius:0, pointHoverRadius:0, tension:0.3, cubicInterpolationMode:'monotone', fill:'start', backgroundColor:grad } ] },
     options:{
-      responsive:true, maintainAspectRatio:false, animation:{duration:350},
+      responsive:true, maintainAspectRatio:false, animation:{duration:300},
       interaction:{ mode:'index', intersect:false },
       events:['mousemove','mouseout','touchstart','touchmove','touchend'],
       plugins:{ legend:{display:false}, tooltip:{ enabled:false } },
@@ -1327,20 +1506,27 @@ function drawChart(labels, data) {
           const i = els[0].index; setChartHeader(data[i], labels[i], first);
         } else setChartHeader(last, null, first);
       },
-      layout:{ padding:{ left:6, right:0 } },
+      layout:{ padding:{ left:2, right:4, top:6 } },
       scales:{
-        x:{ display:true, grid:{ display:false }, border:{ display:false },
+        x:{ display:true, offset:useCandles, grid:{ display:false }, border:{ display:false },
             ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:4, maxRotation:0, autoSkipPadding:24,
-                    callback:(v,i)=>chartDate(labels[i], false) } },
-        y:{ position:'right', grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false },
-            ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:5, padding:6, callback:v=>fmt(v) } }
+                    callback:(v,i)=>chartPeriod === '1' ? new Date(labels[i]).toLocaleTimeString(dateLoc(), {hour:'2-digit', minute:'2-digit'}) : chartDate(labels[i], false) } },
+        y:{ position:'right', min: lo - pad, max: hi + pad, grid:{ color:'rgba(255,255,255,0.035)', drawTicks:false }, border:{ display:false },
+            afterFit: sc => { sc.width = Math.max(sc.width, 58); },
+            ticks:{ color:sub, font:{size:10, family:'Inter'}, maxTicksLimit:4, padding:8,
+                    // подпись рядом с плашкой текущей цены прячем, чтобы не налезали
+                    callback:v => Math.abs(v - last) < (hi - lo + 2 * pad) * 0.07 ? '' : fmt(v) } }
       }
     },
-    plugins:[crosshair, baseline]
+    plugins:[candlePlugin, priceLine, crosshair]
   });
+  chartInstance.$candles = useCandles ? candles : null;
+  chartInstance.update('none');
   // Сбросить заголовок, когда палец отпущен
   ctx.canvas.ontouchend = ctx.canvas.onmouseleave = () => { chartInstance?.tooltip?.setActiveElements([], {x:0,y:0}); chartInstance?.update('none'); setChartHeader(last, null, first); };
 }
+const ICO_CANDLE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 4v3M7 15v5M17 3v4M17 14v6"/><rect x="5" y="7" width="4" height="8" rx="1"/><rect x="15" y="7" width="4" height="7" rx="1"/></svg>';
+const ICO_LINE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16c3 0 3-7 6-7s3 6 6 6 3-9 6-9"/></svg>';
 
 function applyLang() {
   document.documentElement.lang = lang;
@@ -1522,7 +1708,7 @@ function renderSaved() {
       const rate=fromUSD(toUSD(f,1),t);
       const tap=lang==='ru'?'Нажми для конвертации':'Tap to convert';
       return `<div class="fav-item" onclick="useFav('${f}','${t}',${a})">
-        <div><div class="fav-pair">${n[f]||f} → ${n[t]||t}</div>
+        <div><div class="fav-pair"><span class="pair-ico">${assetIcon(f)}${assetIcon(t)}</span>${n[f]||f} → ${n[t]||t}</div>
         <div style="font-size:10px;color:var(--sub2);margin-top:2px">${tap}</div></div>
         <div style="display:flex;align-items:center;gap:10px">
           <div class="fav-rate">${a===1?fmtPairRate(f,t,rate):fmt(a)+' '+sign(f)+' = '+fmt(a*rate)+' '+sign(t)}</div>
@@ -1666,8 +1852,7 @@ function isTransferFiat(c) { return TRANSFER_CURS.includes(c); }
 function fillTransferSelects() {
   const opts = TRANSFER_CURS.map(code => {
     const f = FIAT.find(x=>x.code===code);
-    const flag = f ? f.flag : '🇺🇸';
-    return `<option value="${code}">${flag} ${code}</option>`;
+    return `<option value="${code}">${code}</option>`;
   }).join('');
   for (const id of ['tr-from','tr-to']) {
     const el = document.getElementById(id), v = el.value;
@@ -2076,6 +2261,7 @@ function applyStartParams() {
 
 applyStartParams();
 applyLang();
+initCurPickers();
 document.getElementById('tr-amount').addEventListener('keydown', e => { if (e.key === 'Enter') runTransfer(); });
 loadFiat(); loadCrypto(); loadMetals(); loadDailyChanges();
 setInterval(loadFiat,60000); setInterval(loadCrypto,60000); setInterval(loadDailyChanges, 3600000);
