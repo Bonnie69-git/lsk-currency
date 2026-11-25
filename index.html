@@ -1117,6 +1117,13 @@ function convertFromChart() {
 
 const dateLoc = () => lang === 'ru' ? 'ru' : 'en-US';
 let chartReq = 0;
+function liveChartPrice(code) {
+  if (CRYPTO_SET.has(code)) return cryptoPrices[code] || 0;
+  if (metalPricesUSD[code] && metalsLive) return metalPricesUSD[code];
+  const r = rates[code];
+  if (!r) return 0;
+  return chartMeta(code).unit === 'USD' ? 1 / r : r;
+}
 async function fetchAndDrawChart(code, days) {
   const req = ++chartReq;
   let labels=[], data=[];
@@ -1147,6 +1154,12 @@ async function fetchAndDrawChart(code, days) {
     }
   } catch(e) {}
   if (req !== chartReq) return; // пользователь уже переключил период/валюту
+  // «Сейчас» = живая цена из списка, а не последняя точка истории (у дневных
+  // данных она бывает вчерашней). Добавляем её точкой в конец графика.
+  const live = liveChartPrice(code), lastV = data[data.length - 1];
+  if (live && lastV && Math.abs(live / lastV - 1) < 0.25 && Date.now() - labels[labels.length - 1] > 60000) {
+    labels.push(Date.now()); data.push(live);
+  }
   drawChart(labels, data);
 }
 
