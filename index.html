@@ -1157,8 +1157,9 @@ async function fetchAndDrawChart(code, days) {
   // «Сейчас» = живая цена из списка, а не последняя точка истории (у дневных
   // данных она бывает вчерашней). Добавляем её точкой в конец графика.
   const live = liveChartPrice(code), lastV = data[data.length - 1];
-  if (live && lastV && Math.abs(live / lastV - 1) < 0.25 && Date.now() - labels[labels.length - 1] > 60000) {
-    labels.push(Date.now()); data.push(live);
+  if (live && lastV && Math.abs(live / lastV - 1) < 0.25) {
+    if (Date.now() - labels[labels.length - 1] > 60000) { labels.push(Date.now()); data.push(live); }
+    else data[data.length - 1] = live;
   }
   drawChart(labels, data);
 }
