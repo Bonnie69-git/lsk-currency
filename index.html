@@ -80,6 +80,12 @@ body.light-theme .page-title { color:#0a0a0a; }
 /* QUICK PAIRS */
 .quick-pairs { display:flex; gap:8px; overflow-x:auto; margin:0 -14px 12px; padding:2px 14px; scrollbar-width:none; }
 .quick-pairs::-webkit-scrollbar { display:none; }
+/* Края ленты плавно гаснут: на компьютере обрезанная плашка у края выглядела
+   как вылезшая кнопка. Маска — только у той стороны, куда ещё можно листать. */
+.quick-pairs.fade-r { -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent); mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent); }
+.quick-pairs.fade-l { -webkit-mask-image:linear-gradient(90deg,transparent,#000 44px); mask-image:linear-gradient(90deg,transparent,#000 44px); }
+.quick-pairs.fade-l.fade-r { -webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent); mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent); }
+@media (hover:hover) and (pointer:fine) { .quick-pairs { cursor:grab; } .quick-pairs.dragging { cursor:grabbing; } .quick-pairs.dragging .qp { pointer-events:none; } }
 .qp { flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:9px 13px; cursor:pointer; transition:border-color 0.15s, transform 0.1s; }
 .qp:active { transform:scale(0.96); }
 .qp.active { border-color:var(--t); }
@@ -1254,6 +1260,51 @@ function renderQuickPairs(f, t) {
     const active = a===f && b===t ? ' active' : '';
     return `<div class="qp${active}" onclick="setPair('${a}','${b}')"><div class="qp-pair">${a} → ${b}</div><div class="qp-rate">${r ? fmtPairRate(a,b,r) : '…'}</div></div>`;
   }).join('');
+  initQuickPairsScroll(box);
+  const act = box.querySelector('.qp.active');
+  if (act) {
+    // Выбранная пара целиком в ленте, а не обрезана у края
+    const l = act.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft, pad = 14;
+    if (l - pad < box.scrollLeft) box.scrollLeft = l - pad;
+    else if (l + act.offsetWidth + pad > box.scrollLeft + box.clientWidth) box.scrollLeft = l + act.offsetWidth + pad - box.clientWidth;
+  }
+  updateQuickPairsFade(box);
+}
+function updateQuickPairsFade(box) {
+  const max = box.scrollWidth - box.clientWidth;
+  box.classList.toggle('fade-l', box.scrollLeft > 2);
+  box.classList.toggle('fade-r', box.scrollLeft < max - 2);
+}
+// На компьютере ленту не смахнуть пальцем: листаем колесом мыши и перетаскиванием
+function initQuickPairsScroll(box) {
+  if (box.dataset.scrollInit) return;
+  box.dataset.scrollInit = '1';
+  box.addEventListener('scroll', () => updateQuickPairsFade(box), {passive:true});
+  window.addEventListener('resize', () => updateQuickPairsFade(box));
+  box.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || box.scrollWidth <= box.clientWidth) return;
+    const max = box.scrollWidth - box.clientWidth;
+    if ((e.deltaY < 0 && box.scrollLeft <= 0) || (e.deltaY > 0 && box.scrollLeft >= max)) return;
+    e.preventDefault();
+    box.scrollLeft += e.deltaY;
+  }, {passive:false});
+  let x0 = null, s0 = 0, moved = false;
+  box.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    x0 = e.clientX; s0 = box.scrollLeft; moved = false;
+  });
+  window.addEventListener('pointermove', e => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0;
+    if (!moved && Math.abs(dx) > 5) { moved = true; box.classList.add('dragging'); }
+    if (moved) box.scrollLeft = s0 - dx;
+  });
+  window.addEventListener('pointerup', () => {
+    if (x0 === null) return;
+    x0 = null;
+    // клик после перетаскивания не должен выбирать пару
+    setTimeout(() => box.classList.remove('dragging'), 0);
+  });
 }
 function setPair(a, b) {
   haptic('light');
